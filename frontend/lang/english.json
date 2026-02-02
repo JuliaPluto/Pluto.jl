@@ -44,6 +44,7 @@
 
     "t_anonymous_function_abbr": "A (mini-)function that is defined without the 'function' keyword, but using -> or 'do'.",
     "t_display_complete_type_information_of_this_function_call": "Display the complete type information of this function call",
+    "t_show_types": "...show types...",
     "t_multiple_expressions_in_one_cell": "Multiple expressions in one cell",
     "t_how_would_you_like_to_fix_it": "How would you like to fix it?",
     "t_split_this_cell_into_cells": "Split this cell into {{count}} cells",

@@ -42,6 +42,7 @@
     "t_refresh_to_see_language_change_confirm": "Langue changée ! Veux-tu actualiser la page pour voir les changements ?",
     "t_anonymous_function_abbr": "Une (mini-)fonction qui est définie sans le mot-clé 'function', mais en utilisant -> ou 'do'",
     "t_display_complete_type_information_of_this_function_call": "Afficher les informations de type complètes de cet appel de fonction",
+    "t_show_types": "...montrer les types...",
     "t_multiple_expressions_in_one_cell": "Plusieurs expressions dans une même cellule",
     "t_how_would_you_like_to_fix_it": "Comment veux-tu corriger ceci ?",
     "t_split_this_cell_into_cells": "Diviser cette cellule en {{count}} cellules",

@@ -43,6 +43,7 @@
     "t_refresh_to_see_language_change_confirm": "¡Idioma cambiado! ¿Te gustaría refrescar la página para ver los cambios?",
     "t_anonymous_function_abbr": "Una (mini-)función que se define sin la palabra clave 'function', usando -> o 'do'.",
     "t_display_complete_type_information_of_this_function_call": "Mostrar la información de tipo completa de esta llamada a función",
+    "t_show_types": "...mostrar los tipos...",
     "t_multiple_expressions_in_one_cell": "Múltiples expresiones en una celda",
     "t_how_would_you_like_to_fix_it": "¿Cómo te gustaría arreglarlo?",
     "t_split_this_cell_into_cells": "Dividir esta celda en {{count}} celdas",

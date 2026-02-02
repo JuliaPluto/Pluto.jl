@@ -176,7 +176,7 @@ const Funccall = ({ frame }) => {
                       e.preventDefault()
                       set_expanded(true)
                   }}
-                  >...show types...</a
+                  >${t("t_show_types")}</a
               >`
             : null}`
 }
