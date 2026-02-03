@@ -125,7 +125,7 @@
     "t_safe_preview_body": "Tu lis et édites ce fichier sans exécuter de code Julia.",
     "t_safe_preview_run_this_notebook": "Quand tu sera prêt·e, tu pourras {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "exécuter ce notebook",
-    "t_export_safe_preview_warning": "Ce notebook est toujours en aperçu sécurisé, et les cellules n'ont pas exécuté. Tu voudras peut-être exécuter le notebook en premier. Es-tu sûr·e que tu veux l'exporter ?",
+    "t_export_safe_preview_warning": "Ce notebook est toujours en aperçu sécurisé, et les cellules n'ont pas été exécutées. Tu voudras peut-être exécuter le notebook en premier. Es-tu sûr·e que tu veux l'exporter ?",
     "t_instant_feedback_ellipsis": "Feedback instantané...",
     "t_instant_feedback_send": "Envoyer",
     "t_how_can_we_improve": "🙋 Comment pouvons-nous améliorer {{pluto}} ?",
