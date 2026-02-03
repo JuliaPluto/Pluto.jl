@@ -38,7 +38,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: "18.x"
+                  node-version: "22.x"
 
             - name: Install dependencies
               working-directory: ./test/frontend
