@@ -270,7 +270,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 },
                 definition: find_local_definition(locals, name, cursor) ?? null,
             })
-        } else if (cursor.name === "Assignment" || cursor.name === "KwArg" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
+        } else if (cursor.name === "Assignment" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
             if (cursor.firstChild()) {
                 // @ts-ignore
                 if (cursor.name === "catch") cursor.nextSibling()
