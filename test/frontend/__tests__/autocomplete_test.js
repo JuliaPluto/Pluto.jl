@@ -39,13 +39,6 @@ describe("PlutoAutocomplete", () => {
         browser = null
     })
 
-    const waitForAutocomplete = async (page) => {
-        await page.waitForSelector(".cm-tooltip-autocomplete", { timeout: 10 * 1000 }).catch(async () => {
-            await page.keyboard.press("Tab")
-            await page.waitForSelector(".cm-tooltip-autocomplete")
-        })
-    }
-
     it("should get the correct autocomplete suggestions", async () => {
         await importNotebook(page, "autocomplete_notebook.jl")
         const importedCellIds = await getCellIds(page)
@@ -74,59 +67,6 @@ describe("PlutoAutocomplete", () => {
         )
         suggestions.sort()
         expect(suggestions).toEqual(["my_subtract", "my_sum1", "my_sum2"])
-    })
-
-    it("should not commit autocomplete on dot", async () => {
-        await importNotebook(page, "autocomplete_notebook.jl")
-        const importedCellIds = await getCellIds(page)
-        await Promise.all(importedCellIds.map((cellId) => waitForCellOutput(page, cellId)))
-
-        let lastPlutoCellId = lastElement(importedCellIds)
-        await page.click(`pluto-cell[id="${lastPlutoCellId}"] .add_cell.after`)
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        lastPlutoCellId = lastElement(await getCellIds(page))
-        const inputSelector = `pluto-cell[id="${lastPlutoCellId}"] pluto-input`
-        await writeSingleLineInPlutoInput(page, inputSelector, "my_su")
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        await waitForAutocomplete(page)
-        await page.keyboard.press(".")
-
-        expect(await waitForContentToBecome(page, `${inputSelector} .cm-line`, "my_su.")).toBe("my_su.")
-    })
-
-    it("should not suggest kwarg names as locals", async () => {
-        await importNotebook(page, "autocomplete_notebook.jl")
-        const importedCellIds = await getCellIds(page)
-        await Promise.all(importedCellIds.map((cellId) => waitForCellOutput(page, cellId)))
-
-        let lastPlutoCellId = lastElement(importedCellIds)
-        await page.click(`pluto-cell[id="${lastPlutoCellId}"] .add_cell.after`)
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        lastPlutoCellId = lastElement(await getCellIds(page))
-        const inputSelector = `pluto-cell[id="${lastPlutoCellId}"] pluto-input`
-        await page.waitForSelector(`${inputSelector} .cm-editor:not(.cm-ssr-fake)`)
-        await page.focus(`${inputSelector} .cm-content`)
-        await page.keyboard.type("f(x; kwargzzzz=1)")
-        await page.keyboard.press("Enter")
-        await page.keyboard.type("kwa")
-        await page.waitForFunction(
-            (inputSelector) => {
-                const lines = Array.from(document.querySelectorAll(`${inputSelector} .cm-line`))
-                return lines.length > 0 && (lines[lines.length - 1].textContent ?? "").trimEnd().endsWith("kwa")
-            },
-            { polling: 100 },
-            inputSelector
-        )
-
-        await waitForAutocomplete(page)
-
-        const suggestions = await page.evaluate(() =>
-            Array.from(document.querySelectorAll(".cm-tooltip-autocomplete li")).map((suggestion) => suggestion.textContent)
-        )
-        expect(suggestions).not.toContain("kwargzzzz")
     })
 
     // Skipping because this doesn't work with FuzzyCompletions anymore

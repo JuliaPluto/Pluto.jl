@@ -135,6 +135,22 @@ const i_am_nth_child = (cursor) => {
     return i
 }
 
+const parent_name_and_index = (cursor) => {
+    const map = new NodeWeakMap()
+    map.cursorSet(cursor, "here")
+    if (!cursor.parent()) return { parent_name: null, index: -1 }
+    const parent_name = cursor.name
+    if (!cursor.firstChild()) throw new Error("Could not find my way back")
+    let index = 0
+    while (map.cursorGet(cursor) !== "here") {
+        index++
+        if (!cursor.nextSibling()) {
+            throw new Error("Could not find my way back")
+        }
+    }
+    return { parent_name, index }
+}
+
 /**
  * @param {TreeCursor} cursor
  * @returns {Range[]}
@@ -261,6 +277,13 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
         }
 
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
+            if (cursor.matchContext(["KwArg"])) {
+                const { parent_name, index } = parent_name_and_index(cursor)
+                if (parent_name === "KwArg" && index === 0) {
+                    if (verbose) console.groupEnd()
+                    return false
+                }
+            }
             const name = doc.sliceString(cursor.from, cursor.to)
             usages.push({
                 name: name,

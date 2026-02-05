@@ -149,7 +149,7 @@ const section_operators = {
 const field_rank_heuristic = (text, is_exported) => is_exported * 3 + (/^\p{Ll}/u.test(text) ? 2 : /^\p{Lu}/u.test(text) ? 1 : 0)
 
 const julia_commit_characters = (/** @type {autocomplete.CompletionContext} */ ctx) => {
-    return []
+    return ["."]
 }
 const validFor = (/** @type {string} */ text) => {
     let expected_char = /[\p{L}\p{Nl}\p{Sc}\d_!]*$/u.test(text)
