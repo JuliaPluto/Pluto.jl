@@ -239,7 +239,7 @@
     "t_plutoland_upload_description": "Uploader ce notebook sur {{plutoland}}, un service d'hébergement gratuit pour les notebooks Pluto :",
     "t_plutoland_upload_description_recording": "Uploader cet enregistrement sur {{plutoland}}, un service d'hébergement gratuit pour les enregistrements Pluto :",
     "t_plutoland_upload_upload": "Uploader sur {{plutoland}}",
-    "t_plutoland_upload_uploading": "En upload...",
+    "t_plutoland_upload_uploading": "Upload en cours...",
     "t_plutoland_download": "Télécharger le <strong>fichier HTML</strong>",
     "t_plutoland_download_description": "Enregistrer le fichier HTML exporté sur votre disque :",
     "t_plutoland_download_description_recording": "Enregistrer cet enregistrement en tant que fichier HTML sur votre disque :",
