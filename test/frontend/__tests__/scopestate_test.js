@@ -40,6 +40,7 @@ const test_easy = (/** @type{string} */ code, /** @type{Partial<ScopestateTestRe
 }
 describe("scopestate basics", () => {
     test_easy("a", { usages: ["a"] })
+    test_easy(":a", {})
     test_easy("x = 3", { definitions: ["x"] })
     test_easy("x = y + 1", { definitions: ["x"], usages: ["y"] })
     test_easy("let a = 1, b = 2\n  a + b + c\nend", { locals: ["a", "b"], usages: ["a", "b", "c"] })
