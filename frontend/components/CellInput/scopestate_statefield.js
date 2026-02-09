@@ -32,6 +32,9 @@ const VERBOSE = false
 
 const r = (cursor) => ({ from: cursor.from, to: cursor.to })
 
+/** Check if a name consists only of underscores (like `_`, `__`, etc.) - these are not real variables */
+const is_anonymous_underscore = (name) => /^_+$/.test(name)
+
 const find_local_definition = (locals, name, cursor) => {
     for (let lo of locals) {
         if (lo.name === name && cursor.from >= lo.validity.from && cursor.to <= lo.validity.to) {
@@ -381,13 +384,13 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
         // Handle struct/abstract/primitive type definitions - register type name as definition, skip body
         if (cursor.name === "StructDefinition" || cursor.name === "AbstractDefinition" || cursor.name === "PrimitiveDefinition") {
             const pos_resetter = back_to_parent_resetter(cursor)
-            
+
             // Helper to extract the type name from various node types
             const extract_type_name = () => {
                 // @ts-ignore
                 if (cursor.name === "Identifier") {
                     return { from: cursor.from, to: cursor.to }
-                // @ts-ignore
+                    // @ts-ignore
                 } else if (cursor.name === "ParametrizedExpression") {
                     // a{T} - get the first child which is the name
                     if (cursor.firstChild()) {
@@ -399,7 +402,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                         }
                         cursor.parent()
                     }
-                // @ts-ignore
+                    // @ts-ignore
                 } else if (cursor.name === "BinaryExpression") {
                     // a <: b or a{T} <: b - get the first child
                     if (cursor.firstChild()) {
@@ -410,7 +413,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 }
                 return null
             }
-            
+
             if (cursor.firstChild()) {
                 // Find the TypeHead which contains the type name
                 while (cursor.nextSibling()) {
@@ -494,15 +497,21 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 } else {
                     const { definitions: lhs_definitions, usages: lhs_usages } = explore_assignment_lhs(cursor)
 
-                    // Check if this is an update operator (+=, -=, etc.) by looking at the operator
+                    // Check if this is an update operator (+=, -=, etc.) or broadcast assignment (.=) by looking at the operator
                     cursor.nextSibling()
                     // @ts-ignore
                     const is_update_op = cursor.name === "UpdateOp"
+                    // @ts-ignore
+                    const op_text = doc.sliceString(cursor.from, cursor.to)
+                    // Broadcast assignment (.=) modifies elements, doesn't define the variable
+                    const is_broadcast_assign = op_text === ".="
+                    // Broadcast update (.+=, etc.) also doesn't define the variable
+                    const is_broadcast_update = op_text.startsWith(".")
 
                     // For Index/Field expressions, we track usages inside them
                     lhs_usages.forEach((range) => {
                         const name = doc.sliceString(range.from, range.to)
-                        if (name !== "_") {
+                        if (!is_anonymous_underscore(name)) {
                             usages.push({
                                 name,
                                 usage: range,
@@ -511,11 +520,24 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                         }
                     })
 
-                    if (is_update_op) {
+                    if (is_broadcast_assign || is_broadcast_update) {
+                        // Broadcast assignment (.=) or broadcast update (.+=, etc.) modifies elements, doesn't define the variable
+                        // The LHS is used (read before write for update, or just used for .=)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                usages.push({
+                                    name,
+                                    usage: range,
+                                    definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                                })
+                            }
+                        })
+                    } else if (is_update_op) {
                         // For update operators, the LHS is also used (read before write)
                         lhs_definitions.forEach((range) => {
                             const name = doc.sliceString(range.from, range.to)
-                            if (name !== "_") {
+                            if (!is_anonymous_underscore(name)) {
                                 usages.push({
                                     name,
                                     usage: range,
@@ -529,7 +551,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                         if (local_scope_stack.length === 0) {
                             lhs_definitions.forEach((range) => {
                                 const name = doc.sliceString(range.from, range.to)
-                                if (name !== "_") {
+                                if (!is_anonymous_underscore(name)) {
                                     register_variable(range)
                                 }
                             })
@@ -538,7 +560,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                         // Regular assignment: register definitions (filter out underscore)
                         lhs_definitions.forEach((range) => {
                             const name = doc.sliceString(range.from, range.to)
-                            if (name !== "_") {
+                            if (!is_anonymous_underscore(name)) {
                                 register_variable(range)
                             }
                         })

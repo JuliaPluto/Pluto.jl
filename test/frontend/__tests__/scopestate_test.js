@@ -236,3 +236,76 @@ describe("scopestate assignment operator & modifiers", () => {
     test_easy("f()[] = 1", { usages: ["f"] })
     test_easy("x[f()] = 1", { usages: ["f", "x"] })
 })
+
+describe("scopestate multiple assignments", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: JS scopestate does not track function calls as separate category
+
+    // Basic multiple assignment
+    test_easy("a, b = 1, 2", { definitions: ["a", "b"] })
+    test_easy("a, _, c, __ = 1, 2, 3, _d", { definitions: ["a", "c"], usages: ["_d"] })
+    test_easy("(a, b) = 1, 2", { definitions: ["a", "b"] })
+    test_easy("a = (b, c)", { definitions: ["a"], usages: ["b", "c"] })
+
+    // Nested destructuring
+    test_easy("a, (b, c) = [e,[f,g]]", { definitions: ["a", "b", "c"], usages: ["e", "f", "g"] })
+    test_easy("(x, y), a, (b, c) = z, e, (f, g)", { definitions: ["x", "y", "a", "b", "c"], usages: ["z", "e", "f", "g"] })
+
+    // Index/field expressions in destructuring - NOT definitions
+    test_easy("(x[i], y.r), a, (b, c) = z, e, (f, g)", { definitions: ["a", "b", "c"], usages: ["x", "i", "y", "z", "e", "f", "g"] })
+    test_easy("(a[i], b.r) = (c.d, 2)", { usages: ["a", "b", "i", "c"] })
+
+    // Splat in assignment
+    test_easy("a, b... = 0:5", { definitions: ["a", "b"] })
+
+    // Assignment order edge cases
+    // Note: JS scopestate tracks all usages including inside IndexExpressions
+    // This differs from Julia's ExpressionExplorer which has special handling for assignment order
+    test_easy("a[x], x = 1, 2", { definitions: ["x"], usages: ["a", "x"] })
+    test_easy("x, a[x] = 1, 2", { definitions: ["x"], usages: ["a", "x"] })
+    test_easy("f, a[f()] = g", { definitions: ["f"], usages: ["g", "a", "f"] })
+    test_easy("a[f()], f = g", { definitions: ["f"], usages: ["g", "a", "f"] })
+
+    // Named tuple destructuring
+    test_easy("(; a, b) = x", { definitions: ["a", "b"], usages: ["x"] })
+    test_easy("a = (b, c)", { definitions: ["a"], usages: ["b", "c"] })
+
+    // Const multiple assignment
+    test_easy("const a, b = 1, 2", { definitions: ["a", "b"] })
+})
+
+describe("scopestate tuples", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: JS scopestate does not track function calls as separate category
+
+    // Tuple expressions (not assignments)
+    test_easy("(a, b,)", { usages: ["a", "b"] })
+    // ⚠️ parse error: lezer has issues with `let ... end` inside tuples without newlines
+    // test_easy("(a, b, c, 1, 2, 3, :d, f()..., let y = 3 end)", { usages: ["a", "b", "c", "f"], locals: ["y"] })
+
+    // Named tuples - note: named tuple syntax `(a = b,)` is different from assignment
+    test_easy("(a = b, c = 2, d = 123,)", { usages: ["b"] })
+    // ⚠️ parse error: lezer has issues with `let ... end` inside tuples
+    // test_easy("(a = b, c, d, f()..., let x = (; a = e) end...)", { usages: ["b", "c", "d", "e", "f"], locals: ["x"] })
+    test_easy("(a = b,)", { usages: ["b"] })
+
+    // Note: These are different from Julia - lezer parses them as Assignment, not as tuple expressions
+    // In Julia, `a = b, c` is a tuple `(b, c)` assigned to nothing, but in lezer it's an assignment
+    // test_easy("a = b, c", { usages: ["b", "c"] })  // lezer: defines a
+    // test_easy("a, b = c", { usages: ["a", "c"] })  // lezer: defines a and b
+
+    // Invalid named tuples but still parses
+    test_easy("(a, b = 1, 2)", { usages: ["a"] })
+    // ⚠️ Different from Julia: "(a, b) = 1, 2" in lezer parses as assignment
+    // test_easy("(a, b) = 1, 2", {})
+})
+
+describe("scopestate broadcasting", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: JS scopestate does not track function calls or operators as separate category
+
+    // Broadcast assignment: .= modifies elements, doesn't set the variable
+    test_easy("a .= b", { usages: ["a", "b"] })
+    test_easy("a .+= b", { usages: ["a", "b"] })
+    test_easy("a[i] .+= b", { usages: ["a", "b", "i"] })
+})
