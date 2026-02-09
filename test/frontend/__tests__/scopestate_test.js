@@ -112,3 +112,46 @@ describe("scopestate kwarg handling", () => {
     test_easy("f(kwargzzzz=2)", { usages: ["f"] })
     test_easy("f(kwargzzzz=value)", { usages: ["f", "value"] })
 })
+
+describe("scopestate assignment operator & modifiers", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Written by 🤖
+    // Note: JS scopestate does not track function calls as separate category, only variable usages/definitions
+
+    // Basic assignments
+    test_easy("a = a", { definitions: ["a"], usages: ["a"] })
+    test_easy("a = a + 1", { definitions: ["a"], usages: ["a"] })
+    test_easy("x = a = a + 1", { definitions: ["a", "x"], usages: ["a"] })
+    test_easy("const a = b", { definitions: ["a"], usages: ["b"] })
+
+    // Short function definition creates a function definition, not a variable assignment
+    test_easy("f(x) = x", { definitions: ["f"], locals: ["x"], usages: ["x"] })
+
+    // Index assignment: a[b,c,:] = d - does NOT define a, but uses a, b, c, d
+    test_easy("a[b,c,:] = d", { usages: ["a", "b", "c", "d"] })
+
+    // Field assignment: a.b = c - does NOT define a, but uses a and c
+    test_easy("a.b = c", { usages: ["a", "c"] })
+
+    // Function call with kwargs
+    test_easy("f(a, b=c, d=e; f=g)", { usages: ["a", "c", "e", "f", "g"] })
+
+    // Compound assignment operators
+    test_easy("a += 1", { definitions: ["a"], usages: ["a"] })
+    test_easy("a >>>= 1", { definitions: ["a"], usages: ["a"] })
+    test_easy("a ⊻= 1", { definitions: ["a"], usages: ["a"] })
+
+    // Index compound assignment: a[1] += 1 - does NOT define a
+    test_easy("a[1] += 1", { usages: ["a"] })
+
+    // Let with compound assignment
+    test_easy("x = let a = 1; a += b end", { definitions: ["x"], locals: ["a"], usages: ["a", "b"] })
+
+    // Underscore handling: _ is not a real variable
+    test_easy("_ = a + 1", { usages: ["a"] })
+    test_easy("a = _ + 1", { definitions: ["a"] })
+
+    // Index assignment with function call
+    test_easy("f()[] = 1", { usages: ["f"] })
+    test_easy("x[f()] = 1", { usages: ["f", "x"] })
+})

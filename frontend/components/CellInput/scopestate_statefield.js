@@ -69,25 +69,66 @@ const does_this_create_scope = (/** @type {TreeCursor} */ cursor) => {
 }
 
 /**
+ * Check if the cursor is currently on the LHS of an assignment (the part being assigned to).
+ * Written by 🤖
+ * @param {TreeCursor} cursor
+ * @returns {boolean}
+ */
+const is_assignment_lhs = (cursor) => {
+    const { parent_name, index } = parent_name_and_child_index(cursor)
+    if ((parent_name === "Assignment" || parent_name === "ForBinding") && index === 0) {
+        return true
+    }
+    // Also check for nested destructuring: (a, b) = ...
+    // The parent would be TupleExpression, and we need to check if that tuple is the LHS
+    if (parent_name === "TupleExpression" || parent_name === "BracketExpression") {
+        // Check if the tuple itself is the first child of an assignment
+        const map = new NodeWeakMap()
+        map.cursorSet(cursor, "here")
+        cursor.parent() // go to the tuple
+        const result = is_assignment_lhs(cursor)
+        // go back
+        if (!cursor.firstChild()) return result
+        while (map.cursorGet(cursor) !== "here") {
+            if (!cursor.nextSibling()) break
+        }
+        return result
+    }
+    return false
+}
+
+/**
  * Look into the left-hand side of an Assigment expression and find all ranges where variables are defined.
  * E.g. `a, (b,c) = something` will return ranges for a, b, c.
  * @param {TreeCursor} root_cursor
- * @returns {Range[]}
+ * @returns {{ definitions: Range[], usages: Range[] }}
  */
 const explore_assignment_lhs = (root_cursor) => {
     const a = cursor_not_moved_checker(root_cursor)
-    let found = []
+    let definitions = []
+    let usages = []
     root_cursor.iterate((cursor) => {
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
-            found.push(r(cursor))
+            definitions.push(r(cursor))
         }
         if (cursor.name === "IndexExpression" || cursor.name === "FieldExpression") {
             // not defining a variable but modifying an object
+            // However, we need to track usages inside the index/field expression
+            // e.g., a[b,c] = d uses a, b, c
+            cursor.node.cursor().iterate((inner) => {
+                if (inner.name === "Identifier") {
+                    usages.push(r(inner))
+                }
+                // Stop at Field nodes - we don't want to add field names as usages
+                if (inner.name === "Field") {
+                    return false
+                }
+            })
             return false
         }
     })
     a()
-    return found
+    return { definitions, usages }
 }
 
 /**
@@ -341,6 +382,11 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 }
             }
             const name = doc.sliceString(cursor.from, cursor.to)
+            // Skip underscore _ as it's not a real variable
+            if (name === "_") {
+                if (verbose) console.groupEnd()
+                return false
+            }
             usages.push({
                 name: name,
                 usage: {
@@ -350,20 +396,87 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 definition: find_local_definition(locals, name, cursor) ?? null,
             })
         } else if (cursor.name === "Assignment" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
+            const pos_resetter = back_to_parent_resetter(cursor)
             if (cursor.firstChild()) {
                 // @ts-ignore
                 if (cursor.name === "catch") cursor.nextSibling()
                 // CallExpression means function definition `f(x) = x`, this is handled elsewhere
                 // @ts-ignore
-                if (cursor.name !== "CallExpression") {
-                    explore_assignment_lhs(cursor).forEach(register_variable)
-                    // mark this one as finished
-                    return_false_immediately.cursorSet(cursor, true)
+                if (cursor.name === "CallExpression") {
+                    // Let the normal CallExpression handler deal with this
+                    pos_resetter()
+                    // Don't return false here - we want to traverse children normally
+                } else {
+                    const { definitions: lhs_definitions, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    // Check if this is an update operator (+=, -=, etc.) by looking at the operator
+                    cursor.nextSibling()
+                    // @ts-ignore
+                    const is_update_op = cursor.name === "UpdateOp"
+
+                    // For Index/Field expressions, we track usages inside them
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (name !== "_") {
+                            usages.push({
+                                name,
+                                usage: range,
+                                definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                            })
+                        }
+                    })
+
+                    if (is_update_op) {
+                        // For update operators, the LHS is also used (read before write)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (name !== "_") {
+                                usages.push({
+                                    name,
+                                    usage: range,
+                                    definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                                })
+                            }
+                        })
+                        // Update operators do NOT create new definitions at global scope
+                        // but they DO create definitions at global scope (like a = a + 1)
+                        // Only register as definition if we're at global scope
+                        if (local_scope_stack.length === 0) {
+                            lhs_definitions.forEach((range) => {
+                                const name = doc.sliceString(range.from, range.to)
+                                if (name !== "_") {
+                                    register_variable(range)
+                                }
+                            })
+                        }
+                    } else {
+                        // Regular assignment: register definitions (filter out underscore)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (name !== "_") {
+                                register_variable(range)
+                            }
+                        })
+                    }
+
+                    // Now move to RHS and iterate it
+                    cursor.nextSibling() // skip operator, now at RHS
+                    cursor.iterate(enter, leave)
+
+                    // Go back and return false to prevent double processing
+                    pos_resetter()
+                    if (verbose) console.groupEnd()
+                    return false
                 }
-                cursor.parent()
             }
         } else if (cursor.name === "Parameters") {
-            explore_assignment_lhs(cursor).forEach(register_variable)
+            const { definitions: param_definitions } = explore_assignment_lhs(cursor)
+            param_definitions.forEach((range) => {
+                const name = doc.sliceString(range.from, range.to)
+                if (name !== "_") {
+                    register_variable(range)
+                }
+            })
             if (verbose) console.groupEnd()
             return false
         } else if (cursor.name === "Field") {
