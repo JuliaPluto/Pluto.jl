@@ -82,17 +82,57 @@ const test_easy = (/** @type{string} */ code, /** @type{Partial<ScopestateTestRe
     })
 }
 describe("scopestate basics", () => {
+    // Ported from ExpressionExplorer.jl test suite
     test_easy("a", { usages: ["a"] })
     test_easy(":a", {})
     test_easy("a:b", { usages: ["a", "b"] })
     test_easy("a : b", { usages: ["a", "b"] })
     test_easy("x = 3", { definitions: ["x"] })
+    test_easy("x = x", { definitions: ["x"], usages: ["x"] })
     test_easy("x = y + 1", { definitions: ["x"], usages: ["y"] })
+    test_easy("x = +(a...)", { definitions: ["x"], usages: ["a"] })
+    test_easy("1:3", {})
+    // Note: function calls like sqrt(1) track the function name as a usage
+    test_easy("sqrt(1)", { usages: ["sqrt"] })
+    test_easy("1 + 1", {})
     test_easy("let a = 1, b = 2\n  a + b + c\nend", { locals: ["a", "b"], usages: ["a", "b", "c"] })
     test_easy("function f(x, y)\n  x + y + z\nend", { locals: ["x", "y"], usages: ["x", "y", "z"], definitions: ["f"] })
     test_easy("for i in collection\n  println(i)\nend", { locals: ["i"], usages: ["collection", "println", "i"] })
     test_easy("a, b = 1, 2", { definitions: ["a", "b"] })
     test_easy("[x^2 for x in arr]", { locals: ["x"], usages: ["arr", "x"] })
+})
+
+describe("scopestate lists and structs", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: JS scopestate does not track function calls like `:` as separate category
+
+    // Range expressions
+    test_easy("1:3", {})
+    test_easy("a[1:3,4]", { usages: ["a"] })
+    test_easy("a[b]", { usages: ["a", "b"] })
+    test_easy("[a[1:3,4]; b[5]]", { usages: ["a", "b"] })
+
+    // Field access
+    test_easy("a.someproperty", { usages: ["a"] })
+
+    // Splat in array
+    test_easy("[a..., b]", { usages: ["a", "b"] })
+
+    // Struct definitions - struct name is a definition
+    test_easy("struct a; b; c; end", { definitions: ["a"] })
+    test_easy("abstract type a end", { definitions: ["a"] })
+    // ⚠️ parse error: lezer parser doesn't handle struct/abstract inside let properly
+    // test_easy("let struct a; b; c; end end", { definitions: ["a"] })
+    // test_easy("let abstract type a end end", { definitions: ["a"] })
+
+    // Primitive type definitions
+    test_easy("primitive type Int24 24 end", { definitions: ["Int24"] })
+    test_easy("primitive type Int24 <: Integer 24 end", { definitions: ["Int24"] })
+    // ⚠️ parse error: lezer parser doesn't handle variable as size in primitive type
+    // test_easy("primitive type Int24 <: Integer size end", { definitions: ["Int24"], usages: ["Integer", "size"] })
+
+    // Module definitions - module name is a definition, contents are not tracked
+    test_easy("module a; f(x) = x; z = r end", { definitions: ["a"] })
 })
 
 describe("scopestate import handling", () => {

@@ -338,12 +338,63 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
 
         if (
             return_false_immediately.cursorGet(cursor) ||
-            cursor.name === "ModuleDefinition" ||
             cursor.name === "QuoteStatement" ||
             cursor.name === "QuoteExpression" ||
             cursor.name === "MacroIdentifier" ||
             cursor.name === "Symbol"
         ) {
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle module definitions - register module name as definition, skip contents
+        if (cursor.name === "ModuleDefinition") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'module' keyword
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
+                }
+            }
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle struct/abstract/primitive type definitions - register type name as definition, skip body
+        if (cursor.name === "StructDefinition" || cursor.name === "AbstractDefinition" || cursor.name === "PrimitiveDefinition") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+            if (cursor.firstChild()) {
+                // Find the TypeHead which contains the type name
+                while (cursor.nextSibling()) {
+                    // @ts-ignore
+                    if (cursor.name === "TypeHead") {
+                        // The first Identifier in TypeHead is the type name
+                        if (cursor.firstChild()) {
+                            // @ts-ignore
+                            if (cursor.name === "Identifier") {
+                                const name = doc.sliceString(cursor.from, cursor.to)
+                                definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
+                            } else if (cursor.name === "BinaryExpression") {
+                                // For `Int24 <: Integer`, get the first identifier
+                                if (cursor.firstChild()) {
+                                    // @ts-ignore
+                                    if (cursor.name === "Identifier") {
+                                        const name = doc.sliceString(cursor.from, cursor.to)
+                                        definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
+                                    }
+                                    cursor.parent()
+                                }
+                            }
+                            cursor.parent()
+                        }
+                        break
+                    }
+                }
+            }
+            pos_resetter()
             if (verbose) console.groupEnd()
             return false
         }
