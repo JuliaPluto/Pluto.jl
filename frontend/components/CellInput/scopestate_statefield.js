@@ -139,6 +139,7 @@ const parent_name_and_child_index = (cursor) => {
 
 /**
  * Extract defined variable names from an import/using statement.
+ * Written by 🤖
  * @param {TreeCursor} cursor
  * @param {Text} doc
  * @returns {Range[]}

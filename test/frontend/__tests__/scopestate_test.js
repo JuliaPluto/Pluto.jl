@@ -38,17 +38,32 @@ const getDepth = (node, d = 0) => {
     return getDepth(node.parent, d + 1)
 }
 
+// Written by 🤖
 const printTree = (code) => {
+    // ANSI color codes
+    const c = {
+        reset: "\x1b[0m",
+        bold: "\x1b[1m",
+        dim: "\x1b[2m",
+        cyan: "\x1b[36m",
+        yellow: "\x1b[33m",
+        green: "\x1b[32m",
+        magenta: "\x1b[35m",
+        red: "\x1b[31m",
+    }
+
     const tree = cm.julia().language.parser.parse(code)
     const doc = cm.Text.of([code])
 
-    const lines = ["\n=== Parse tree for: " + code.replace(/\n/g, "\\n") + " ==="]
+    const lines = [`\n${c.bold}${c.cyan}=== Parse tree for: ${c.yellow}${code.replace(/\n/g, "\\n")}${c.cyan} ===${c.reset}`]
 
     tree.cursor().iterate((cursor) => {
         const depth = cursor.node.parent ? getDepth(cursor.node) : 0
         const indent = "  ".repeat(depth)
         const text = doc.sliceString(cursor.from, cursor.to).replace(/\n/g, "\\n")
-        lines.push(`${indent}${cursor.name}[${cursor.from},${cursor.to}]: "${text}"`)
+        const isError = cursor.name === "⚠"
+        const nameColor = isError ? c.red : c.cyan
+        lines.push(`${indent}${nameColor}${cursor.name}${c.reset}${c.magenta}[${cursor.from},${cursor.to}]${c.reset}: ${c.green}"${text}"${c.reset}`)
     })
 
     console.log(lines.join("\n"))
