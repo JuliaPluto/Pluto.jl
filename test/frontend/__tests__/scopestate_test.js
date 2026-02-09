@@ -50,6 +50,17 @@ describe("scopestate basics", () => {
     test_easy("[x^2 for x in arr]", { locals: ["x"], usages: ["arr", "x"] })
 })
 
+describe("scopestate import handling", () => {
+    test_easy("import Pluto", { definitions: ["Pluto"] })
+    test_easy("import Pluto: wow", { definitions: ["wow"] })
+    test_easy("import Pluto.ExpressionExplorer.wow, Plutowie", { definitions: ["wow", "Plutowie"] })
+    test_easy("import .Pluto: wow", { definitions: ["wow"] })
+    test_easy("import ..Pluto: wow", { definitions: ["wow"] })
+    test_easy("let; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
+    test_easy("while false; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
+    test_easy("try\n using Pluto.wow, Dates\n catch\n end", { definitions: ["wow", "Dates"] })
+})
+
 describe("scopestate kwarg handling", () => {
     test_easy("let x = 1; f(x; kwargzzzz=2); end", { locals: ["x"], usages: ["f", "x"] })
     test_easy("function foo(; kwargzzzz=1)\n  kwargzzzz\nend", { locals: ["kwargzzzz"], usages: ["kwargzzzz"], definitions: ["foo"] })

@@ -138,6 +138,66 @@ const parent_name_and_child_index = (cursor) => {
 }
 
 /**
+ * Extract defined variable names from an import/using statement.
+ * @param {TreeCursor} cursor
+ * @param {Text} doc
+ * @returns {Range[]}
+ */
+const explore_import_statement = (cursor, doc) => {
+    const a = cursor_not_moved_checker(cursor)
+    let found = []
+
+    // Get the last identifier in an ImportPath
+    const get_last_identifier_in_import_path = (cursor) => {
+        // ImportPath contains: dots, Identifiers separated by dots
+        // We want the last Identifier
+        let lastIdentifier = null
+        if (cursor.firstChild()) {
+            do {
+                if (cursor.name === "Identifier") {
+                    lastIdentifier = r(cursor)
+                }
+            } while (cursor.nextSibling())
+            cursor.parent()
+        }
+        return lastIdentifier
+    }
+
+    if (cursor.firstChild()) {
+        // Skip the 'import' or 'using' keyword
+        while (cursor.nextSibling()) {
+            if (cursor.name === "SelectedImport") {
+                // `import Pluto: wow, bar` or `using Pluto: wow, bar`
+                // Only items after `:` define variables
+                let sawColon = false
+                if (cursor.firstChild()) {
+                    do {
+                        // @ts-ignore
+                        if (cursor.name === ":") {
+                            sawColon = true
+                            // @ts-ignore
+                        } else if (sawColon && cursor.name === "ImportPath") {
+                            const id = get_last_identifier_in_import_path(cursor)
+                            if (id) found.push(id)
+                        }
+                    } while (cursor.nextSibling())
+                    cursor.parent()
+                }
+            } else if (cursor.name === "ImportPath") {
+                // `import Pluto` or `import Pluto.wow`
+                // The last identifier is the defined variable
+                const id = get_last_identifier_in_import_path(cursor)
+                if (id) found.push(id)
+            }
+        }
+        cursor.parent()
+    }
+
+    a()
+    return found
+}
+
+/**
  * @param {TreeCursor} cursor
  * @returns {Range[]}
  */
@@ -240,10 +300,18 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             cursor.name === "QuoteStatement" ||
             cursor.name === "QuoteExpression" ||
             cursor.name === "MacroIdentifier" ||
-            cursor.name === "ImportStatement" ||
-            cursor.name === "UsingStatement" ||
             cursor.name === "Symbol"
         ) {
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle import/using statements - they always define global variables, regardless of local scope
+        if (cursor.name === "ImportStatement" || cursor.name === "UsingStatement") {
+            explore_import_statement(cursor, doc).forEach((range) => {
+                const name = doc.sliceString(range.from, range.to)
+                definitions.set(name, { ...range, valid_from: range.from })
+            })
             if (verbose) console.groupEnd()
             return false
         }
