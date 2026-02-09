@@ -108,6 +108,21 @@ const explore_assignment_lhs = (root_cursor) => {
     let definitions = []
     let usages = []
     root_cursor.iterate((cursor) => {
+        // Skip Type nodes - identifiers inside are type annotations, not variable definitions
+        // They should be tracked as usages
+        if (cursor.name === "Type") {
+            cursor.node.cursor().iterate((inner) => {
+                if (inner.name === "Identifier") {
+                    usages.push(r(inner))
+                }
+            })
+            return false
+        }
+        // Skip BraceExpression - identifiers inside are type parameters, not variable definitions
+        // For type alias like A{B} = B, the B in {B} is a type parameter
+        if (cursor.name === "BraceExpression") {
+            return false
+        }
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
             definitions.push(r(cursor))
         }
@@ -366,27 +381,46 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
         // Handle struct/abstract/primitive type definitions - register type name as definition, skip body
         if (cursor.name === "StructDefinition" || cursor.name === "AbstractDefinition" || cursor.name === "PrimitiveDefinition") {
             const pos_resetter = back_to_parent_resetter(cursor)
+            
+            // Helper to extract the type name from various node types
+            const extract_type_name = () => {
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    return { from: cursor.from, to: cursor.to }
+                // @ts-ignore
+                } else if (cursor.name === "ParametrizedExpression") {
+                    // a{T} - get the first child which is the name
+                    if (cursor.firstChild()) {
+                        // @ts-ignore
+                        if (cursor.name === "Identifier") {
+                            const result = { from: cursor.from, to: cursor.to }
+                            cursor.parent()
+                            return result
+                        }
+                        cursor.parent()
+                    }
+                // @ts-ignore
+                } else if (cursor.name === "BinaryExpression") {
+                    // a <: b or a{T} <: b - get the first child
+                    if (cursor.firstChild()) {
+                        const result = extract_type_name()
+                        cursor.parent()
+                        return result
+                    }
+                }
+                return null
+            }
+            
             if (cursor.firstChild()) {
                 // Find the TypeHead which contains the type name
                 while (cursor.nextSibling()) {
                     // @ts-ignore
                     if (cursor.name === "TypeHead") {
-                        // The first Identifier in TypeHead is the type name
                         if (cursor.firstChild()) {
-                            // @ts-ignore
-                            if (cursor.name === "Identifier") {
-                                const name = doc.sliceString(cursor.from, cursor.to)
-                                definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
-                            } else if (cursor.name === "BinaryExpression") {
-                                // For `Int24 <: Integer`, get the first identifier
-                                if (cursor.firstChild()) {
-                                    // @ts-ignore
-                                    if (cursor.name === "Identifier") {
-                                        const name = doc.sliceString(cursor.from, cursor.to)
-                                        definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
-                                    }
-                                    cursor.parent()
-                                }
+                            const nameRange = extract_type_name()
+                            if (nameRange) {
+                                const name = doc.sliceString(nameRange.from, nameRange.to)
+                                definitions.set(name, { ...nameRange, valid_from: nameRange.from })
                             }
                             cursor.parent()
                         }

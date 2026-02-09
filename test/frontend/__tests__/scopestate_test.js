@@ -137,6 +137,45 @@ describe("scopestate lists and structs", () => {
     test_easy("module a; f(x) = x; z = r end", { definitions: ["a"] })
 })
 
+describe("scopestate types", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: JS scopestate does not track inner struct/type references
+
+    // Type annotations in assignments
+    test_easy("x::Foo = 3", { definitions: ["x"], usages: ["Foo"] })
+    test_easy("x::Foo", { usages: ["x", "Foo"] })
+    test_easy("a::Foo, b::String = 1, 2", { definitions: ["a", "b"], usages: ["Foo", "String"] })
+
+    // Type indexing and isa
+    test_easy("Foo[]", { usages: ["Foo"] })
+    // Note: `isa` is a keyword in the lezer parser, not tracked as an identifier usage
+    test_easy("x isa Foo", { usages: ["x", "Foo"] })
+
+    // Index assignment with type annotation: (x[])::Int = 1 - does NOT define x
+    test_easy("(x[])::Int = 1", { usages: ["Int", "x"] })
+    test_easy("(x[])::Int, y = 1, 2", { definitions: ["y"], usages: ["Int", "x"] })
+
+    // Type alias definitions
+    test_easy("A{B} = B", { definitions: ["A"], usages: ["B"] })
+    test_easy("A{T} = Union{T,Int}", { definitions: ["A"], usages: ["T", "Int", "Union"] })
+
+    // Abstract type definitions (already covered in lists and structs, but with more variations)
+    test_easy("abstract type a end", { definitions: ["a"] })
+    test_easy("abstract type a <: b end", { definitions: ["a"] })
+    test_easy("abstract type a <: b{C} end", { definitions: ["a"] })
+    test_easy("abstract type a{T} end", { definitions: ["a"] })
+    test_easy("abstract type a{T,S} end", { definitions: ["a"] })
+    test_easy("abstract type a{T} <: b end", { definitions: ["a"] })
+    test_easy("abstract type a{T} <: b{T} end", { definitions: ["a"] })
+
+    // Struct definitions (basic - already tested, but include for completeness)
+    test_easy("struct a end", { definitions: ["a"] })
+    test_easy("struct a <: b; c; d::Foo; end", { definitions: ["a"] })
+    test_easy("struct a{T,S}; c::T; d::Foo; end", { definitions: ["a"] })
+    test_easy("struct a{T} <: b; c; d::Foo; end", { definitions: ["a"] })
+    test_easy("struct a{T} <: b{T}; c; d::Foo; end", { definitions: ["a"] })
+})
+
 describe("scopestate import handling", () => {
     test_easy("import Pluto", { definitions: ["Pluto"] })
     test_easy("import Pluto: wow", { definitions: ["wow"] })
