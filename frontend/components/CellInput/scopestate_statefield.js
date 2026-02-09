@@ -25,9 +25,9 @@ const VERBOSE = false
  *  usage: Range,
  *  definition: Range | null,
  *  name: string,
- * }>} usages
- * @property {Map<String, Definition>} definitions
- * @property {Array<{ definition: Range, validity: Range, name: string }>} locals
+ * }>} usages Any variable use, global or local.
+ * @property {Map<String, Definition>} definitions All global variable definitions.
+ * @property {Array<{ definition: Range, validity: Range, name: string }>} locals All local variable definitions, with the range where they are valid.
  */
 
 const r = (cursor) => ({ from: cursor.from, to: cursor.to })
