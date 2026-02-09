@@ -13,6 +13,7 @@ frontend-dist
 frontend-dist-*
 node_modules
 .parcel-cache
+.https-cache
 frontend/dist
 .net
 net

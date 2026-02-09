@@ -1,10 +1,9 @@
-import { parser } from "@plutojl/lezer-julia"
-import { Text } from "@codemirror/state"
 import { explore_variable_usage } from "../../../frontend/components/CellInput/scopestate_statefield.js"
+import * as cm from "../../../frontend/imports/CodemirrorPlutoSetup.js"
 
 const analyze = (code) => {
-    const tree = parser.parse(code)
-    const doc = Text.of([code])
+    const tree = cm.julia().language.parser.parse(code)
+    const doc = cm.Text.of([code])
     return explore_variable_usage(tree.cursor(), doc, null, false)
 }
 
