@@ -33,9 +33,37 @@ const cleanup_scopestate_testresult = (/** @type {Partial<ScopestateTestResult>}
         definitions: result.definitions ? result.definitions.sort() : [],
     })
 
+const getDepth = (node, d = 0) => {
+    if (!node.parent) return d
+    return getDepth(node.parent, d + 1)
+}
+
+const printTree = (code) => {
+    const tree = cm.julia().language.parser.parse(code)
+    const doc = cm.Text.of([code])
+
+    const lines = ["\n=== Parse tree for: " + code.replace(/\n/g, "\\n") + " ==="]
+
+    tree.cursor().iterate((cursor) => {
+        const depth = cursor.node.parent ? getDepth(cursor.node) : 0
+        const indent = "  ".repeat(depth)
+        const text = doc.sliceString(cursor.from, cursor.to).replace(/\n/g, "\\n")
+        lines.push(`${indent}${cursor.name}[${cursor.from},${cursor.to}]: "${text}"`)
+    })
+
+    console.log(lines.join("\n"))
+}
+
 const test_easy = (/** @type{string} */ code, /** @type{Partial<ScopestateTestResult>} */ expected) => {
     it(`scopestate ${code.replace("\n", ";")}`, () => {
-        expect(cleanup_scopestate_testresult(analyze_easy(code))).toEqual(cleanup_scopestate_testresult(expected))
+        const actual = cleanup_scopestate_testresult(analyze_easy(code))
+        const expectedClean = cleanup_scopestate_testresult(expected)
+        try {
+            expect(actual).toEqual(expectedClean)
+        } catch (e) {
+            printTree(code)
+            throw e
+        }
     })
 }
 describe("scopestate basics", () => {
@@ -58,7 +86,7 @@ describe("scopestate import handling", () => {
     test_easy("import ..Pluto: wow", { definitions: ["wow"] })
     test_easy("let; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
     test_easy("while false; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
-    test_easy("try\n using Pluto.wow, Dates\n catch\n end", { definitions: ["wow", "Dates"] })
+    test_easy("try\n using Pluto.wow, Dates\n catch\n end", { definitions: ["wow", "Datees"] })
 })
 
 describe("scopestate kwarg handling", () => {
