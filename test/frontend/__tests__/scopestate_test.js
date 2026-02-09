@@ -124,6 +124,8 @@ describe("scopestate lists and structs", () => {
     // ⚠️ parse error: lezer parser doesn't handle struct/abstract inside let properly
     // test_easy("let struct a; b; c; end end", { definitions: ["a"] })
     // test_easy("let abstract type a end end", { definitions: ["a"] })
+    test_easy("let\n struct a; b; c; end\n end", { definitions: ["a"] })
+    test_easy("let\n abstract type a end\n end", { definitions: ["a"] })
 
     // Primitive type definitions
     test_easy("primitive type Int24 24 end", { definitions: ["Int24"] })
