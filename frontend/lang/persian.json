@@ -1,5 +1,6 @@
 {
     "t_language_name": "فارسی",
+    "t_language_direction": "rtl",
     "t_my_work": "کارهای من",
     "t_newnotebook": "ساخت یک <strong>دفترچه جدید</strong>",
     "t_welcome_to_pluto": "به {{pluto}} خوش آمدید",
