@@ -176,15 +176,21 @@ describe("scopestate types", () => {
     test_easy("struct a{T} <: b{T}; c; d::Foo; end", { definitions: ["a"] })
 })
 
-describe("scopestate import handling", () => {
+describe("scopestate import & using", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // Note: imports always define global variables, regardless of local scope
+    test_easy("using Plots", { definitions: ["Plots"] })
+    test_easy("using Plots.ExpressionExplorer", { definitions: ["ExpressionExplorer"] })
+    test_easy("using JSON, UUIDs", { definitions: ["JSON", "UUIDs"] })
     test_easy("import Pluto", { definitions: ["Pluto"] })
-    test_easy("import Pluto: wow", { definitions: ["wow"] })
+    test_easy("import Pluto: wow, wowie", { definitions: ["wow", "wowie"] })
     test_easy("import Pluto.ExpressionExplorer.wow, Plutowie", { definitions: ["wow", "Plutowie"] })
     test_easy("import .Pluto: wow", { definitions: ["wow"] })
     test_easy("import ..Pluto: wow", { definitions: ["wow"] })
-    test_easy("let; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
-    test_easy("while false; import Pluto.wow, Dates; end", { definitions: ["wow", "Dates"] })
-    test_easy("try\n using Pluto.wow, Dates\n catch\n end", { definitions: ["wow", "Dates"] })
+    test_easy("let\n import Pluto.wow, Dates\nend", { definitions: ["Dates", "wow"] })
+    test_easy("while false\n import Pluto.wow, Dates\nend", { definitions: ["Dates", "wow"] })
+    test_easy("try\n using Pluto.wow, Dates\ncatch\nend", { definitions: ["Dates", "wow"] })
+    test_easy("module A\n import B\nend", { definitions: ["A"] })
 })
 
 describe("scopestate kwarg handling", () => {
@@ -378,7 +384,11 @@ describe("scopestate functions", () => {
     // test_easy("function g end", { definitions: ["g"] })
     test_easy("function f()\n g(x) = x\n end", { definitions: ["f"], locals: ["g", "x"], usages: ["x"] })
     test_easy("function f(z)\n g(x) = x\n g(z)\n end", { definitions: ["f"], locals: ["g", "x", "z"], usages: ["g", "x", "z"] })
-    test_easy("function f(x, y=1; r, s=3 + 3)\n r + s + x * y * z\n end", { definitions: ["f"], locals: ["r", "s", "x", "y"], usages: ["r", "s", "x", "y", "z"] })
+    test_easy("function f(x, y=1; r, s=3 + 3)\n r + s + x * y * z\n end", {
+        definitions: ["f"],
+        locals: ["r", "s", "x", "y"],
+        usages: ["r", "s", "x", "y", "z"],
+    })
     test_easy("function f(x)\n x * y * z\n end", { definitions: ["f"], locals: ["x"], usages: ["x", "y", "z"] })
     test_easy("function f(x)\n x = x / 3\n x\n end", { definitions: ["f"], locals: ["x"], usages: ["x"] })
     // Note: args... and kwargs... in function parameters are not being tracked as locals yet
