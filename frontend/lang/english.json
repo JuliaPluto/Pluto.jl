@@ -1,5 +1,6 @@
 {
     "t_language_name": "English",
+    "t_language_direction": "ltr",
     "t_my_work": "My work",
     "t_newnotebook": "Create a <strong>new notebook</strong>",
     "t_welcome_to_pluto": "welcome to {{pluto}}",

@@ -76,6 +76,7 @@ pluto-editor {
     min-width: 0;
     container-type: inline-size;
     container-name: editor;
+    overflow-x: clip;
 }
 
 main {
@@ -106,6 +107,7 @@ pluto-editor main {
         /* Second part: push away from the right to take up all free space */ min((100% - (700px + 25px + 6px)), /* but don't do this more than */ 500px)
     );
     position: relative;
+    margin-left: auto;
 }
 
 pluto-notebook {
@@ -632,7 +634,7 @@ dialog#export div#container {
     flex-direction: row;
     display: flex;
     max-width: 1000px;
-    padding-right: 10em;
+    padding-inline-end: 10em;
     margin: 0 auto;
     position: relative;
     height: var(--header-height);
@@ -693,7 +695,7 @@ dialog#export .export_small_btns {
     padding: 0.9em;
     border-radius: 0.9em;
     position: absolute;
-    right: 0.8em;
+    inset-inline-end: 0.8em;
     top: 0em;
     background: var(--export-bg-color);
 }
@@ -953,9 +955,9 @@ div.desktop_picker_group span {
     color: var(--nav-filepicker-color);
     border: 2px solid var(--footer-input-border-color);
     border-radius: 3px;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-inline-end: none;
+    border-end-end-radius: 0;
+    border-start-end-radius: 0;
 }
 
 pluto-filepicker .cm-scroller {
@@ -1088,7 +1090,7 @@ nav#at_the_top:after {
     nav#at_the_top > pluto-filepicker .cm-editor,
     nav#at_the_top > div.desktop_picker_group span {
         border: 2px solid transparent;
-        border-right: none;
+        border-inline-end: none;
         transition: border 0.15s ease-in-out;
     }
     nav#at_the_top > pluto-filepicker button,
@@ -1101,7 +1103,7 @@ nav#at_the_top:after {
     header:hover > nav#at_the_top > div.desktop_picker_group span,
     header:focus-within > nav#at_the_top > div.desktop_picker_group span {
         border: 2px solid var(--footer-input-border-color);
-        border-right: none;
+        border-inline-end: none;
     }
     header:hover > nav#at_the_top > pluto-filepicker button,
     header:focus-within > nav#at_the_top > pluto-filepicker button,
@@ -1643,6 +1645,7 @@ pluto-input .cm-editor {
     /* Make sure that scrolling an editor into view gives some breathing room */
     scroll-margin-block: 20vh;
     min-height: 25px;
+    direction: ltr;
 }
 pluto-input:focus-within .cm-editor {
     /* z-index increased by 1 to make sure that the autocomplete window shows above all other editors, see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context */
@@ -1708,7 +1711,6 @@ pluto-shoulder {
     --invisible-border: calc(0.5 * var(--pluto-cell-spacing));
     --shoulder-width: calc(28px + var(--invisible-border));
     --border-radius: calc(5px + var(--invisible-border));
-
     left: calc(0px - var(--shoulder-width));
     width: var(--shoulder-width);
     border-radius: var(--border-radius) 0px 0px var(--border-radius);
@@ -1722,6 +1724,7 @@ pluto-shoulder {
     bottom: calc(0px - var(--invisible-border));
     border: var(--invisible-border) solid rgba(0, 0, 0, 0);
     border-right: none;
+    direction: ltr;
 }
 pluto-editor.fullscreen pluto-shoulder {
     --shoulder-width: 2000px;
@@ -2103,9 +2106,8 @@ pluto-input > .input_context_menu li button {
     margin-top: 1px;
     background-size: var(--size) var(--size);
     background-position: center;
-    margin-right: calc(var(--size) / 3);
+    margin-inline-end: calc(var(--size) / 3);
 }
-
 .ctx_icon {
     filter: var(--image-filters);
 }
@@ -2748,7 +2750,7 @@ pluto-helpbox > header > button.helpbox-tab-key > .tabicon {
     background-size: var(--size);
     margin-bottom: calc(-0.15 * var(--size));
     filter: var(--image-filters);
-    margin-right: 0.6em;
+    margin-inline-end: 0.6em;
     display: inline-block;
 }
 pluto-helpbox > header > button.helpbox-docs > .tabicon {
@@ -2901,7 +2903,7 @@ button.helpbox-tab-key {
 }
 
 button.helpbox-tab-key.helpbox-process {
-    margin-right: auto;
+    margin-inline-end: auto;
 }
 
 button.helpbox-process.busy {
@@ -3309,7 +3311,7 @@ footer form > label {
 }
 
 footer form > label {
-    margin-right: 1em;
+    margin-inline-end: 1em;
     flex: 0 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3339,9 +3341,11 @@ footer input {
     background: var(--white);
     font-family: inherit;
     font-size: inherit;
-    border-radius: 3px 0 0 3px;
+    border-radius: 3px;
+    border-end-end-radius: 0;
+    border-start-end-radius: 0;
     padding: 3px;
-    border-right: none;
+    border-inline-end: none;
 }
 
 header#pluto-nav pluto-filepicker button,
@@ -3349,7 +3353,9 @@ header#pluto-nav .desktop_picker_group button,
 footer button {
     margin: 0px;
     background: var(--footer-filepicker-focus-color);
-    border-radius: 0 3px 3px 0;
+    border-radius: 3px;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
     border: 3px solid var(--footer-filepicker-focus-color);
     color: var(--footer-filepicker-button-color);
     /* border: none; */
@@ -3378,7 +3384,7 @@ footer #info {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-right: 1rem;
+    margin-inline-end: 1rem;
     font-size: 0.75rem;
     flex: 0 2 auto;
 }

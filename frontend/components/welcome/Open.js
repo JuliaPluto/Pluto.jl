@@ -41,7 +41,7 @@ export const Open = ({ client, connected, CustomPicker, show_samples, on_start_n
 
     return html`<${PasteHandler} on_start_navigation=${on_start_navigation} />
         <h2>${picker.text}</h2>
-        <div id="new" class=${is_desktop() ? "desktop_opener" : ""}>
+        <div id="new" dir="ltr" class=${is_desktop() ? "desktop_opener" : ""}>
             ${is_desktop()
                 ? html`
                       <div class="desktop_picker_group">

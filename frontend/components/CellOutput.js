@@ -612,7 +612,7 @@ export let RawHTMLContainer = ({ body, className = "", persist_js_state = false,
         }
     }, [body, last_run_timestamp, pluto_actions, sanitize_html])
 
-    return html`<div class="raw-html-wrapper ${className}" ref=${container_ref}></div>`
+    return html`<div dir="auto" class="raw-html-wrapper ${className}" ref=${container_ref}></div>`
 }
 
 // https://github.com/fonsp/Pluto.jl/issues/1692

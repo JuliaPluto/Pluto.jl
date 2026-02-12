@@ -31,7 +31,7 @@ const TerminalViewAnsiUp = ({ value, hide_button = false }) => {
           ></button>`
 
     return !!value
-        ? html`<pkg-terminal
+        ? html`<pkg-terminal dir="ltr"
               >${button}
               <div class="scroller" tabindex="0"><pre ref=${node_ref} class="pkg-terminal"></pre></div
           ></pkg-terminal>`

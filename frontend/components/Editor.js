@@ -48,7 +48,7 @@ import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { get_included_external_source } from "../common/external_source.js"
 import { ProjectTomlEditor } from "./ProjectTomlEditor.js"
 import { LanguagePicker } from "./LanguagePicker.js"
-import { getCurrentLanguage, t, th } from "../common/lang.js"
+import { getCurrentLanguage, getWritingDirection, t, th } from "../common/lang.js"
 import { PlutoLandUpload } from "./PlutoLandUpload.js"
 import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
@@ -1470,6 +1470,7 @@ ${t("t_key_autosave_description")}`
     updateLang() {
         const lang = this.state.notebook.metadata?.frontmatter?.language
         document.documentElement.lang = lang ?? getCurrentLanguage()
+        document.documentElement.dir = getWritingDirection()
     }
 
     componentDidMount() {

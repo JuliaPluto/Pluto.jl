@@ -53,7 +53,7 @@ p {
 }
 
 ul {
-    padding-left: 0;
+    padding-inline-start: 0;
     list-style: none;
 }
 
@@ -105,9 +105,9 @@ pluto-filepicker .cm-editor {
     color: var(--nav-filepicker-color);
     border: 2px solid var(--footer-filepicker-focus-color);
     border-radius: 3px;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    border-inline-end: none;
+    border-end-end-radius: 0;
+    border-start-end-radius: 0;
     flex: 1 1 auto;
     width: 0px;
     /* min-width: 0px; */
@@ -155,8 +155,8 @@ pluto-filepicker button,
 
 #new pluto-filepicker button {
     cursor: pointer;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
     flex: 0 1 auto;
 }
 
@@ -261,7 +261,7 @@ body.nosessions ul#new ~ * {
 
 #recent button {
     margin: 0px;
-    margin-right: 0.2em;
+    margin-inline-end: 0.2em;
     padding: 1px;
     opacity: 0.6;
     border: none;

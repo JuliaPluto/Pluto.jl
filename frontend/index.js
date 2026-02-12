@@ -2,6 +2,7 @@ import { html, render } from "./imports/Preact.js"
 import "./common/NodejsCompatibilityPolyfill.js"
 
 import { Welcome } from "./components/welcome/Welcome.js"
+import { getCurrentLanguage, getWritingDirection } from "./common/lang.js"
 
 const url_params = new URLSearchParams(window.location.search)
 
@@ -28,6 +29,9 @@ const launch_params = {
 }
 
 console.log("Launch parameters: ", launch_params)
+
+document.documentElement.lang = getCurrentLanguage()
+document.documentElement.dir = getWritingDirection()
 
 // @ts-ignore
 render(html`<${Welcome} launch_params=${launch_params} />`, document.querySelector("#app"))

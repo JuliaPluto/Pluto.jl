@@ -125,6 +125,9 @@ export const getCurrentLanguage = () => {
     return getLanguage(to_search)
 }
 
+export const getWritingDirection = () => {
+    return t("t_language_direction") === "rtl" ? "rtl" : "ltr"
+}
 const getLanguage = _.memoize((to_search) => {
     for (const lang of to_search) {
         if (lang != null) {

@@ -24,6 +24,7 @@ pluto-tree-items {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
+    direction: ltr;
 }
 pluto-tree.collapsed,
 pluto-tree.collapsed pluto-tree,

@@ -179,5 +179,5 @@ const LogViewAnsiUp = (/** @type {{value: string}} */ { value }) => {
         node_ref.current.innerHTML = ansi_to_html(value)
     }, [node_ref.current, value])
 
-    return html`<pre ref=${node_ref}></pre>`
+    return html`<pre dir="auto" ref=${node_ref}></pre>`
 }
