@@ -6,10 +6,11 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "clean": "rm -rf ../frontend-dist ../frontend-dist-static",
+        "clean": "rm -rf ../frontend-dist ../frontend-dist-offline ../frontend/.parcel-cache",
         "start": "cd ../frontend && parcel --dist-dir ../frontend-dist --config ../frontend-bundler/.parcelrc index.html editor.html error.jl.html",
         "note about order": "super weird but index.html has to come before editor.html or the prefetch in index.html will not bundle correctly.",
-        "build": "npm run clean && cd ../frontend && parcel build --no-source-maps --public-url . --dist-dir ../frontend-dist --config ../frontend-bundler/.parcelrc index.html editor.html error.jl.html",
+        "build": "cd ../frontend && parcel build --no-source-maps --public-url . --dist-dir ../frontend-dist --config ../frontend-bundler/.parcelrc index.html editor.html error.jl.html",
+        "build-offline": "cd ../frontend && parcel build --no-source-maps --public-url . --dist-dir ../frontend-dist-offline --config ../frontend-bundler/.parcelrc-offline editor.html",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
@@ -17,7 +18,7 @@
     "dependencies": {
         "@parcel/config-default": "^2.11.0",
         "mkdirp": "^3.0.1",
-        "parcel": "^2.11.0",
+        "parcel": "^2.15.4",
         "parcel-reporter-bundle-manifest": "^1.0.0",
         "parcel-resolver-like-a-browser": "file:../frontend-bundler/parcel-resolver-like-a-browser"
     },
@@ -28,6 +29,7 @@
     "devDependencies": {
         "@parcel/optimizer-blob-url": "^2.11.0",
         "@parcel/optimizer-data-url": "^2.11.0",
+        "@parcel/transformer-inline": "^2.11.0",
         "@plutojl/posthtml-crossorigin": "^1.0.0",
         "@types/node": "^22",
         "posthtml": "^0.16.6",

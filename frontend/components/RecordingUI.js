@@ -2,7 +2,6 @@ import _ from "../imports/lodash.js"
 import { createSilentAudio, create_recorder } from "../common/AudioRecording.js"
 import { html, useEffect, useState, useRef, useCallback, useLayoutEffect, useMemo } from "../imports/Preact.js"
 import { AudioPlayer } from "./AudioPlayer.js"
-import immer from "../imports/immer.js"
 import { base64_arraybuffer, blob_url_to_data_url } from "../common/PlutoHash.js"
 import { pack, unpack } from "../common/MsgPack.js"
 import { t, th } from "../common/lang.js"
@@ -162,14 +161,15 @@ export const RecordingUI = ({ notebook_name, is_recording, recording_waiting_to_
 
             console.log(current_recording_ref.current)
 
-            let element = document.createElement("a")
-            element.setAttribute("href", "data:text/html;charset=utf-8," + encodeURIComponent(output_html))
-            element.setAttribute("download", `${notebook_name_ref.current} recording.html`)
-
-            element.style.display = "none"
-            document.body.appendChild(element)
-            element.click()
-            document.body.removeChild(element)
+            window.dispatchEvent(
+                new CustomEvent("open pluto html export", {
+                    detail: {
+                        is_recording: true,
+                        download_filename: `${notebook_name_ref.current} recording.html`,
+                        download_url: "data:text/html;charset=utf-8," + encodeURIComponent(output_html),
+                    },
+                })
+            )
         }
 
         recording_start_time_ref.current = 0
@@ -202,18 +202,18 @@ export const RecordingUI = ({ notebook_name, is_recording, recording_waiting_to_
                   </div>
               </div>`
             : is_recording
-            ? html`<div class="outline-frame-actions-container">
-                  <div class="overlay-button">
-                      <button
-                          onclick=${() => {
-                              stop_recording()
-                          }}
-                      >
-                          <span>${th("t_recording_ui_stop_recording")}<span class="stop-recording-icon pluto-icon"></span></span>
-                      </button>
-                  </div>
-              </div>`
-            : null}
+              ? html`<div class="outline-frame-actions-container">
+                    <div class="overlay-button">
+                        <button
+                            onclick=${() => {
+                                stop_recording()
+                            }}
+                        >
+                            <span>${th("t_recording_ui_stop_recording")}<span class="stop-recording-icon pluto-icon"></span></span>
+                        </button>
+                    </div>
+                </div>`
+              : null}
     `
 }
 

@@ -21,7 +21,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 20
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
               # We use that PAT token instead of GITHUB_TOKEN because we are triggering another github action on the 'release' event.
               # Triggering a workflow from a workflow is only allowed if the relaying event is signed with a PAT.
               # See https://docs.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
@@ -43,7 +43,7 @@ jobs:
                   git reset --hard $GITHUB_SHA
 
             # if this is a PR. then just checkout without fanciness
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
               if: github.event_name == 'pull_request'
 
             # Do the actual bundling
@@ -59,33 +59,50 @@ jobs:
             - name: The Actual Build (try 3 times)
               working-directory: frontend-bundler
               run: |
+                npm run clean
                 (npm run build) || (npm run build) || (npm run build)
-                                
-            - name: List generated files
-              working-directory: frontend-dist
-              run: |
-                ls -lha
+                (npm run build-offline) || (npm run build-offline) || (npm run build-offline)
                 
+   
+            - name: List generated files
+              run: |
+                ls -lha frontend-dist
+                ls -lha frontend-dist-offline
+
             - name: Generate bundle size report
               working-directory: frontend-dist
               run: |
-                # Get total size of frontend-dist folder
                 total_size=$(du -sh . | cut -f1)
                 
-                # Create bundle size report
                 cat > AAA_bundle_size.md << EOF
                 # Bundle Size Report
-                
                 **Total bundle size:** $total_size
                 
                 ## Top 20 Largest Files
-                
                 \`\`\`
                 $(find . -type f -exec du -h {} + | sort -hr | head -20)
                 \`\`\`
                 
                 Generated on: $(date)
                 EOF
+
+            - name: Generate bundle size report - offline
+              working-directory: frontend-dist-offline
+              run: |
+                total_size=$(du -sh . | cut -f1)
+                
+                cat > AAA_bundle_size.md << EOF
+                # Bundle Size Report
+                **Total bundle size:** $total_size
+                
+                ## Top 20 Largest Files
+                \`\`\`
+                $(find . -type f -exec du -h {} + | sort -hr | head -20)
+                \`\`\`
+                
+                Generated on: $(date)
+                EOF
+
                 
 
             - name: Check for corrupt files
@@ -95,12 +112,21 @@ jobs:
                     exit 1
                 fi
 
-            # Push the rebuild frontend-dist to the release branch.
-            # Needs to be `add --force` because frontend-dist is normally gitignored.
-            # Also needs `push --force` because we reset to main (which doesn't contain the previous frontend-dist)
-            - name: Force push frontend-dist changes
+            - name: Check for corrupt files - offline
+              working-directory: frontend-dist-offline
+              run: |
+                if [[ $(find . -empty) ]]; then
+                    exit 1
+                fi
+
+
+            # Push the built frontend-dist and frontend-dist-offline to the release branch.
+            # Needs to be `add --force` because these folders are normally gitignored.
+            # Also needs `push --force` because we reset to main (which doesn't contain the previous frontend-dist and frontend-dist-offline)
+            - name: Force push frontend-dist and frontend-dist-offline changes
               if: github.event_name != 'pull_request'
               run: |
                   git add frontend-dist --force
+                  git add frontend-dist-offline --force
                   git commit -m "$GITHUB_WORKFLOW" -m "Built from hash $GITHUB_SHA"
                   git push origin release --force

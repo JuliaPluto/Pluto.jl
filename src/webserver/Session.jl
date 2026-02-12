@@ -34,6 +34,11 @@ end
 # SERVER
 ###
 
+
+const SESSION_UPDATE_LOOP_INTERVAL = Ref(2.0 * 60 * 60) # 2 hours, this should be less than half of `max_age` of the `cleanup` function in `temp dir in scratch.jl`
+const SESSION_UPDATE_LOOP_DELAY = Ref(15.0 * 60) # 15 minutes
+
+
 """
 The `ServerSession` keeps track of:
 
@@ -41,6 +46,8 @@ The `ServerSession` keeps track of:
 - `notebooks`: running notebooks
 - `secret`: the web access token
 - `options`: global pluto configuration `Options` for this session.
+
+Use the keyword constructor.
 """
 Base.@kwdef mutable struct ServerSession
     connected_clients::Dict{Symbol,ClientSession} = Dict{Symbol,ClientSession}()
@@ -48,7 +55,30 @@ Base.@kwdef mutable struct ServerSession
     secret::String = String(rand(('a':'z') ∪ ('A':'Z') ∪ ('0':'9'), 8))
     binder_token::Union{String,Nothing} = nothing
     options::Configuration.Options = Configuration.Options()
+    
+    function ServerSession(
+        connected_clients,
+        notebooks,
+        secret,
+        binder_token,
+        options,
+    )
+        x = new(
+            connected_clients,
+            notebooks,
+            secret,
+            binder_token,
+            options,    
+        )
+        timer = Timer(SESSION_UPDATE_LOOP_DELAY[]; interval=SESSION_UPDATE_LOOP_INTERVAL[]) do _t
+            timer_callback(x)
+        end
+        finalizer(x) do _
+            close(timer)
+        end
+    end
 end
+
 
 function save_notebook(session::ServerSession, notebook::Notebook)
     

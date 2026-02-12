@@ -2,10 +2,10 @@ import _ from "../imports/lodash.js"
 import { cl } from "../common/ClassTable.js"
 import { html, useState, useEffect, useLayoutEffect, useRef, useMemo } from "../imports/Preact.js"
 import { SimpleOutputBody } from "./TreeView.js"
-import { help_circle_icon } from "./Popup.js"
 import { ansi_to_html } from "../imports/AnsiUp.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { t, th } from "../common/lang.js"
+import { InlineIonicon } from "./PlutoLandUpload.js"
 
 const LOGS_VISIBLE_START = 60
 const LOGS_VISIBLE_END = 20
@@ -60,15 +60,16 @@ export const Logs = ({ logs, line_heights, set_cm_highlighted_line, sanitize_htm
         return null
     }
 
-    const dot = (log, i) => html`<${Dot}
-        set_cm_highlighted_line=${set_cm_highlighted_line}
-        level=${log.level}
-        msg=${log.msg}
-        kwargs=${log.kwargs}
-        sanitize_html=${sanitize_html}
-        key=${i}
-        y=${is_hidden_input ? 0 : log.line - 1}
-    /> `
+    const dot = (log, i) =>
+        html`<${Dot}
+            set_cm_highlighted_line=${set_cm_highlighted_line}
+            level=${log.level}
+            msg=${log.msg}
+            kwargs=${log.kwargs}
+            sanitize_html=${sanitize_html}
+            key=${i}
+            y=${is_hidden_input ? 0 : log.line - 1}
+        /> `
 
     return html`
         <pluto-logs-container>
@@ -144,10 +145,10 @@ const Dot = ({ set_cm_highlighted_line, msg, kwargs, y, level, sanitize_html }) 
             >${is_progress
                 ? html`<${Progress} name="${msg[0]}" progress=${progress} />`
                 : is_stdout
-                ? html`<${MoreInfo} body=${th("t_logs_stdout")} /> <${LogViewAnsiUp} value=${msg[0]} />`
-                : html`${mimepair_output(msg)}${kwargs.map(
-                      ([k, v]) => html`<pluto-log-dot-kwarg><pluto-key>${k}</pluto-key><pluto-value>${mimepair_output(v)}</pluto-value></pluto-log-dot-kwarg>`
-                  )}`}</pluto-log-dot
+                  ? html`<${MoreInfo} body=${th("t_logs_stdout")} /> <${LogViewAnsiUp} value=${msg[0]} />`
+                  : html`${mimepair_output(msg)}${kwargs.map(
+                        ([k, v]) => html`<pluto-log-dot-kwarg><pluto-key>${k}</pluto-key><pluto-value>${mimepair_output(v)}</pluto-value></pluto-log-dot-kwarg>`
+                    )}`}</pluto-log-dot
         >
     </pluto-log-dot-positioner>`
 }
@@ -166,8 +167,8 @@ const MoreInfo = (/** @type{{body: import("../imports/Preact.js").ReactElement}}
             })
             e.preventDefault()
         }}
-        ><img alt="❔" src=${help_circle_icon}
-    /></a>`
+        >${InlineIonicon("help-circle-outline")}</a
+    >`
 }
 
 const LogViewAnsiUp = (/** @type {{value: string}} */ { value }) => {

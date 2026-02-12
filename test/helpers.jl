@@ -146,15 +146,21 @@ function verify_no_running_processes()
     if length(Distributed.procs()) != 1 || !isempty(Malt.__iNtErNaL_get_running_procs())
         @error "Not all notebook processes were closed during tests!" Distributed.procs() Malt.__iNtErNaL_get_running_procs()
     end
+    
+    check_project()
 end
 
 # We have our own registry for these test! Take a look at https://github.com/JuliaPluto/PlutoPkgTestRegistry#readme for more info about the test packages and their dependencies.
 
-pluto_test_registry_spec = Pkg.RegistrySpec(;
+const pluto_test_registry_spec = Pkg.RegistrySpec(;
     url="https://github.com/JuliaPluto/PlutoPkgTestRegistry", 
     uuid=Base.UUID("96d04d5f-8721-475f-89c4-5ee455d3eda0"),
     name="PlutoPkgTestRegistry",
 )
+
+const pkg_fixtures = joinpath(@__DIR__, "packages", "fixtures")
+
+
 
 snapshots_dir = joinpath(@__DIR__, "snapshots")
 
@@ -171,4 +177,30 @@ function cleanup(session, notebook)
     
     WorkspaceManager.unmake_workspace((session, notebook))
 end
+
+
+
+# ╔═╡ 9fb3787f-d524-4463-a3c7-a346f0eaada0
+yo(f) = let
+	p = joinpath(Base.active_project(), f)
+	if isfile(p)
+		c = read(p)
+		Text("file: $(length(c)) bytes, hash: $(hash(c))")
+	else
+		Text("(empty file)")
+	end
+end
+
+# ╔═╡ 50be1a92-ba29-4e27-be62-21508596dbee
+function check_project()
+    println()
+    println("Checking project")
+	@show(LOAD_PATH)
+	@show(Base.ACTIVE_PROJECT[])
+	@show(yo("Project.toml"))
+	@show(yo("Manifest.toml"))
+    println()
+end
+
+
 

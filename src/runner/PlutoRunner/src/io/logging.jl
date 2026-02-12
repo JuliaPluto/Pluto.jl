@@ -87,6 +87,7 @@ function Logging.handle_message(pl::PlutoCellLogger, level, msg, _module, group,
         before_published_object_keys = collect(keys(po()))
 
         # Render the log arguments:
+        msg = preprocess_log_msg(msg)
         msg_formatted = format_output_default(msg isa AbstractString ? Text(msg) : msg)
         kwargs_formatted = Tuple{String,Any}[(string(k), format_log_value(v)) for (k, v) in kwargs if k != :maxlog]
 
@@ -119,6 +120,9 @@ function Logging.handle_message(pl::PlutoCellLogger, level, msg, _module, group,
         nothing
     end
 end
+
+# This can be used to customize how certain logs are displayed. Custom methods should directly return an `AbstractString`. Most logs are already AbstractStrings so they don't need custom method, but for example, since v1.6, ProgressLogging.jl returns a log msg that is not an AbstractString.
+preprocess_log_msg(msg) = msg
 
 format_log_value(v) = format_output_default(v)
 format_log_value(v::Tuple{<:Exception,Vector{<:Any}}) = format_output(CapturedException(v...))

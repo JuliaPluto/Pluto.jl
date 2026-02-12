@@ -181,6 +181,7 @@ function match_block(node) {
             iselse = true
         }
         if (node.name === "elseif") node = node.parent.parent
+        if (!node.parent) return null
 
         let try_node = node.parent.firstChild
         let possibly_end = node.parent.lastChild

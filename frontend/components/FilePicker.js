@@ -30,19 +30,13 @@ const assert_not_null = (x) => {
     }
 }
 
-const set_cm_value = (/** @type{EditorView} */ cm, /** @type {string} */ value, scroll = true) => {
+export const set_cm_value = (/** @type{EditorView} */ cm, /** @type {string} */ value, scroll = true) => {
     cm.dispatch({
         changes: { from: 0, to: cm.state.doc.length, insert: value },
         selection: EditorSelection.cursor(value.length),
         // a long path like /Users/fons/Documents/article-test-1/asdfasdfasdfsadf.jl does not fit in the little box, so we scroll it to the left so that you can see the filename easily.
         scrollIntoView: scroll,
     })
-}
-
-const is_desktop = !!window.plutoDesktop
-
-if (is_desktop) {
-    console.log("Running in Desktop Environment! Found following properties/methods:", window.plutoDesktop)
 }
 
 /**
@@ -52,12 +46,11 @@ if (is_desktop) {
  *  button_label: String,
  *  placeholder: String,
  *  on_submit: (new_path: String) => Promise<void>,
- *  on_desktop_submit?: (loc?: string) => Promise<void>,
  *  client: import("../common/PlutoConnection.js").PlutoConnection,
  *  clear_on_blur: Boolean,
  * }} props
  */
-export const FilePicker = ({ value, suggest_new_file, button_label, placeholder, on_submit, on_desktop_submit, client, clear_on_blur }) => {
+export const FilePicker = ({ value, suggest_new_file, button_label, placeholder, on_submit, client, clear_on_blur }) => {
     const [current_value, set_current_value] = useState(value)
 
     const [url_value, set_url_value] = useState("")
@@ -85,20 +78,9 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
     const onSubmit = () => {
         const current_cm = cm.current
         if (current_cm == null) return
-        if (!is_desktop) {
-            const my_val = current_cm.state.doc.toString()
-            if (my_val === forced_value.current) {
-                suggest_not_tmp()
-                return true
-            }
-        }
         run(async () => {
             try {
-                if (is_desktop && on_desktop_submit) {
-                    await on_desktop_submit((await guess_notebook_location(url_value)).path_or_url)
-                } else {
-                    await on_submit(current_cm.state.doc.toString())
-                }
+                await on_submit(current_cm.state.doc.toString())
                 current_cm.dom.blur()
             } catch (error) {
                 set_cm_value(current_cm, forced_value.current, true)
@@ -244,7 +226,7 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
         })
         const current_cm = cm.current
 
-        if (!is_desktop) base.current.insertBefore(current_cm.dom, base.current.firstElementChild)
+        base.current.insertBefore(current_cm.dom, base.current.firstElementChild)
         // window.addEventListener("resize", () => {
         //     if (!cm.current.hasFocus()) {
         //         deselect(cm.current)
@@ -260,24 +242,11 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
         }
     })
 
-    return is_desktop
-        ? html`<div class="desktop_picker_group" ref=${base}>
-              <input
-                  value=${url_value}
-                  placeholder="Enter notebook URL..."
-                  onChange=${(v) => {
-                      set_url_value(v.target.value)
-                  }}
-              />
-              <div onClick=${onSubmit} class="desktop_picker">
-                  <button>${button_label}</button>
-              </div>
-          </div>`
-        : html`
-              <pluto-filepicker class=${suggest_button ? "suggest_button" : ""} ref=${base} onfocusout=${onBlur}>
-                  <button onClick=${onSubmit} disabled=${is_button_disabled}>${button_label}</button>
-              </pluto-filepicker>
-          `
+    return html`
+        <pluto-filepicker class=${suggest_button ? "suggest_button" : ""} ref=${base} onfocusout=${onBlur}>
+            <button onClick=${onSubmit} disabled=${is_button_disabled}>${button_label}</button>
+        </pluto-filepicker>
+    `
 }
 
 const dirname = (/** @type {string} */ str) => {

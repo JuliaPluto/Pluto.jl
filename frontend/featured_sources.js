@@ -4,7 +4,7 @@ export default {
         {
             url: "https://featured.plutojl.org/pluto_export.json",
             // this is one month before the expiry date of our domain registration at njal.la
-            valid_until: "2025-10",
+            valid_until: "2027-10",
             id: "featured pluto",
         },
         {
@@ -15,7 +15,7 @@ export default {
         {
             url: "https://plutojl.org/pluto_export.json",
             // this is one month before the expiry date of our domain registration at njal.la
-            valid_until: "2025-10",
+            valid_until: "2027-10",
             id: "pluto website",
         },
     ],

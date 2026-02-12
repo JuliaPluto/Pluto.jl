@@ -1,24 +1,19 @@
 {
-
     "t_language_name": "Deutsch",
-
     "t_my_work": "Meine Arbeit",
     "t_newnotebook": "Ein <strong>neues Notebook</strong> erstellen",
-    "t_welcome_to_pluto": "willkommen bei {{pluto}}",
-    "t_confirmdeletencells": "Bist du sicher, dass du {{count}} Zellen löschen möchtest?",
+    "t_welcome_to_pluto": "Willkommen bei {{pluto}}",
     "t_FORGET": "VERGESSEN",
-
     "t_live_docs_search_placeholder": "Dokumentation durchsuchen...",
     "t_live_docs_body": "<p>Willkommen bei der <b>Live-Dokumentation</b>! Lass dieses kleine Fenster offen, während du am Notebook arbeitest, und du erhältst Dokumentation zu allem, was du eingibst!</p><p>Du kannst auch eine Suchanfrage oben eingeben.</p><hr><p><em>Immer noch nicht weitergekommen? Hier sind <a target=\"_blank\" href=\"https://julialang.org/about/help/\">einige Tipps</a>.</em></p>",
     "t_panel_status": "Prozessstatus",
     "t_panel_status_short": "Status",
     "t_panel_docs": "Live Docs",
+    "t_panel_docs_description": "Live-Dokumentation: Suche nach Julia-Dokumentation und erhalte Live-Dokumentation zu allem, was du eingibst",
     "t_panel_status_progress": "Status {{progress}}",
     "t_panel_status_progress_inner": "({{done}}/{{total}})",
     "t_panel_close": "Panel schließen",
     "t_panel_popout": "Panel auslagern",
-
-
     "t_stop_notebook_session": "Sitzung beenden",
     "t_shut_down_notebook": "Notebook herunterfahren",
     "t_start_notebook_in_background": "Notebook im Hintergrund starten",
@@ -43,11 +38,9 @@
     "t_cell_indirectly_disabled_in_file_tooltip": "Diese Zelle ist indirekt in der Datei als deaktiviert markiert. Klicke für weitere Informationen!",
     "t_cell_disabled_in_file_explanation": "Diese Zelle ist derzeit in der Notebookdatei als Julia-<em>Kommentar</em> statt als <em>Code</em> gespeichert.<br />So wird sie nicht ausgeführt, wenn das Notebook außerhalb von Pluto als Skript läuft.<br />Verwende das Kontextmenü, um sie wieder zu aktivieren.",
     "t_cell_indirectly_disabled_in_file_explanation": "Diese Zelle ist derzeit in der Notebookdatei als Julia-<em>Kommentar</em> statt als <em>Code</em> gespeichert.<br />So wird sie nicht ausgeführt, wenn das Notebook außerhalb von Pluto als Skript läuft.<br />Eine vorherige Zelle <b>deaktiviert indirekt</b> diese Zelle in der Datei; aktiviere {{upstreamLink}}, um diese Zelle zu beeinflussen.",
-
+    "t_cell_upstreamLink": "die vorherige Zelle",
     "t_language_picker_description": "Sprache der Benutzeroberfläche ändern",
     "t_refresh_to_see_language_change_confirm": "Sprache geändert! Möchtest du die Seite aktualisieren, um die Änderungen zu sehen?",
-
-
     "t_anonymous_function_abbr": "Eine (Mini-)Funktion, die ohne das 'function'-Schlüsselwort definiert wird, sondern mit -> oder 'do'.",
     "t_display_complete_type_information_of_this_function_call": "Vollständige Typinformationen dieses Funktionsaufrufs anzeigen",
     "t_multiple_expressions_in_one_cell": "Mehrere Ausdrücke in einer Zelle",
@@ -61,6 +54,7 @@
     "t_another_cell_defining_xs_contains_errors": "Eine andere Zelle, die {{symbols}} definiert, enthält Fehler.",
     "t_error_message": "Fehlermeldung",
     "t_stack_trace": "Stack-Trace",
+    "t_header_list_of_syntax_errors": "Syntaxfehler",
     "t_here_is_what_happened_the_most_recent_locations_are_first": "Hier ist, was passiert ist, die neuesten Positionen stehen zuerst:",
     "t_show_stack_trace": "Stack-Trace anzeigen...",
     "t_stack_frame_location": "von",
@@ -91,11 +85,9 @@
     "t_package_could_not_load": "<p>Das Paket <strong>{{package}}.jl</strong> konnte nicht geladen werden, da es nicht initialisiert werden konnte.</p><p>Das ist nicht schön! Was du versuchen könntest:</p>",
     "t_package_could_not_load_things_you_could_try": "<ul><li>Das Notebook neu starten.</li><li>Eine andere Julia-Version ausprobieren.</li><li>Die Entwickler:innen von {{package}}.jl bezüglich dieses Fehlers kontaktieren.</li></ul>",
     "t_might_find_info_in_pkg_log": "Du kannst nützliche Informationen im Paketinstallationsprotokoll finden:",
-
     "t_edit_frontmatter": "Frontmatter bearbeiten",
     "t_start_presentation": "Präsentation starten",
     "t_close": "Schließen",
-
     "t_export_action_ellipsis": "Exportieren...",
     "t_export_category_export": "exportieren",
     "t_export_category_record": "aufzeichnen",
@@ -108,11 +100,9 @@
     "t_export_card_record": "Aufzeichnen",
     "t_export_card_record_description": "<em>(Vorschau)</em> Das gesamte Notebook und alle Änderungen, die du vornimmst, erfassen.",
     "t_export_card_pride_month_message": "Die Zukunft ist <strong>queer</strong>!",
-
     "t_save_notebook_ellipsis": "Notebook speichern...",
     "t_save_notebook_button_label_when_currently_not_saved": "Auswählen",
     "t_save_notebook_button_label_when_currently_saved": "Verschieben",
-
     "t_process_status_loading_binder": "Binder wird geladen...",
     "t_process_status_reconnecting": "Verbindung wird wiederhergestellt...",
     "t_process_status_loading": "Wird geladen...",
@@ -124,22 +114,20 @@
     "t_process_restart_action_short": "neu starten",
     "t_process_give_permission_to_run_code": "Notebookcode ausführen",
     "t_process_running_cells": "Zellen werden ausgeführt... ({{done}}/{{total}} erledigt)",
-
     "t_safe_preview": "Sichere Vorschau",
     "t_safe_preview_not_executed": "Code nicht in <em>Sicherer Vorschau</em> ausgeführt",
     "t_safe_preview_not_rendered": "Skripte und Stile nicht in <em>Sicherer Vorschau</em> gerendert",
+    "t_safe_preview_confirm_warning": "Warnung",
     "t_safe_preview_confirm_before": "Bist du sicher, dass du dieser Datei vertraust?",
     "t_safe_preview_confirm_before_danger": "⚠️ Achtung!",
     "t_safe_preview_confirm_after": "Ein bösartiges Notebook kann Passwörter und Daten stehlen.",
     "t_safe_preview_body": "Du liest und bearbeitest diese Datei, ohne Julia-Code auszuführen.",
     "t_safe_preview_run_this_notebook": "Wenn du bereit bist, kannst du {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "dieses Notebook ausführen",
-
     "t_instant_feedback_ellipsis": "Direktes Feedback...",
     "t_instant_feedback_send": "Senden",
     "t_how_can_we_improve": "🙋 Wie können wir {{pluto}} verbessern?",
     "t_FAQ": "FAQ",
-
     "t_loading_cells": "Zellen werden geladen...",
     "t_reading_hidden_code": "👀 Versteckten Code lesen",
     "t_enable_and_run_cell": "Zelle aktivieren und ausführen",
@@ -161,29 +149,25 @@
     "t_save_cell": "Code speichern ohne ihn auszuführen",
     "t_jump_cell": "Diese Zelle hängt von einer deaktivierten Zelle ab",
     "t_run_cell": "Zelle ausführen (Umschalt + Enter)",
-
+    "t_help_about_tab_navigation_inside_cell": "Drücke Esc und dann Tab, um die Navigation fortzusetzen.",
     "t_cell_is_disabled": "Diese Zelle ist deaktiviert. {{link}}, um den Code auszuführen.",
     "t_cell_is_disabled_link": "Diese Zelle aktivieren",
-
-
-
     "t_ask_ai_action": "KI fragen",
     "t_ask_ai_action_description": "KI zu dieser Zelle befragen",
     "t_ai_prompt_generator_title": "KI-Prompt-Generator",
     "t_ai_prompt_generator_intro": "Du kannst diesen Text in einen KI-Chat kopieren, um ihm Kontext aus deinem Notebook zu geben.",
     "t_ai_prompt_generator_question_input_placeholder": "Gib hier deine Frage ein...",
+    "t_ai_prompt_generator_default_question_errored": "Warum verursacht diese Zelle einen Fehler?",
     "t_copy_action": "Kopieren",
     "t_copy_action_description": "In Zwischenablage kopieren",
     "t_copy_action_complete": "Kopiert!",
     "t_copy_header_id_action_description": "Klicke hier, um die URL zu dieser Überschrift zu kopieren",
-
     "t_ai_permission_prompt_title": "KI verwenden, um Syntaxfehler zu beheben?",
     "t_ai_permission_prompt_body": "Pluto sendet den Code aus dieser Zelle an einen kommerziellen LLM-Service, um Syntaxfehler zu beheben. Aktualisierter Code wird nicht ohne Bestätigung ausgeführt.",
     "t_ai_permission_prompt_body_2": "Übermittelter Code kann (anonym) von Pluto-Entwicklern zur Verbesserung des KI-Services verwendet werden.",
     "t_dont_ask_again": "Nicht mehr fragen",
     "t_no": "Nein",
     "t_yes": "Ja",
-
     "t_ai_accept_and_close": "KI-Syntaxkorrektur akzeptieren und schließen",
     "t_ai_decline_and_close": "KI-Syntaxkorrektur ablehnen und schließen",
     "t_ai_accept_and_run": "Akzeptieren & Ausführen",
@@ -194,15 +178,10 @@
     "t_ai_syntax_fix_failed": "Syntaxfehler konnte nicht behoben werden: {{error}}",
     "t_ai_fix_syntax_with_ai": "Syntax mit KI korrigieren",
     "t_ai_fix_syntax_with_ai_description": "Versuchen, diesen Syntaxfehler mit einem LLM-Service zu beheben",
-
     "t_confirm_delete_multiple_cells": "{{count}} Zellen löschen?",
     "t_confirm_delete_multiple_interrupt_notebook": "Diese Zelle läuft noch - möchtest du das Notebook unterbrechen?",
     "t_confirm_move_file": "Bist du sicher? Wird verschoben von\n\n{{old_path}}\n\nnach\n\n{{new_path}}?",
-
-
     "t_oopsie_pls_refresh": "Hoppla!! Bitte aktualisiere deinen Browser und alles wird in Ordnung sein!",
-
-
     "t_key_run": "Zelle ausführen",
     "t_key_run_add": "Zelle ausführen und Zelle darunter hinzufügen",
     "t_key_submit_all_changes": "alle Änderungen übermitteln",
@@ -218,17 +197,12 @@
     "t_key_ctrl_c": "ausgewählte Zellen kopieren",
     "t_key_ctrl_x": "ausgewählte Zellen ausschneiden",
     "t_key_ctrl_v": "ausgewählte Zellen einfügen",
-
     "t_key_autosave_description": "Die Notebookdatei wird jedes Mal gespeichert, wenn du eine Zelle ausführst.",
     "t_key_selection_description": "Wähle mehrere Zellen aus, indem du eine Auswahlbox aus dem Bereich zwischen den Zellen ziehst.",
-
     "t_key_or": "oder",
-
     "t_navigate_to_previous_page": "Zurück",
-
     "t_bonds_static_warning": "Du betrachtest ein statisches Dokument. {{run_notebook_action}}, um Interaktivität zu aktivieren.",
     "t_bonds_static_warning_inner": "Dieses Notebook ausführen",
-
     "t_edit_or_run_this_notebook": "Dieses Notebook <strong>bearbeiten</strong> oder <strong>ausführen</strong>",
     "t_edit_or_run_view_code": "Code anzeigen",
     "t_edit_or_run_view_code_cancel": "Abbrechen",
@@ -246,12 +220,10 @@
     "t_edit_or_run_open_the_notebook_file": "Die Notebookdatei öffnen",
     "t_edit_or_run_open_the_notebook_file_description": "Gib den gespeicherten Dateinamen in das <em>Öffnen</em>-Feld ein.",
     "t_edit_or_run_paste_url_in_the_open_box": "URL in das <em>Öffnen</em>-Feld einfügen",
-
     "t_time_minutes_one": "{{count}} Minute",
     "t_time_minutes_other": "{{count}} Minuten",
     "t_time_seconds_one": "{{count}} Sekunde",
     "t_time_seconds_other": "{{count}} Sekunden",
-
     "t_frontmatter_title": "Frontmatter",
     "t_frontmatter_description": "Wenn du dieses Notebook im Web veröffentlichst, kannst du die Parameter unten festlegen, um sie in den HTML-Metadaten bereitzustellen. Dies ist nützlich für Suchmaschinen und soziale Medien.",
     "t_frontmatter_synchronized": "Frontmatter synchronisiert ✓\n\nDiese Parameter werden in zukünftigen Exporten verwendet.",
@@ -261,48 +233,48 @@
     "t_frontmatter_cancel": "Abbrechen",
     "t_frontmatter_save": "Speichern",
     "t_frontmatter_preview": "Vorschau",
-
-
+    "t_frontmatter_language_placeholder": "de-DE (BCP-47-Sprach-Tag eingeben)",
+    "t_plutoland_upload_description": "Dieses Notebook auf {{plutoland}} hochladen, einen kostenlosen Hosting-Service für Pluto-Notebooks:",
+    "t_plutoland_upload_description_recording": "Diese Aufzeichnung auf {{plutoland}} hochladen, einen kostenlosen Hosting-Service für Pluto-Aufzeichnungen:",
+    "t_plutoland_upload_upload": "Auf {{plutoland}} hochladen",
+    "t_plutoland_upload_uploading": "Wird hochgeladen...",
+    "t_plutoland_download": "<strong>HTML-Datei</strong> herunterladen",
+    "t_plutoland_download_description": "Die HTML-Export-Datei auf deiner Festplatte speichern:",
+    "t_plutoland_download_description_recording": "Die Aufzeichnung als HTML-Datei auf deiner Festplatte speichern:",
+    "t_plutoland_choose_up_or_down": "Wähle ↑ oder ↓",
+    "t_plutoland_upload_success": "Hochgeladen! Du kannst diese URL teilen:",
+    "t_plutoland_upload_success_recording": "Hochgeladen! Sie dir deine Aufzeichnung hier an:",
+    "t_plutoland_upload_delete": "Dauerhaft von pluto.land löschen",
     "t_logs_truncated": "{{count}} Protokolle nicht angezeigt...",
     "t_logs_stdout": "Dieser Text wurde in den <a href=\"https://en.wikipedia.org/wiki/Standard_streams\" target=\"_blank\">Terminal-Stream</a> geschrieben, während die Zelle ausgeführt wurde. Es ist nicht der <em>Rückgabewert</em> der Zelle.",
     "t_logs_click_for_more_info": "Klicke für weitere Informationen",
-
     "t_ready_notif_title": "Pluto: Notebook bereit",
     "t_ready_notif_body": "✓ Alle {{count}} Schritte abgeschlossen",
     "t_ready_notif": "Benachrichtige mich, wenn fertig",
     "t_ready_notif_permission": "Pluto benötigt eine Berechtigung zum Anzeigen von Benachrichtigungen. <strong>Aktiviere Benachrichtigungen</strong> in deinen Browsereinstellungen, um diese Funktion zu verwenden.",
-
     "t_pkg_disables_str": "{{function}} deaktiviert Plutos internen Paketmanager.",
     "t_pkg_stdlib": "{{package}} ist Teil von Julias vorinstallierter <em>Standardbibliothek</em>.",
     "t_pkg_will_be_installed": "{{package}} wird installiert, wenn du dieses Notebook ausführst.",
     "t_pkg_is_installing": "{{package}} wird installiert...",
     "t_pkg_is_installed": "{{package}} ist im Notebook installiert.",
-
     "t_pkg_not_found": "Das Paket {{package}} konnte nicht in der Registry gefunden werden. Hast du dich vertippt?",
     "t_pkg_will_be_installed_in_notebook": "{{package}} wird im Notebook installiert, wenn du diese Zelle ausführst.",
-
     "t_pkg_installation_can_take": "Die Installation kann {{time_install}} dauern.<br/>Danach lädt es in {{time_load}}.",
     "t_pkg_update_packages": "Pakete aktualisieren",
     "t_pkg_update_packages_description": "Möchtest du nach Updates suchen und diese installieren? Eine Sicherungskopie des Notebooks wird erstellt.",
     "t_pkg_currently_busy": "Pkg ist derzeit mit anderen Paketen beschäftigt... komm später wieder!",
     "t_pkg_toggle_terminal": "Pkg-Terminalausgabe anzeigen/verstecken",
-
     "t_pkg_go_to_help": "Mehr über Pakete in Pluto erfahren",
-
     "t_save_all_changes": "Alle Änderungen speichern",
     "t_save_all_changes_description": "Alle geänderten Zellen speichern und ausführen",
     "t_file_change_detected": "Dateiänderung erkannt, <b>Notebook aktualisiert</b>",
     "t_file_saved": "Gespeichert",
-
     "t_recording_ui_start_recording": "<strong>Aufzeichnung starten</strong>",
     "t_recording_ui_start_recording_muted": "<strong>Aufzeichnung starten</strong> (kein Audio)",
     "t_recording_ui_stop_recording": "<strong>Aufzeichnung stoppen</strong>",
     "t_recording_ui_back_to_recording": "Zurück zur <strong>Aufzeichnung</strong> {{icon}}",
-
     "t_presentation_previous_slide": "Vorherige Folie",
     "t_presentation_next_slide": "Nächste Folie",
-
-
     "t_status_names": {
         "workspace": "Arbeitsbereich-Einrichtung",
         "create_process": "Julia starten",
@@ -321,14 +293,29 @@
         "backend_responded": "Notebook geöffnet",
         "backend_notebook_running": "Zur Live-Bearbeitung wechseln"
     },
-
     "t_tree_show_more_items": "mehr",
     "t_table_no_columns": "Diese Tabelle hat keine Spalten",
     "t_table_no_rows": "Diese Tabelle hat keine Zeilen",
-
     "t_undo_delete_one": "Zelle gelöscht",
     "t_undo_delete_other": "{{count}} Zellen gelöscht",
     "t_undo_delete_link": "RÜCKGÄNGIG",
     "t_auto_disabled": "{{another_cell}} wurde deaktiviert, da sie auch {{variable}} definiert.",
-    "t_auto_disabled_link": "Eine andere Zelle"
+    "t_auto_disabled_link": "Eine andere Zelle",
+    "t_project_toml_editor_title": "Project.toml (Feature-Vorschau)",
+    "t_project_toml_editor_description": "Dieses Notebook hat seine eigene Paketumgebung. Du kannst die Project.toml-Datei bearbeiten, um die verwendeten Pakete festzulegen",
+    "t_project_toml_editor_what_is_project_toml": "Was ist Project.toml",
+    "t_project_toml_editor_compat_description": "Du kannst die Einträge ändern, um die Paketversionen für dieses Notebook festzulegen. Durch Hinzufügen kannst du nicht registrierte oder lokale Pakete verwenden.",
+    "t_project_toml_editor_feature_preview_note": "<strong>Hinweis:<strong> Dies ist eine Feature-Vorschau. Es funktioniert möglicherweise nicht immer wie erwartet. Bitte teile uns dein Feedback mit!",
+    "t_project_toml_editor_status_tab_note": "Nach dem Speichern kannst du die Protokolle im Status-Tab sehen",
+    "t_project_toml_editor_backup_checkbox": "Vor dem Speichern eine Sicherungskopie des Notebooks erstellen?",
+    "t_project_toml_editor_cancel": "Abbrechen",
+    "t_project_toml_editor_save": "Speichern & Auflösen (Resolve)",
+    "t_project_toml_editor_placeholder": "Dies ist eine TOML-Datei. Du kannst hier Metadaten für dein Projekt festlegen.",
+    "t_project_toml_editor_wait_cells": "Bitte warte, bis alle Zellen ausgeführt wurden",
+    "t_project_toml_editor_wait_packages": "Bitte warte, bis alle Paketoperationen abgeschlossen sind (auch in anderen Notebooks).",
+    "t_project_toml_editor_synchronized": "roject TOML synchronisiert ✔\n\nSieh dir die Protokolle im Status-Tab an.",
+    "t_project_toml_editor_sync_failed": "Project TOML-Synchronisierung fehlgeschlagen: {{error}}",
+    "t_project_toml_editor_start_notebook_first": "Du musst das Notebook starten, bevor du die Project.toml bearbeiten kannst. Dies könnte in Zukunft unterstützt werden.",
+    "t_project_toml_editor_version_latest": "Neueste",
+    "t_project_toml_editor_version_latest_compatible": "Neueste kompatible"
 }

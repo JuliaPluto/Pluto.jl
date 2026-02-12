@@ -7,7 +7,7 @@ cl({a: true, b: false, c: true})
 */
 
 export const cl = (classTable) => {
-    if(!classTable){
+    if (!classTable) {
         return null
     }
     return Object.entries(classTable).reduce((allClasses, [nextClass, enable]) => (enable ? nextClass + " " + allClasses : allClasses), "")

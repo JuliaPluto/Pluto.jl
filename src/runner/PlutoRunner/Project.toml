@@ -1,21 +1,16 @@
 name = "PlutoRunner"
 uuid = "dc6b355a-2368-4481-ae6d-ae0351418d79"
 authors = ["Michiel Dral <m.c.dral@gmail.com>", "Fons van der Plas <fons@plutojl.org>", "Paul Berg <paul@plutojl.org>"]
-version = "29.14.98"
+version = "30.31.32"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
-Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
-[compat]
-# these compat entries should match those for the same packages in Project.toml of Pluto.jl itself.
-PrecompileTools = "~1.2, ~1.3"
+# you CANNOT add a non-stdlib dependency here. I'm sorry this suckz but we tried and it's just too hard to make this work. Check out https://github.com/fonsp/Pluto.jl/issues/3187 and linked issues/PRs for details.

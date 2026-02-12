@@ -3,6 +3,7 @@ import Pluto
 import Pluto: update_save_run!, update_run!, WorkspaceManager, ClientSession, ServerSession, Notebook, Cell, project_relative_path, SessionActions, load_notebook
 using Test
 import Pkg
+import TOML
 
 
 @testset "PkgCompat" begin
@@ -92,7 +93,7 @@ import Pkg
     end
 
     @testset "Compat manipulation" begin
-        old_path = joinpath(@__DIR__, "old_artifacts_import.jl")
+        old_path = joinpath(pkg_fixtures, "old_artifacts_import.jl")
         old_contents = read(old_path, String)
         
         dir = mktempdir()
@@ -110,7 +111,7 @@ import Pkg
         
         @test Pluto.only_versions_or_lineorder_differ(old_path, path)
         
-        ptoml = Pkg.TOML.parse(ptoml_contents())
+        ptoml = TOML.parse(ptoml_contents())
         @test haskey(ptoml["deps"], "PlutoPkgTestA")
         @test haskey(ptoml["deps"], "Artifacts")
         @test haskey(ptoml["compat"], "PlutoPkgTestA")
@@ -118,7 +119,7 @@ import Pkg
         
         PkgCompat.clear_stdlib_compat_entries!(notebook.nbpkg_ctx)
         
-        ptoml = Pkg.TOML.parse(ptoml_contents())
+        ptoml = TOML.parse(ptoml_contents())
         @test haskey(ptoml["deps"], "PlutoPkgTestA")
         @test haskey(ptoml["deps"], "Artifacts")
         @test haskey(ptoml["compat"], "PlutoPkgTestA")
@@ -129,7 +130,7 @@ import Pkg
         old_a_compat_entry = ptoml["compat"]["PlutoPkgTestA"]
         PkgCompat.clear_auto_compat_entries!(notebook.nbpkg_ctx)
         
-        ptoml = Pkg.TOML.parse(ptoml_contents())
+        ptoml = TOML.parse(ptoml_contents())
         @test haskey(ptoml["deps"], "PlutoPkgTestA")
         @test haskey(ptoml["deps"], "Artifacts")
         @test !haskey(ptoml, "compat")
@@ -139,7 +140,7 @@ import Pkg
         
         PkgCompat.write_auto_compat_entries!(notebook.nbpkg_ctx)
         
-        ptoml = Pkg.TOML.parse(ptoml_contents())
+        ptoml = TOML.parse(ptoml_contents())
         @test haskey(ptoml["deps"], "PlutoPkgTestA")
         @test haskey(ptoml["deps"], "Artifacts")
         @test haskey(ptoml["compat"], "PlutoPkgTestA")

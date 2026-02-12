@@ -5,8 +5,9 @@
 }
 
 :root {
-    --inter-ui-font-stack: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, "Apple Color Emoji", "Segoe UI Emoji",
-        "Segoe UI Symbol", system-ui, sans-serif;
+    --inter-ui-font-stack:
+        "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        system-ui, sans-serif;
     --system-fonts-mono: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     color-scheme: light dark;

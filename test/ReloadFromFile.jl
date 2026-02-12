@@ -150,7 +150,7 @@ end
     ###
     sleep(timeout_between_tests)
     
-    file8 = read(joinpath(@__DIR__, "packages", "simple_stdlib_import.jl"), String)
+    file8 = read(joinpath(@__DIR__, "packages", "fixtures", "simple_stdlib_import.jl"), String)
     write(notebook.path, file8)
     
     

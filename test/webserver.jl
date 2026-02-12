@@ -57,14 +57,14 @@ end
         (" 🍕🍕", (6, 10), (3, 5)), # a 🍕 is two UTF16 codeunits
     ]
     for (s, (start_byte, end_byte), (from, to)) in tests
-        @test PlutoRunner.map_byte_range_to_utf16_codepoints(s, start_byte, end_byte) == (from, to)
+        @test Pluto.PlutoRunner.map_byte_range_to_utf16_codepoints(s, start_byte, end_byte) == (from, to)
     end
 end
 
 
 @testset "Exports" begin
     port, socket = 
-        @inferred Pluto.port_serversocket(Sockets.ip"0.0.0.0", nothing, 5543) 
+        @inferred Pluto.port_serversocket(Sockets.ip"0.0.0.0", nothing, 5543)
 
     close(socket)
     @test 5543 <= port < 5600
@@ -125,12 +125,29 @@ end
     
     @test occursin(string(Pluto.PLUTO_VERSION), export_contents)
     @test occursin("</html>", export_contents)
+    @test occursin("insertion-spot", export_contents)
+    
+    export_offline_contents = read(download(local_url("notebookexport?offline_bundle&id=$(notebook.notebook_id)")), String)
+    
+    # We can't test for this if the offline_bundle is working (and that it is different from the regular bundle), because the tests are probably running on an unbundled Pluto (the directories frontend-dist and frontend-dist-offline are not generated). In that case, Pluto falls back to using the unbundled editor.html with CDN pointing to /frontnend/, for example:
+    ### https://cdn.jsdelivr.net/gh/JuliaPluto/Pluto.jl@0.20.21/frontend/img/favicon_unsaturated.svg
+    @test occursin(string(Pluto.PLUTO_VERSION), export_offline_contents)
+    @test occursin("</html>", export_offline_contents)
+    @test occursin("insertion-spot", export_offline_contents)
+    
+    # wait for Pkg to finish
+    for _ in 1:10
+        Pluto.withtoken(Pluto.pkg_token) do
+            sleep(0.01)
+        end
+    end
     
     for notebook in values(🍭.notebooks)
-        SessionActions.shutdown(🍭, notebook; keep_in_session=false)
+        SessionActions.shutdown(🍭, notebook; keep_in_session=false, async=false)
     end
     
     close(server)
 end
+sleep(2)
 
 end # testset

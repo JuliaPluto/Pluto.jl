@@ -20,7 +20,7 @@ interface MsgPackCodec {
 
 declare const msgpack: {
     createCodec(): MsgPackCodec
-    encode(value: any, options: { codec?: MsgPackCodec }): Uint8Array
+    encode(value: any, options: { codec?: MsgPackCodec }): Uint8Array<ArrayBuffer>
     decode(buffer: Uint8Array, options: { codec?: MsgPackCodec }): any
 }
 

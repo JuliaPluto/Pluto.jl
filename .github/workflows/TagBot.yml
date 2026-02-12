@@ -1,7 +1,7 @@
 # This GitHub action checks whether a new version of this package
 # has been registred in the official registry.
 # If so, it creates a new _release_:
-# https://github.com/fonsp/Pluto.jl/releases
+# https://github.com/JuliaPluto/Pluto.jl/releases
 
 name: TagBot
 
@@ -27,7 +27,7 @@ jobs:
                     > 
                     > <a href="https://binder.plutojl.org/{{ version }}/"><img alt="Binder logo" src="https://mybinder.org/badge_logo.svg"></a>
                     >
-                    > Generate your own binder links using [pluto-on-binder.glitch.me](https://pluto-on-binder.glitch.me/)!
+                    > Learn more about Binder and Pluto at [plutojl.org/en/docs/binder](https://plutojl.org/en/docs/binder/)!
 
                     {% if custom %}
                     {{ custom }}

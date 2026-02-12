@@ -47,7 +47,7 @@ export const SelectionArea = ({ on_selection, set_scroller, cell_order }) => {
     const is_selecting_ref = useRef(false)
     const element_ref = useRef(/** @type {HTMLElement?} */ (null))
 
-    const [selection, set_selection] = useState(/** @type {{start: Coordinate2D, end: Coordinate2D}?} */ (null))
+    const [selection, set_selection] = useState(/** @type {{start: Coordinate2D, end: Coordinate2D, start_screen_y: number}?} */ (null))
 
     useEffect(() => {
         const event_target_inside_this_notebook = (/** @type {MouseEvent} */ e) => {
@@ -73,7 +73,7 @@ export const SelectionArea = ({ on_selection, set_scroller, cell_order }) => {
                 (t === "PLUTO-EDITOR" || t === "MAIN" || t === "PLUTO-NOTEBOOK" || t === "PREAMBLE")
             ) {
                 on_selection([])
-                set_selection({ start: { x: e.pageX, y: e.pageY }, end: { x: e.pageX, y: e.pageY } })
+                set_selection({ start: { x: e.pageX, y: e.pageY }, end: { x: e.pageX, y: e.pageY }, start_screen_y: e.screenY })
                 is_selecting_ref.current = true
             }
         }
@@ -99,7 +99,7 @@ export const SelectionArea = ({ on_selection, set_scroller, cell_order }) => {
             }
         }
 
-        let update_selection = in_request_animation_frame(({ pageX, pageY }) => {
+        let update_selection = in_request_animation_frame(({ pageX, pageY, screenY }) => {
             if (!is_selecting_ref.current || selection == null) return
 
             let new_selection_end = { x: pageX, y: pageY }
@@ -125,21 +125,29 @@ export const SelectionArea = ({ on_selection, set_scroller, cell_order }) => {
                 return A.start_left < B.end_left && A.end_left > B.start_left && A.start_top < B.end_top && A.end_top > B.start_top
             })
 
-            set_scroller({ up: true, down: true })
+            set_scroller({
+                up: selection.start_screen_y > screenY || selection.start.y > selection.end.y,
+                down: selection.start_screen_y < screenY || selection.start.y < selection.end.y,
+            })
+
             on_selection(in_selection.map((x) => x.id))
-            set_selection({ start: selection.start, end: new_selection_end })
+            set_selection({ start: selection.start, end: new_selection_end, start_screen_y: selection.start_screen_y })
         })
 
         const onscroll = (e) => {
             if (is_selecting_ref.current) {
-                update_selection({ pageX: mouse_position_ref.current.clientX, pageY: mouse_position_ref.current.clientY + document.documentElement.scrollTop })
+                update_selection({
+                    pageX: mouse_position_ref.current.clientX,
+                    pageY: mouse_position_ref.current.clientY + document.documentElement.scrollTop,
+                    screenY: mouse_position_ref.current.screenY,
+                })
             }
         }
 
         const onmousemove = (e) => {
             mouse_position_ref.current = e
             if (is_selecting_ref.current) {
-                update_selection({ pageX: e.pageX, pageY: e.pageY })
+                update_selection({ pageX: e.pageX, pageY: e.pageY, screenY: e.screenY })
                 e.preventDefault()
             }
         }

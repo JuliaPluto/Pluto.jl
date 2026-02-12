@@ -6,6 +6,7 @@ import Pluto: update_save_run!, update_run!, WorkspaceManager, ClientSession, Se
 import Pluto.PkgUtils
 import Pluto.PkgCompat
 import Malt
+import TOML
 
 
 @testset "Built-in Pkg" begin
@@ -175,7 +176,7 @@ import Malt
             @test count("PlutoPkgTestD", ptoml_contents()) == 2
             @test count("Dates", ptoml_contents()) == 1 # once in [deps], but not in [compat] because it is a stdlib
 
-            ptoml = Pkg.TOML.parse(ptoml_contents())
+            ptoml = TOML.parse(ptoml_contents())
 
             @test haskey(ptoml["compat"], "PlutoPkgTestA")
             @test haskey(ptoml["compat"], "PlutoPkgTestB")
@@ -223,7 +224,7 @@ import Malt
         cleanup(🍭, notebook)
     end
 
-    simple_import_path = joinpath(@__DIR__, "simple_import.jl")
+    simple_import_path = joinpath(pkg_fixtures, "simple_import.jl")
     simple_import_notebook = read(simple_import_path, String)
 
     @testset "Manifest loading" begin
@@ -251,7 +252,7 @@ import Malt
     end
     
     @testset "Package added by url" begin
-        url_notebook = read(joinpath(@__DIR__, "url_import.jl"), String)
+        url_notebook = read(joinpath(pkg_fixtures, "url_import.jl"), String)
 
         🍭 = ServerSession()
 
@@ -275,7 +276,7 @@ import Malt
         cleanup(🍭, notebook)
     end
     
-    future_notebook = read(joinpath(@__DIR__, "future_nonexisting_version.jl"), String)
+    future_notebook = read(joinpath(pkg_fixtures, "future_nonexisting_version.jl"), String)
     @testset "Recovery from unavailable versions" begin
         🍭 = ServerSession()
 
@@ -354,13 +355,13 @@ import Malt
         cleanup(🍭, notebook)
     end
     
-    pkg_cell_notebook = read(joinpath(@__DIR__, "pkg_cell.jl"), String)
+    pkg_cell_notebook = read(joinpath(pkg_fixtures, "pkg_cell.jl"), String)
     @testset "Pkg cell -- loaded from file" begin
         🍭 = ServerSession()
 
         dir = mktempdir()
         for n in ["Project.toml", "Manifest.toml"]
-            cp(joinpath(@__DIR__, "pkg_cell_env", n), joinpath(dir, n))
+            cp(joinpath(pkg_fixtures, "pkg_cell_env", n), joinpath(dir, n))
         end
         path = joinpath(dir, "hello.jl")
         write(path, pkg_cell_notebook)
@@ -427,12 +428,14 @@ import Malt
         end
 
         @test index_order == [3, 2, 1]
+        
+        cleanup(🍭, notebook)
     end
 
     @testset "File format -- Backwards compat" begin
         🍭 = ServerSession()
         
-        pre_pkg_notebook = read(joinpath(@__DIR__, "old_import.jl"), String)
+        pre_pkg_notebook = read(joinpath(pkg_fixtures, "old_import.jl"), String)
         dir = mktempdir()
         path = joinpath(dir, "hello.jl")
         write(path, pre_pkg_notebook)
@@ -493,7 +496,7 @@ import Malt
     @testset "Bad files" begin
         @testset "$(name)" for name in ["corrupted_manifest", "unregistered_import"]
 
-            original_path = joinpath(@__DIR__, "$(name).jl")
+            original_path = joinpath(pkg_fixtures, "$(name).jl")
             original_contents = read(original_path, String)
 
             🍭 = ServerSession()
@@ -704,22 +707,14 @@ import Malt
             update_save_run!(🍭, notebook, notebook.cells[1])
             @test noerror(notebook.cells[1])
             
-            after_run = precomp_entries()
-            
-
             full_logs = join([log["msg"][1] for log in notebook.cells[1].logs], "\n")
-            
-            is_broken_idk_why = Sys.iswindows() && v"1.11.0-aaa" <= VERSION < v"1.12.0-aaa" && !match
-            is_broken_idk_why |= VERSION >= v"1.12.0-aaa" && !match
-
-            if !is_broken_idk_why
-                # There should be a log message about loading the cache.
-                @test occursin(r"Loading.*cache"i, full_logs)
-                # There should NOT be a log message about rejecting the cache.
-                @test !occursin(r"reject.*cache"i, full_logs)
-            end
+            # There should be a log message about loading the cache.
+            @test occursin(r"Loading.*cache"i, full_logs)
+            # There should NOT be a log message about rejecting the cache.
+            @test !occursin(r"reject.*cache"i, full_logs)
             
             # Running the import should not have triggered additional precompilation, everything should have been precompiled during Pkg.precompile() (in sync_nbpkg).
+            after_run = precomp_entries()
             @test after_sync == after_run
             
             cleanup(🍭, notebook)

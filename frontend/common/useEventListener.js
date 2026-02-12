@@ -9,7 +9,7 @@ export const useEventListener = (
     /** @type {EventListenerAddable | import("../imports/Preact.js").Ref<EventListenerAddable>} */ element,
     /** @type {string} */ event_name,
     /** @type {EventListenerOrEventListenerObject} */ handler,
-    /** @type {any[] | undefined} */ deps
+    /** @type {any[] | undefined} */ deps = undefined
 ) => {
     let handler_cached = useCallback(handler, deps)
     useEffect(() => {

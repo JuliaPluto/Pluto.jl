@@ -27,29 +27,29 @@ export const FeaturedCard = ({ entry, source_manifest, direct_html_links, disabl
                 ? null
                 : x
             : x == null
-            ? null
-            : // URLs are relative to the source URL...
-              new URL(
-                  x,
-                  // ...and the source URL is relative to the current location
-                  new URL(source_url, window.location.href)
-              ).href
+              ? null
+              : // URLs are relative to the source URL...
+                new URL(
+                    x,
+                    // ...and the source URL is relative to the current location
+                    new URL(source_url, window.location.href)
+                ).href
 
     // `direct_html_links` means that we will navigate you directly to the exported HTML file. Otherwise, we use our local editor, with the exported state as parameters. This lets users run the featured notebooks locally.
     const href = disable_links
         ? "#"
         : direct_html_links
-        ? u(entry.html_path)
-        : with_query_params(`edit`, {
-              statefile: u(entry.statefile_path),
-              notebookfile: u(entry.notebookfile_path),
-              notebookfile_integrity: entry.hash == null ? null : `sha256-${base64url_to_base64(entry.hash)}`,
-              disable_ui: `true`,
-              name: title == null ? null : `sample ${title}`,
-              pluto_server_url: `.`,
-              // Little monkey patch because we don't want to use the slider server when for the CDN source, only for the featured.plutojl.org source. But both sources have the same pluto_export.json so this is easiest.
-              slider_server_url: source_url?.includes("cdn.jsdelivr.net/gh/JuliaPluto/featured") ? null : u(source_manifest?.slider_server_url),
-          })
+          ? u(entry.html_path)
+          : with_query_params(`edit`, {
+                statefile: u(entry.statefile_path),
+                notebookfile: u(entry.notebookfile_path),
+                notebookfile_integrity: entry.hash == null ? null : `sha256-${base64url_to_base64(entry.hash)}`,
+                disable_ui: `true`,
+                name: title == null ? null : `sample ${title}`,
+                pluto_server_url: `.`,
+                // Little monkey patch because we don't want to use the slider server when for the CDN source, only for the featured.plutojl.org source. But both sources have the same pluto_export.json so this is easiest.
+                slider_server_url: source_url?.includes("cdn.jsdelivr.net/gh/JuliaPluto/featured") ? null : u(source_manifest?.slider_server_url),
+            })
 
     const author = author_info(entry.frontmatter)
 

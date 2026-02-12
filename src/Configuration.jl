@@ -192,6 +192,7 @@ const MATH_MODE_DEFAULT = nothing
 const STARTUP_FILE_DEFAULT = "no"
 const HISTORY_FILE_DEFAULT = "no"
 const HEAP_SIZE_HINT_DEFAULT = nothing
+const CPU_TARGET_DEFAULT = nothing
 
 function roughly_the_number_of_physical_cpu_cores()
     # https://gist.github.com/fonsp/738fe244719cae820245aa479e7b4a8d
@@ -242,6 +243,7 @@ These options will be passed as command line argument to newly launched processe
 - `startup_file::Union{Nothing,String} = "$STARTUP_FILE_DEFAULT"` By default, the startup file isn't loaded in notebooks.
 - `history_file::Union{Nothing,String} = "$HISTORY_FILE_DEFAULT"` By default, the history isn't loaded in notebooks.
 - `threads::Union{Nothing,String,Int} = default_number_of_threads()`
+- `cpu_target::Union{Nothing,String} = "$CPU_TARGET_DEFAULT"` By default, cpu_target is nothing which generates very specific (not portable) code.
 """
 @option mutable struct CompilerOptions
     compile::Union{Nothing,String} = COMPILE_DEFAULT
@@ -268,6 +270,7 @@ These options will be passed as command line argument to newly launched processe
     history_file::Union{Nothing,String} = HISTORY_FILE_DEFAULT
 
     threads::Union{Nothing,String,Int} = default_number_of_threads()
+    cpu_target::Union{Nothing, String} = CPU_TARGET_DEFAULT
 end
 
 """
@@ -331,6 +334,7 @@ function from_flat_kwargs(;
         startup_file::Union{Nothing,String} = STARTUP_FILE_DEFAULT,
         history_file::Union{Nothing,String} = HISTORY_FILE_DEFAULT,
         threads::Union{Nothing,String,Int} = default_number_of_threads(),
+        cpu_target::Union{Nothing,String} = CPU_TARGET_DEFAULT,
     )
     server = ServerOptions(;
         root_url,
@@ -384,6 +388,7 @@ function from_flat_kwargs(;
         startup_file,
         history_file,
         threads,
+        cpu_target,
     )
     return Options(; server, security, evaluation, compiler)
 end

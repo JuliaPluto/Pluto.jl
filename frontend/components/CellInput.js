@@ -68,8 +68,7 @@ import { t } from "../common/lang.js"
 
 export const ENABLE_CM_MIXED_PARSER = window.localStorage.getItem("ENABLE_CM_MIXED_PARSER") === "true"
 export const ENABLE_CM_SPELLCHECK = window.localStorage.getItem("ENABLE_CM_SPELLCHECK") === "true"
-export const ENABLE_CM_AUTOCOMPLETE_ON_TYPE =
-    (window.localStorage.getItem("ENABLE_CM_AUTOCOMPLETE_ON_TYPE") ?? (/Mac/.test(navigator.platform) ? "true" : "false")) === "true"
+export const ENABLE_CM_AUTOCOMPLETE_ON_TYPE = (window.localStorage.getItem("ENABLE_CM_AUTOCOMPLETE_ON_TYPE") ?? "true") === "true"
 
 if (ENABLE_CM_MIXED_PARSER) {
     console.log(`YOU ENABLED THE CODEMIRROR MIXED LANGUAGE PARSER
@@ -131,6 +130,10 @@ export const pluto_syntax_colors_javascript = HighlightStyle.define(common_style
 export const pluto_syntax_colors_python = HighlightStyle.define(common_style_tags, {
     all: { color: `var(--cm-color-editor-text)`, filter: `contrast(0.5)` },
     scope: pythonLanguage,
+})
+
+export const pluto_syntax_color_any = HighlightStyle.define(common_style_tags, {
+    all: { color: `var(--cm-color-editor-text)` },
 })
 
 export const pluto_syntax_colors_css = HighlightStyle.define(
@@ -362,7 +365,7 @@ export const CellInput = ({
             return true
         }
 
-        let select_autocomplete_command = autocomplete.completionKeymap.find((keybinding) => keybinding.key === "Enter")
+        let accept_autocomplete_command = autocomplete.completionKeymap.find((keybinding) => keybinding.key === "Enter")
         let keyMapTab = (/** @type {EditorView} */ cm) => {
             // I think this only gets called when we are not in an autocomplete situation, otherwise `tab_completion_command` is called. I think it only happens when you have a selection.
 
@@ -370,7 +373,7 @@ export const CellInput = ({
                 return false
             }
             // This will return true if the autocomplete select popup is open
-            if (select_autocomplete_command?.run?.(cm)) {
+            if (accept_autocomplete_command?.run?.(cm)) {
                 return true
             }
 
@@ -544,7 +547,7 @@ export const CellInput = ({
 
             if (update.docChanged || update.selectionSet) {
                 let state = update.state
-                DOCS_UPDATER_VERBOSE && console.groupCollapsed("Live docs updater")
+                DOCS_UPDATER_VERBOSE && console.groupCollapsed("Live docs updater from docChange or selectionSet")
                 try {
                     let result = get_selected_doc_from_state(state, DOCS_UPDATER_VERBOSE)
                     if (result != null) {
@@ -693,7 +696,7 @@ export const CellInput = ({
                         },
                         request_packages: () => pluto_actions.send("all_registered_package_names").then(({ message }) => message.results),
                         request_special_symbols: () => pluto_actions.send("complete_symbols").then(({ message }) => message),
-                        on_update_doc_query: on_update_doc_query,
+                        on_update_doc_query,
                         request_unsubmitted_global_definitions: () => pluto_actions.get_unsubmitted_global_definitions(),
                         cell_id,
                     }),
@@ -735,7 +738,7 @@ export const CellInput = ({
                         set_error(exception)
                         console.error("EditorView exception!", exception)
                         // alert(
-                        //     `We ran into an issue! We have lost your cursor 😞😓😿\n If this appears again, please press F12, then click the "Console" tab,  eport an issue at https://github.com/fonsp/Pluto.jl/issues`
+                        //     `We ran into an issue! We have lost your cursor 😞😓😿\n If this appears again, please press F12, then click the "Console" tab,  eport an issue at https://github.com/JuliaPluto/Pluto.jl/issues`
                         // )
                     }),
                 ],

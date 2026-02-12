@@ -3,7 +3,7 @@ module PkgUtils
 import FileWatching
 import Pkg
 import ..Pluto
-import ..Pluto: Notebook, save_notebook, load_notebook, load_notebook_nobackup, withtoken, Token, readwrite, PkgCompat
+import ..Pluto: Notebook, save_notebook, load_notebook, load_notebook_nobackup, withtoken, Token, readwrite, PkgCompat, WorkspaceManager
 import ..Pluto.PkgCompat: project_file, manifest_file
 
 using Markdown
@@ -96,11 +96,13 @@ update_notebook_environment(notebook_path::String; backup::Bool=true, level::Pkg
 Call `Pkg.update` in the package environment embedded in a notebook file, modifying the notebook file. A [`Pkg.UpgradeLevel`](@ref) can be passed to the `level` keyword argument. A backup file is created by default. 
 """
 function update_notebook_environment(path::String; kwargs...)
-    Pluto.update_nbpkg(
-        Pluto.ServerSession(),
-        load_notebook_nobackup(path);
-        kwargs...
-    )
+    session = Pluto.ServerSession()
+    notebook = load_notebook_nobackup(path)
+    try
+        Pluto.update_nbpkg(session, notebook; kwargs...)
+    finally
+        WorkspaceManager.unmake_workspace((session, notebook))
+    end
 end
 
 """
@@ -308,7 +310,7 @@ const activate_notebook = activate_notebook_environment
 function testnb(name="simple_stdlib_import.jl")
     t = tempname()
 
-    readwrite(Pluto.project_relative_path("test", "packages", name), t)
+    readwrite(Pluto.project_relative_path("test", "packages", "fixtures", name), t)
     t
 end
 

@@ -37,7 +37,7 @@ export const ProgressBar = ({ notebook, backend_launch_phase, status }) => {
     let cell_progress = recently_running.length === 0 ? 0 : 1 - Math.max(0, currently_running.length - 0.3) / recently_running.length
 
     let binder_loading = status.loading && status.binder
-    let progress = binder_loading ? backend_launch_phase ?? 0 : cell_progress
+    let progress = binder_loading ? (backend_launch_phase ?? 0) : cell_progress
 
     const anything = (binder_loading || recently_running.length !== 0) && progress !== 1
     // Double inversion with ! to short-circuit the true, not the false

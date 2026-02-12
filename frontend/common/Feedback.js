@@ -72,7 +72,7 @@ export const init_feedback = async () => {
                     feedbackform.querySelector("#opinion").value = ""
                 } catch (error) {
                     let message =
-                        "Whoops, failed to send feedback 😢\nWe would really like to hear from you! Please got to https://github.com/fonsp/Pluto.jl/issues to report this failure:\n\n"
+                        "Whoops, failed to send feedback 😢\nWe would really like to hear from you! Please got to https://github.com/JuliaPluto/Pluto.jl/issues to report this failure:\n\n"
                     console.error(message)
                     console.error(error)
                     alert(message + error)

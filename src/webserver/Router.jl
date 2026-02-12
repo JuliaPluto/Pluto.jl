@@ -11,6 +11,7 @@ function http_router_for(session::ServerSession)
     HTTP.register!(router, "GET", "/edit", create_serve_onefile(project_relative_path(frontend_directory(), "editor.html")))
 
     HTTP.register!(router, "GET", "/ping", r -> HTTP.Response(200, "OK!"))
+    HTTP.register!(router, "GET", "/auth-check", r -> HTTP.Response(200, "OK!"))
     HTTP.register!(router, "GET", "/possible_binder_token_please", r -> session.binder_token === nothing ? HTTP.Response(200,"") : HTTP.Response(200, session.binder_token))
     
     function try_launch_notebook_response(
@@ -43,8 +44,8 @@ function http_router_for(session::ServerSession)
         try
             uri = HTTP.URI(request.target)
             query = HTTP.queryparams(uri)
-            as_sample = haskey(query, "as_sample")
-            execution_allowed = haskey(query, "execution_allowed")
+            as_sample = istruthyquery(query, "as_sample")
+            execution_allowed = istruthyquery(query, "execution_allowed")
             if haskey(query, "path")
                 path = tamepath(maybe_convert_path_to_wsl(query["path"]))
                 if isfile(path)
@@ -55,7 +56,7 @@ function http_router_for(session::ServerSession)
                         as_sample, 
                         risky_file_source=nothing,
                         title="Failed to load notebook", 
-                        advice="The file <code>$(htmlesc(path))</code> could not be loaded. Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!",
+                        advice="The file <code>$(htmlesc(path))</code> could not be loaded. Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!",
                     )
                 else
                     return error_response(404, "Can't find a file here", "Please check whether <code>$(htmlesc(path))</code> exists.")
@@ -69,7 +70,7 @@ function http_router_for(session::ServerSession)
                     as_sample, 
                     risky_file_source=url,
                     title="Failed to load notebook", 
-                    advice="The notebook from <code>$(htmlesc(url))</code> could not be loaded. Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!"
+                    advice="The notebook from <code>$(htmlesc(url))</code> could not be loaded. Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!"
                 )
             else
                 # You can ask Pluto to handle CustomLaunch events
@@ -82,7 +83,7 @@ function http_router_for(session::ServerSession)
                 return maybe_notebook_response
             end
         catch e
-            return error_response(400, "Bad query", "Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
+            return error_response(400, "Bad query", "Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
         end
     end
 
@@ -114,7 +115,7 @@ function http_router_for(session::ServerSession)
             SessionActions.move(session, notebook, newpath)
             HTTP.Response(200, notebook.path)
         catch e
-            error_response(400, "Bad query", "Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
+            error_response(400, "Bad query", "Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
         end
     end
 
@@ -140,13 +141,13 @@ function http_router_for(session::ServerSession)
             home_url="../", 
             as_sample=true, 
             title="Failed to load sample", 
-            advice="Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!"
+            advice="Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!"
         )
     end
     HTTP.register!(router, "GET", "/sample/*", serve_sample)
     HTTP.register!(router, "POST","/sample/*", serve_sample)
 
-    notebook_from_uri(request) = let
+    function notebook_from_uri(request)
         uri = HTTP.URI(request.target)        
         query = HTTP.queryparams(uri)
         id = UUID(query["id"])
@@ -160,7 +161,7 @@ function http_router_for(session::ServerSession)
             HTTP.setheader(response, "Content-Disposition" => "inline; filename=\"$(basename(notebook.path))\"")
             response
         catch e
-            return error_response(400, "Bad query", "Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
+            return error_response(400, "Bad query", "Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
         end
     end
     HTTP.register!(router, "GET", "/notebookfile", serve_notebookfile)
@@ -173,7 +174,7 @@ function http_router_for(session::ServerSession)
             HTTP.setheader(response, "Content-Disposition" => "attachment; filename=\"$(without_pluto_file_extension(basename(notebook.path))).plutostate\"")
             response
         catch e
-            return error_response(400, "Bad query", "Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
+            return error_response(400, "Bad query", "Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
         end
     end
     HTTP.register!(router, "GET", "/statefile", serve_statefile)
@@ -181,12 +182,13 @@ function http_router_for(session::ServerSession)
     function serve_notebookexport(request::HTTP.Request)
         try
             notebook = notebook_from_uri(request)
-            response = HTTP.Response(200, generate_html(notebook))
+            offline_bundle = istruthyquery(request, "offline_bundle")
+            response = HTTP.Response(200, generate_html(notebook; offline_bundle))
             HTTP.setheader(response, "Content-Type" => "text/html; charset=utf-8")
             HTTP.setheader(response, "Content-Disposition" => "attachment; filename=\"$(without_pluto_file_extension(basename(notebook.path))).html\"")
             response
         catch e
-            return error_response(400, "Bad query", "Please <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
+            return error_response(400, "Bad query", "Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!", sprint(showerror, e, stacktrace(catch_backtrace())))
         end
     end
     HTTP.register!(router, "GET", "/notebookexport", serve_notebookexport)
@@ -202,10 +204,10 @@ function http_router_for(session::ServerSession)
             save_path;
             as_redirect=false,
             as_sample=false,
-            execution_allowed=haskey(query, "execution_allowed"),
-            clear_frontmatter=haskey(query, "clear_frontmatter"),
+            execution_allowed=istruthyquery(query, "execution_allowed"),
+            clear_frontmatter=istruthyquery(query, "clear_frontmatter"),
             title="Failed to load notebook",
-            advice="The contents could not be read as a Pluto notebook file. When copying contents from somewhere else, make sure that you copy the entire notebook file.  You can also <a href='https://github.com/fonsp/Pluto.jl/issues'>report this error</a>!"
+            advice="The contents could not be read as a Pluto notebook file. When copying contents from somewhere else, make sure that you copy the entire notebook file.  You can also <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!"
         )
     end
     HTTP.register!(router, "POST", "/notebookupload", serve_notebookupload)
@@ -222,6 +224,16 @@ function http_router_for(session::ServerSession)
     return scoped_router(session.options.server.base_url, router)
 end
 
+function istruthyquery(query::Dict, key::String)
+	val = get(query, key, nothing)
+	if val === nothing
+		false
+	else
+		lowercase(val) ∉ ("false", "0")
+	end
+end
+istruthyquery(url::String, key::String) = istruthyquery(HTTP.queryparams(HTTP.URI(url)), key)
+istruthyquery(request::HTTP.Request, key::String) = istruthyquery(request.target, key)
 
 
 """

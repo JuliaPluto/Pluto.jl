@@ -113,6 +113,7 @@ end
         ("", "GET"),
         ("edit?id=$(notebook.notebook_id)", "GET"),
         ("editor.html", "GET"),
+        ("auth-check", "GET"),
         ("notebookfile?id=$(notebook.notebook_id)", "GET"),
         ("notebookexport?id=$(notebook.notebook_id)", "GET"),
         ("statefile?id=$(notebook.notebook_id)", "GET"),

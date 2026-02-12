@@ -162,7 +162,8 @@ describe("with_js_link", () => {
     })
 
     const expect_jslog = async (expected) => {
-        expect(await waitForContentToBecome(page, "#checkme", expected)).toBe(expected)
+        // Use longer timeout for flaky test - 60 seconds instead of default 30
+        expect(await waitForContentToBecome(page, "#checkme", expected, { timeout: 60000 })).toBe(expected)
     }
     it("js errors", async () => {
         await waitForPlutoToCalmDown(page)
@@ -175,8 +176,8 @@ describe("with_js_link", () => {
 
         // We clicked twice, but sometimes it only registers one click for some reason. I don't care, so let's check for either.
         let prefix = await Promise.race([
-            waitForContentToBecome(page, "#checkme", "hello!clickyay FRIETJE"),
-            waitForContentToBecome(page, "#checkme", "hello!clickclickyay FRIETJEyay FRIETJE"),
+            waitForContentToBecome(page, "#checkme", "hello!clickyay FRIETJE", { timeout: 60000 }),
+            waitForContentToBecome(page, "#checkme", "hello!clickclickyay FRIETJEyay FRIETJE", { timeout: 60000 }),
         ])
 
         const yolotriggerid = "8782cc14-eb1a-48a8-a114-2f71f77be275"

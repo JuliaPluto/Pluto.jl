@@ -32,10 +32,14 @@ Base.@kwdef mutable struct Notebook
     "Cells are ordered in a `Notebook`, and this order can be changed by the user. Cells will always have a constant UUID."
     cells_dict::Dict{UUID,Cell}
     cell_order::Vector{UUID}
+    # cells::Vector{Cell} – you can also use the `.cells` property to get all cells as a vector. This is defined later using a `Base.getproperty` method.
 
     path::String
     notebook_id::UUID=uuid1()
+    # the reactivity information of this notebook
     topology::NotebookTopology
+    
+    # caches used to speed up some operations
     _cached_topological_order::TopologicalOrder
     _cached_cell_dependencies::Dict{UUID,Dict{String,Any}}=Dict{UUID,Dict{String,Any}}()
     _cached_cell_dependencies_source::Union{Nothing,NotebookTopology}=nothing
@@ -50,8 +54,9 @@ Base.@kwdef mutable struct Notebook
     # per notebook compiler options
     # nothing means to use global session compiler options
     compiler_options::Union{Nothing,Configuration.CompilerOptions}=nothing
-    nbpkg_ctx::Union{Nothing,PkgContext}=nothing
-    # nbpkg_ctx::Union{Nothing,PkgContext}=PkgCompat.create_empty_ctx()
+    
+    # package environment management
+    nbpkg_ctx::Union{Nothing,PkgContext}=nothing # nothing means that the notebook is not (yet) using Pluto's automatic package manager.
     nbpkg_ctx_instantiated::Bool=false
     nbpkg_restart_recommended_msg::Union{Nothing,String}=nothing
     nbpkg_restart_required_msg::Union{Nothing,String}=nothing

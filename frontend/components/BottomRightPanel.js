@@ -180,13 +180,13 @@ export let BottomRightPanel = ({
                           sanitize_html=${sanitize_html}
                       />`
                     : open_tab === "process"
-                    ? html`<${StatusTab}
-                          notebook=${notebook}
-                          backend_launch_logs=${backend_launch_logs}
-                          my_clock_is_ahead_by=${my_clock_is_ahead_by}
-                          status=${status}
-                      />`
-                    : null}
+                      ? html`<${StatusTab}
+                            notebook=${notebook}
+                            backend_launch_logs=${backend_launch_logs}
+                            my_clock_is_ahead_by=${my_clock_is_ahead_by}
+                            status=${status}
+                        />`
+                      : null}
             </pluto-helpbox>
         </aside>
     `

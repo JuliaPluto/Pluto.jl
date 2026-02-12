@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.41
+# v0.20.21
 
 #> [frontmatter]
 #> license_url = "https://github.com/JuliaPluto/featured/blob/2a6a9664e5428b37abe4957c1dca0994f4a8b7fd/LICENSES/Unlicense"
@@ -18,12 +18,14 @@ using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
-    quote
+    #! format: off
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ 571613a1-6b4b-496d-9a68-aac3f6a83a4b
@@ -157,13 +159,6 @@ md"""
 	<p> Hello $(who)!</p>
 	""")
 
-# ╔═╡ e7d3db79-8253-4cbd-9832-5afb7dff0abf
-cool_features = [
-	md"Interpolate any **HTML-showable object**, such as plots and images, or another `@htl` literal."
-	md"Interpolated lists are expanded _(like in this cell!)_."
-	"Easy syntax for CSS"
-	]
-
 # ╔═╡ bf592202-a9a4-4e9b-8433-fed55e3aa3bc
 @htl("""
 	<p>It has a bunch of very cool features! Including:</p>
@@ -174,6 +169,13 @@ cool_features = [
 		for item in cool_features
 	])</ul>
 	""")
+
+# ╔═╡ e7d3db79-8253-4cbd-9832-5afb7dff0abf
+cool_features = [
+	md"Interpolate any **HTML-showable object**, such as plots and images, or another `@htl` literal."
+	md"Interpolated lists are expanded _(like in this cell!)_."
+	"Easy syntax for CSS"
+	]
 
 # ╔═╡ 5ac5b984-8c02-4b8d-a342-d0f05f7909ec
 md"""
@@ -508,16 +510,6 @@ md"""
 (Though using `HypertextLiteral.jl` would make more sense for this purpose.)
 """
 
-# ╔═╡ fc8984c8-4668-418a-b258-a1718809470c
-
-
-# ╔═╡ 846354c8-ba3b-4be7-926c-d3c9cc9add5f
-films = [
-	(title="Frances Ha", director="Noah Baumbach", year=2012),
-	(title="Portrait de la jeune fille en feu", director="Céline Sciamma", year=2019),
-	(title="De noorderlingen", director="Alex van Warmerdam", year=1992),
-];
-
 # ╔═╡ c857bb4b-4cf4-426e-b340-592cf7700434
 @htl("""
 	<script>
@@ -541,6 +533,16 @@ films = [
 	
 	</script>
 	""")
+
+# ╔═╡ fc8984c8-4668-418a-b258-a1718809470c
+
+
+# ╔═╡ 846354c8-ba3b-4be7-926c-d3c9cc9add5f
+films = [
+	(title="Frances Ha", director="Noah Baumbach", year=2012),
+	(title="Portrait de la jeune fille en feu", director="Céline Sciamma", year=2019),
+	(title="De noorderlingen", director="Alex van Warmerdam", year=1992),
+];
 
 # ╔═╡ a33c7d7a-8071-448e-abd6-4e38b5444a3a
 md"""
@@ -650,11 +652,6 @@ Modify `x`, add and remove elements, and notice that preact maintains its state.
 # ╔═╡ 85483b28-341e-4ed6-bb1e-66c33613725e
 x = ["hello pluton!", 232000,2,2,12 ,12,2,21,1,2, 120000]
 
-# ╔═╡ 3266f9e6-42ad-4103-8db3-b87d2c315290
-state = Dict(
-	:x => x
-	)
-
 # ╔═╡ 9e37c18c-3ebb-443a-9663-bb4064391d6e
 @htl("""
 <script id="asdf">
@@ -713,6 +710,11 @@ state = Dict(
 	
 	
 """)
+
+# ╔═╡ 3266f9e6-42ad-4103-8db3-b87d2c315290
+state = Dict(
+	:x => x
+	)
 
 # ╔═╡ 7d9d6c28-131a-4b2a-84f8-5c085f387e85
 md"""
@@ -1036,7 +1038,7 @@ version = "0.11.4"
 [[CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.1+0"
 
 [[Dates]]
 deps = ["Printf"]
@@ -1146,7 +1148,7 @@ version = "1.2.0"
 [[OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1258,7 +1260,7 @@ version = "1.2.13+1"
 [[libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+1"
+version = "5.11.0+0"
 
 [[nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]

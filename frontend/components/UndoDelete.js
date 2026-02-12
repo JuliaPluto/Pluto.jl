@@ -10,9 +10,12 @@ export const UndoDelete = ({ recently_deleted, on_click }) => {
     useEffect(() => {
         if (recently_deleted != null && recently_deleted.length > 0) {
             set_hidden(false)
-            const interval = setTimeout(() => {
-                set_hidden(true)
-            }, 8000 * Math.pow(recently_deleted.length, 1 / 3))
+            const interval = setTimeout(
+                () => {
+                    set_hidden(true)
+                },
+                8000 * Math.pow(recently_deleted.length, 1 / 3)
+            )
 
             return () => {
                 clearTimeout(interval)

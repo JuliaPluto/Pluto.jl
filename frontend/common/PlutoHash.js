@@ -10,7 +10,7 @@ export const base64_arraybuffer = async (/** @type {BufferSource} */ data) => {
         reader.readAsDataURL(new Blob([data]))
     })
 
-    return base64url.substring(base64url.indexOf(',')+1)
+    return base64url.substring(base64url.indexOf(",") + 1)
 }
 
 /** Encode a buffer using the `base64url` encoding, which uses URL-safe special characters, see https://en.wikipedia.org/wiki/Base64#Variants_summary_table */

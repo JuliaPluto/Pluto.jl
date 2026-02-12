@@ -38,6 +38,13 @@
         --frontmatter-input-bg-color: #fbfbfb;
         --frontmatter-input-border-color: hsl(207deg 24% 87%);
 
+        /* PlutoLand upload styling */
+        --plutoland-bg-color: white;
+        --plutoland-bigbutton-bg-color: white;
+        --plutoland-url-fg: #375bbd;
+        --plutoland-url-bg: #f7fbff;
+        --plutoland-or-bg-color: hsl(210 20% 83% / 1);
+
         /*Pluto output styling */
         --pluto-schema-types-color: rgba(0, 0, 0, 0.4);
         --pluto-schema-types-border-color: rgba(0, 0, 0, 0.2);
@@ -127,10 +134,12 @@
         /* ai features */
         --ai-gradient-bg: linear-gradient(20deg, #f9ecff, #fff4f2);
         --ai-prompt-bg: #fbffff;
+
         /*Pkg status*/
         --pkg-popup-bg: white;
         --pkg-popup-border-color: #f0e4ee;
         --pkg-popup-buttons-bg-color: white;
+        --pkg-version-color: #666;
         --black: black;
         --white: white;
         --pkg-terminal-bg-color: #232433;

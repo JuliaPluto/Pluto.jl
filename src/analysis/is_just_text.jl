@@ -5,9 +5,13 @@ const md_and_friends = [
 	:getindex,
 ]
 
-"""Does the cell only contain md"..." and html"..."?
+"""
+Does the cell only contain md"..." and html"..."?
 
-This is used to run these cells first."""
+This means that these cells can run:
+- in "Safe Preview" mode
+- server-side (while waiting for the notebook process to start)
+"""
 function is_just_text(topology::NotebookTopology, cell::Cell)::Bool
 	# https://github.com/fonsp/Pluto.jl/issues/209
         node = topology.nodes[cell]

@@ -23,7 +23,7 @@ jobs:
 
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-            - uses: actions/checkout@v5
+            - uses: actions/checkout@v6
 
             # Makes thes `julia` command available
             - uses: julia-actions/setup-julia@v2
@@ -38,7 +38,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: "18.x"
+                  node-version: "22.x"
 
             - name: Install dependencies
               working-directory: ./test/frontend
@@ -65,7 +65,7 @@ jobs:
                   PLUTO_PORT: 1235
                   PLUTO_TEST_OFFLINE: ${{ github.ref_name == 'release' }}
 
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v5
               if: failure()
               with:
                   name: test-screenshot-artifacts

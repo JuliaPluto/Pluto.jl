@@ -25,9 +25,9 @@ const VERBOSE = false
  *  usage: Range,
  *  definition: Range | null,
  *  name: string,
- * }>} usages
- * @property {Map<String, Definition>} definitions
- * @property {Array<{ definition: Range, validity: Range, name: string }>} locals
+ * }>} usages Any variable use, global or local.
+ * @property {Map<String, Definition>} definitions All global variable definitions.
+ * @property {Array<{ definition: Range, validity: Range, name: string }>} locals All local variable definitions, with the range where they are valid.
  */
 
 const r = (cursor) => ({ from: cursor.from, to: cursor.to })
@@ -120,19 +120,82 @@ const cursor_not_moved_checker = (cursor) => {
     }
 }
 
-const i_am_nth_child = (cursor) => {
+/** Return the number of siblings that appear before the cursor (i.e. the index of the cursor node among its siblings, starting at 0), and the name of the parent node. */
+const parent_name_and_child_index = (cursor) => {
     const map = new NodeWeakMap()
     map.cursorSet(cursor, "here")
-    if (!cursor.parent()) throw new Error("Cannot be toplevel")
-    cursor.firstChild()
-    let i = 0
+    if (!cursor.parent()) return { parent_name: null, index: -1 }
+    const parent_name = cursor.name
+    if (!cursor.firstChild()) throw new Error("Could not find my way back")
+    let index = 0
     while (map.cursorGet(cursor) !== "here") {
-        i++
+        index++
         if (!cursor.nextSibling()) {
             throw new Error("Could not find my way back")
         }
     }
-    return i
+    return { parent_name, index }
+}
+
+/**
+ * Extract defined variable names from an import/using statement.
+ * Written by 🤖
+ * @param {TreeCursor} cursor
+ * @param {Text} doc
+ * @returns {Range[]}
+ */
+const explore_import_statement = (cursor, doc) => {
+    const a = cursor_not_moved_checker(cursor)
+    let found = []
+
+    // Get the last identifier in an ImportPath
+    const get_last_identifier_in_import_path = (cursor) => {
+        // ImportPath contains: dots, Identifiers separated by dots
+        // We want the last Identifier
+        let lastIdentifier = null
+        if (cursor.firstChild()) {
+            do {
+                if (cursor.name === "Identifier") {
+                    lastIdentifier = r(cursor)
+                }
+            } while (cursor.nextSibling())
+            cursor.parent()
+        }
+        return lastIdentifier
+    }
+
+    if (cursor.firstChild()) {
+        // Skip the 'import' or 'using' keyword
+        while (cursor.nextSibling()) {
+            if (cursor.name === "SelectedImport") {
+                // `import Pluto: wow, bar` or `using Pluto: wow, bar`
+                // Only items after `:` define variables
+                let sawColon = false
+                if (cursor.firstChild()) {
+                    do {
+                        // @ts-ignore
+                        if (cursor.name === ":") {
+                            sawColon = true
+                            // @ts-ignore
+                        } else if (sawColon && cursor.name === "ImportPath") {
+                            const id = get_last_identifier_in_import_path(cursor)
+                            if (id) found.push(id)
+                        }
+                    } while (cursor.nextSibling())
+                    cursor.parent()
+                }
+            } else if (cursor.name === "ImportPath") {
+                // `import Pluto` or `import Pluto.wow`
+                // The last identifier is the defined variable
+                const id = get_last_identifier_in_import_path(cursor)
+                if (id) found.push(id)
+            }
+        }
+        cursor.parent()
+    }
+
+    a()
+    return found
 }
 
 /**
@@ -238,9 +301,18 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             cursor.name === "QuoteStatement" ||
             cursor.name === "QuoteExpression" ||
             cursor.name === "MacroIdentifier" ||
-            cursor.name === "ImportStatement" ||
-            cursor.name === "UsingStatement"
+            cursor.name === "Symbol"
         ) {
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle import/using statements - they always define global variables, regardless of local scope
+        if (cursor.name === "ImportStatement" || cursor.name === "UsingStatement") {
+            explore_import_statement(cursor, doc).forEach((range) => {
+                const name = doc.sliceString(range.from, range.to)
+                definitions.set(name, { ...range, valid_from: range.from })
+            })
             if (verbose) console.groupEnd()
             return false
         }
@@ -253,7 +325,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                     ...range,
                     valid_from: range.from,
                 })
-            else locals.push({ name, validity: _.last(local_scope_stack), definition: range })
+            else locals.push({ name, validity: /** @type{Range} */ (_.last(local_scope_stack)), definition: range })
         }
 
         if (does_this_create_scope(cursor)) {
@@ -261,6 +333,13 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
         }
 
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
+            if (cursor.matchContext(["KwArg"])) {
+                const { parent_name, index } = parent_name_and_child_index(cursor)
+                if (parent_name === "KwArg" && index === 0) {
+                    if (verbose) console.groupEnd()
+                    return false
+                }
+            }
             const name = doc.sliceString(cursor.from, cursor.to)
             usages.push({
                 name: name,
@@ -270,7 +349,7 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 },
                 definition: find_local_definition(locals, name, cursor) ?? null,
             })
-        } else if (cursor.name === "Assignment" || cursor.name === "KwArg" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
+        } else if (cursor.name === "Assignment" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
             if (cursor.firstChild()) {
                 // @ts-ignore
                 if (cursor.name === "catch") cursor.nextSibling()
@@ -291,7 +370,10 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             if (verbose) console.groupEnd()
             return false
         } else if (cursor.name === "CallExpression") {
-            if (cursor.matchContext(["FunctionDefinition", "Signature"]) || (cursor.matchContext(["Assignment"]) && i_am_nth_child(cursor) === 0)) {
+            if (
+                cursor.matchContext(["FunctionDefinition", "Signature"]) ||
+                (cursor.matchContext(["Assignment"]) && parent_name_and_child_index(cursor).index === 0)
+            ) {
                 const pos_resetter = back_to_parent_resetter(cursor)
 
                 cursor.firstChild() // Now we should have the function name

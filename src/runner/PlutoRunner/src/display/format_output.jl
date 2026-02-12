@@ -2,7 +2,7 @@
 
 # This is not a struct to make it easier to pass these objects between processes.
 const MimedOutput = Tuple{Union{String,Vector{UInt8},Dict{Symbol,Any}},MIME}
-const ObjectDimPair = Tuple{ObjectID,Int64}
+const ObjectDimPair = Tuple{ObjectID,Int64} # this is Int64 on 32 bit computers as well
 
 const tree_display_limit = 30
 const tree_display_limit_increase = 40
@@ -11,7 +11,7 @@ const table_row_display_limit_increase = 60
 const table_column_display_limit = 8
 const table_column_display_limit_increase = 30
 
-const tree_display_extra_items = Dict{UUID,Dict{ObjectDimPair,Int64}}()
+const tree_display_extra_items = Dict{UUID,Dict{ObjectDimPair,Int64}}() # this is Int64 on 32 bit computers as well
 
 # This is not a struct to make it easier to pass these objects between processes.
 const FormattedCellResult = NamedTuple{(:output_formatted, :errored, :interrupted, :process_exited, :runtime, :published_objects, :has_pluto_hook_features),Tuple{PlutoRunner.MimedOutput,Bool,Bool,Bool,Union{UInt64,Nothing},Dict{String,Any},Bool}}
@@ -93,7 +93,7 @@ function format_output_default(@nospecialize(val), @nospecialize(context=default
         end
     catch ex
         title = ErrorException("Failed to show value: \n" * sprint(try_showerror, ex))
-        bt = stacktrace(catch_backtrace())
+        bt = catch_backtrace()
         format_output(CapturedException(title, bt))
     end
 end

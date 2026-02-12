@@ -181,3 +181,34 @@ const argmin = (x) => {
 }
 
 const last = (x) => x[x.length - 1]
+
+export const get_drop_index_for_paste = (/** @type {HTMLElement} */ pluto_editor_element) => {
+    /** @type {HTMLElement[]} */
+    const cell_nodes = Array.from(pluto_editor_element.querySelectorAll(":scope > main > pluto-notebook > pluto-cell"))
+
+    if (cell_nodes.length === 0) {
+        return 0
+    }
+
+    const last_cell = cell_nodes[cell_nodes.length - 1]
+    const cell_edges = cell_nodes.map((el) => el.offsetTop)
+    cell_edges.push(last_cell.offsetTop + last_cell.scrollHeight)
+
+    const main_element = pluto_editor_element.querySelector("main") ?? pluto_editor_element
+    const main_top = main_element.getBoundingClientRect().top + document.documentElement.scrollTop
+    const viewport_height = window.innerHeight ?? document.documentElement.clientHeight ?? 0
+    const middle_of_viewport = document.documentElement.scrollTop + viewport_height / 2
+    const editorY = middle_of_viewport - main_top
+
+    let best_index = 0
+    let best_distance = Infinity
+    for (let i = 0; i < cell_edges.length; i++) {
+        const distance = Math.abs(cell_edges[i] - editorY - 8)
+        if (distance < best_distance) {
+            best_distance = distance
+            best_index = i
+        }
+    }
+
+    return best_index
+}

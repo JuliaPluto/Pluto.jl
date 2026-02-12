@@ -10,6 +10,7 @@ import { Featured } from "./Featured.js"
 import { get_environment } from "../../common/Environment.js"
 import default_featured_sources from "../../featured_sources.js"
 import { t, th } from "../../common/lang.js"
+import { add_block_screen_text_listener } from "../DesktopInterface.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../../common/Environment.js"
@@ -92,6 +93,12 @@ export const Welcome = ({ launch_params }) => {
             // to start JIT'ting
             client.send("current_time")
             client.send("completepath", { query: "" }, {})
+        })
+    }, [])
+
+    useEffect(() => {
+        add_block_screen_text_listener((/** @type string */ block_screen_text) => {
+            set_block_screen_with_this_text(block_screen_text)
         })
     }, [])
 

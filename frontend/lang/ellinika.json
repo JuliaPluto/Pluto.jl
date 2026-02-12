@@ -1,38 +1,36 @@
 {
-
     "t_language_name": "Ελληνικά",
-    
     "t_my_work": "Οι σημειώσεις μου",
-    "t_newnotebook": "Δημιουργία <strong>νέου σημειματαρίου</strong>",
+    "t_newnotebook": "Δημιουργία <strong>νέου σημειωματαρίου</strong>",
     "t_welcome_to_pluto": "Καλώς ήλθατε στο {{pluto}}",
-    "t_confirmdeletencells": "Είστε σίγουροι ότι θέλετε να διαγράψετε {{count}} κύτταρα;",
     "t_FORGET": "ΑΦΑΙΡΕΣΗ",
-
     "t_live_docs_search_placeholder": "Αναζήτηση Τεκμηρίωσης...",
     "t_live_docs_body": "<p>Καλώς ήλθατε στην <b>Ζωντανή Τεκμηρίωση</b>! Κρατήστε αυτό το μικρό παράθυρο ανοιχτό καθώς δουλεύετε, και θα σας δείχνει την τεκμηρίωση για ό,τι δακτυλογραφείτε!</p><p>Μπορείτε επίσης να ρωτήσετε.</p><hr><p><em>Ακόμη; Ορίστε <a target=\"_blank\" href=\"https://julialang.org/about/help/\">μερικές ιδέες</a>.</em></p>",
     "t_panel_status": "Κατάσταση διεργασίας",
     "t_panel_status_short": "Κατάσταση",
     "t_panel_docs": "Ζωντανή τεκμηρίωση",
+    "t_panel_docs_description": "Ζωντανή τεκμηρίωση: Αναζητήστε την τεκμηρίωση της Julia και δείτε ζωντανά την τεκμηρίωση για ό,τι δακτυλογραφείτε.",
     "t_panel_status_progress": "Κατάσταση {{progress}}",
     "t_panel_status_progress_inner": "({{done}}/{{total}})",
     "t_panel_close": "Κλείσιμο πλαισίου",
     "t_panel_popout": "Ξεπροβάλλετε το πλαίσιο",
-
-
     "t_stop_notebook_session": "Κλείσιμο συνεδρίας",
-    "t_shut_down_notebook": "Απενεργοποίηση σημειματαρίου",
+    "t_shut_down_notebook": "Απενεργοποίηση σημειωματαρίου",
     "t_start_notebook_in_background": "Ξεκινήστε ένα νέο σημειωματάριο στο παρασκήνιο",
-    "t_remove_from_recent_notebooks": "Αφαίερση από τα πρόσφατα. Αυτό δεν θα διαγράψει το αρχείο του σημειματαρίου.",
+    "t_remove_from_recent_notebooks": "Αφαίερση από τα πρόσφατα. Αυτό δεν θα διαγράψει το αρχείο του σημειωματαρίου.",
     "t_loading_something": "Φόρτωση {{text}}...",
-    "t_open_a_notebook_action": "Άνοιγμα σημειματαρίου",
+    "t_loading_something_notebook_from_clipboard": "σημειωματάριο από το πρόχειρο",
+    "t_loading_something_new_notebook": "νέο σημειωματάριο",
+    "t_open_a_notebook_action": "Άνοιγμα σημειωματαρίου",
     "t_enter_path_or_url": "Εισάγετε διαδρομή αρχείου ή διαδικτύου URL...",
     "t_open_file_action": "Άνοιγμα αρχείου",
     "t_open_action": "Άνοιγμα",
     "t_open_from_url_action": "Άνοιγμα από URL",
     "t_close_notebook_session": "Κλείσιμο συνεδρίας;",
-    "t_shut_down_notebook_process": "Κλείσιμο διεργασίας σημειματαρίου;",
+    "t_shut_down_notebook_process": "Κλείσιμο διεργασίας σημειωματαρίου;",
     "t_loading_ellipses": "Φορτώνει...",
     "t_notebooks": "Σημειωματάρια",
+    "t_cell_input_placeholder": "Εισαγάγετε τον κυτταρικό κώδικα...",
     "t_add_cell": "Προσθήκη κελιού ({{key}})",
     "t_drag_to_move_cell": "Σύρετε για να μετακινήσετε το κύτταρο",
     "t_show_hide_code": "Εμφάνιση/απόκρυψη κώδικα",
@@ -40,9 +38,8 @@
     "t_cell_indirectly_disabled_in_file_tooltip": "Αυτό το κύτταρο έχει νοηθεί ως απενεργοποιημένο επειδή εξαρτάται από κάποιο άλλο απενεργοποιημένο κύτταρο. Πατήστε για να μάθετε περισσότερα!",
     "t_cell_disabled_in_file_explanation": "Αυτό το κύτταρο έχει αποθηκευτεί στο αρχείο ως <em>σχόλιο</em> julia, ανγί για <em>κώδικας</em>.<br />Έτσι, δεν θα τρέξει όταν το αρχείο εκτελεστεί εκτός του Pluto, ως script.<br />Χρησιμοποιήστε το μενού για να το ενεργοποιήσετε ξανά",
     "t_cell_indirectly_disabled_in_file_explanation": "Αυτό το κύτταρο έχει αποθηκευτεί στο αρχείο ως <em>σχόλιο</em> julia, ανγί για <em>κώδικας</em>.<br />Έτσι, δεν θα τρέξει όταν το αρχείο εκτελεστεί εκτός του Pluto, ως script.<br />Ένα κύτταρο από το οποίο αυτό εξαρτάται είναι απενεργοποιημένο, με αποτέλεσμα αυτό να απενεργοποιείται <b>εμμέσως</b> <em> στο αρχείο</em>; ενεργοποιήστε {{upstreamLink}} για να ενεργοποιηθεί και αυτό το κύτταρο.",
-    "t_language_picker_description": "",
+    "t_language_picker_description": "Αλλαγή της γλώσσας της διεπαφής",
     "t_refresh_to_see_language_change_confirm": "Η γλώσσα άλλαξε! Θέλετε να ανανεώσετε τη σελίδα για να δείτε τις αλλαγές;",
-    
     "t_anonymous_function_abbr": "Μια (μίνι-)συνάρτηση που ορίζεται χωρίς τη λέξη-κλειδί 'function', αλλά χρησιμοποιώντας '->' ή 'do'.",
     "t_display_complete_type_information_of_this_function_call": "Εμφάνιση όλων των πληροφοριών τύπου για αυτή την κλήση συνάρτησης",
     "t_multiple_expressions_in_one_cell": "Πολλαπλές εκφράσεις σε ένα κύτταρο",
@@ -51,13 +48,17 @@
     "t_wrap_all_code_in_a_begin_end_block": "Τύλιγμα όλου του κώδικα σε μπλοκ <em>begin ... end</em>.",
     "t_error_message_from_package": "Μήνυμα σφάλματος από {{package}}",
     "t_multiple_definitions_for": "Πολλαπλοί ορισμοί για {{symbols}}.",
+    "t_cyclic_references_among": "Κυκλικές αναφορές μεταξύ των",
+    "t_combine_cells_begin_block": "Συμπτύξτε τους ορισμούς σε ένα μοναδικό, διαδραστικό κελί χρησιμοποιώντας ένα μπλοκ <code>begin ... end </code>.",
     "t_another_cell_defining_xs_contains_errors": "Ένα άλλο κύτταρο που ορίζει {{symbols}} περιέχει σφάλματα.",
     "t_error_message": "Μήνυμα σφάλματος",
     "t_stack_trace": "Ίχνος στοίβας",
+    "t_header_list_of_syntax_errors": "Συντακτικά σφάλματα",
     "t_here_is_what_happened_the_most_recent_locations_are_first": "Αυτό είναι τι συνέβη, οι πιο πρόσφατες τοποθεσίες εμφανίζονται πρώτες:",
     "t_show_stack_trace": "Εμφάνιση ίχνους στοίβας...",
     "t_stack_frame_location": "από",
     "t_stack_frame_this_cell": "Αυτό το κύτταρο",
+    "t_stack_frame_other_cell": "Το άλλο κύτταρο",
     "t_stack_frame_line": "γραμμή",
     "t_show_more": "Εμφάνιση περισσότερων...",
     "t_motivational_words_be_creative_and_write_as_many_as_you_want": [
@@ -83,11 +84,9 @@
     "t_package_could_not_load": "<p>Το πακέτο <strong>{{package}}.jl</strong> δεν μπόρεσε να φορτωθεί επειδή απέτυχε να αρχικοποιηθεί.</p><p>Αυτό δεν είναι καλό! Πράγματα που μπορείτε να δοκιμάσετε:</p>",
     "t_package_could_not_load_things_you_could_try": "<ul><li>Επανεκκινήστε το σημειωματάριο.</li><li>Δοκιμάστε διαφορετική έκδοση Julia.</li><li>Επικοινωνήστε με τις συγγραφείς του {{package}}.jl για αυτό το σφάλμα.</li></ul>",
     "t_might_find_info_in_pkg_log": "Μπορεί να βρείτε χρήσιμες πληροφορίες στο αρχείο καταγραφής εγκατάστασης πακέτων:",
-
     "t_edit_frontmatter": "Επεξεργασία μεταδεδομένων",
     "t_start_presentation": "Έναρξη παρουσίασης",
     "t_close": "Κλείσιμο",
-
     "t_export_action_ellipsis": "Εξαγωγή...",
     "t_export_category_export": "εξαγωγή",
     "t_export_category_record": "εγγραφή",
@@ -100,11 +99,9 @@
     "t_export_card_record": "Εγγραφή",
     "t_export_card_record_description": "<em>(προεπισκόπηση)</em> Καταγράψτε ολόκληρο το σημειωματάριο και τυχόν αλλαγές που κάνετε.",
     "t_export_card_pride_month_message": "Το μέλλον είναι <strong>queer</strong>!",
-
     "t_save_notebook_ellipsis": "Αποθήκευση σημειωματαρίου...",
     "t_save_notebook_button_label_when_currently_not_saved": "Επιλογή",
     "t_save_notebook_button_label_when_currently_saved": "Μετακίνηση",
-
     "t_process_status_loading_binder": "Φόρτωση binder...",
     "t_process_status_reconnecting": "Επανασύνδεση...",
     "t_process_status_loading": "Φόρτωση...",
@@ -116,21 +113,20 @@
     "t_process_restart_action_short": "επανεκκίνηση",
     "t_process_give_permission_to_run_code": "Εκτέλεση κώδικα σημειωματαρίου",
     "t_process_running_cells": "Εκτέλεση κελιών... ({{done}}/{{total}} ολοκληρώθηκαν)",
-    
     "t_safe_preview": "Ασφαλής προεπισκόπηση",
     "t_safe_preview_not_executed": "Ο κώδικας δεν εκτελέστηκε επειδή βρίσκεστε σε <em>Ασφαλή προεπισκόπηση</em>",
     "t_safe_preview_not_rendered": "Scripts και στυλ δεν εκτελούνται όσο βρίσκεστε σε <em>Ασφαλή προεπισκόπηση</em>",
+    "t_safe_preview_confirm_warning": "Προειδοποίηση",
     "t_safe_preview_confirm_before": "Είστε σίγουροι ότι εμπιστεύεστε αυτό το αρχείο;",
     "t_safe_preview_confirm_before_danger": "⚠️ Κίνδυνος!",
     "t_safe_preview_confirm_after": "Ένα κακόβουλο σημειωματάριο μπορεί να κλέψει κωδικούς πρόσβασης και δεδομένα.",
     "t_safe_preview_body": "Διαβάζετε και επεξεργάζεστε αυτό το αρχείο χωρίς να εκτελείτε κώδικα Julia.",
     "t_safe_preview_run_this_notebook": "Όταν είστε έτοιμοι, μπορείτε να {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "εκτελέσετε αυτό το σημειωματάριο",
-    
     "t_instant_feedback_ellipsis": "Άμεση ανατροφοδότηση...",
+    "t_instant_feedback_send": "Αποστολή",
     "t_how_can_we_improve": "🙋 Πώς μπορούμε να κάνουμε το {{pluto}} καλύτερο;",
     "t_FAQ": "Συχνές Ερωτήσεις",
-
     "t_loading_cells": "Φόρτωση κελιών...",
     "t_reading_hidden_code": "👀 Ανάγνωση κρυφού κώδικα",
     "t_enable_and_run_cell": "Ενεργοποίηση και εκτέλεση του κελιού",
@@ -152,29 +148,25 @@
     "t_save_cell": "Αποθήκευση κώδικα χωρίς εκτέλεση",
     "t_jump_cell": "Αυτό το κύτταρο εξαρτάται από ένα απενεργοποιημένο κύτταρο",
     "t_run_cell": "Εκτέλεση κελιού (Shift + Enter)",
-    
+    "t_help_about_tab_navigation_inside_cell": "Πατήστε <kbd>Esc</kbd> και μετά <kbd>Tab</kbd> για να συνεχίσετε την πλοήγηση.",
     "t_cell_is_disabled": "Αυτό το κύτταρο είναι απενεργοποιημένο. {{link}} για να εκτελέσετε τον κώδικα.",
     "t_cell_is_disabled_link": "Ενεργοποιήστε αυτό το κύτταρο",
-    
-    
-    
     "t_ask_ai_action": "Ρωτήστε την AI",
     "t_ask_ai_action_description": "Ρωτήστε την AI για αυτό το κύτταρο",
     "t_ai_prompt_generator_title": "Γεννήτρια Προτροπών AI",
     "t_ai_prompt_generator_intro": "Μπορείτε να αντιγράψετε αυτό το κείμενο σε μια συνομιλία AI για να της δώσετε πλαίσιο από το σημειωματάριό σας.",
     "t_ai_prompt_generator_question_input_placeholder": "Πληκτρολογήστε την ερώτησή σας εδώ...",
+    "t_ai_prompt_generator_default_question_errored": "Για ποιό λόγο έχει σφάλμα αυτό το κύταρρο",
     "t_copy_action": "Αντιγραφή",
     "t_copy_action_description": "Αντιγραφή στο πρόχειρο",
     "t_copy_action_complete": "Αντιγράφηκε!",
     "t_copy_header_id_action_description": "Κάντε κλικ για αντιγραφή URL σε αυτήν την επικεφαλίδα",
-    
     "t_ai_permission_prompt_title": "Χρήση AI για διόρθωση συντακτικών σφαλμάτων;",
     "t_ai_permission_prompt_body": "Το Pluto θα στείλει κώδικα από αυτό το κύτταρο σε μια εμπορική υπηρεσία LLM για διόρθωση συντακτικών σφαλμάτων. Ο ενημερωμένος κώδικας δεν θα εκτελεστεί χωρίς επιβεβαίωση.",
     "t_ai_permission_prompt_body_2": "Ο υποβληθείς κώδικας μπορεί να χρησιμοποιηθεί (ανώνυμα) από τις συγγραφείς του Pluto για βελτίωση της υπηρεσίας AI.",
     "t_dont_ask_again": "Να μη ρωτηθώ ξανά",
     "t_no": "Όχι",
     "t_yes": "Ναι",
-    
     "t_ai_accept_and_close": "Αποδοχή διόρθωσης συντακτικού AI και κλείσιμο",
     "t_ai_decline_and_close": "Απόρριψη διόρθωσης συντακτικού AI και κλείσιμο",
     "t_ai_accept_and_run": "Αποδοχή & Εκτέλεση",
@@ -185,15 +177,10 @@
     "t_ai_syntax_fix_failed": "Αποτυχία διόρθωσης συντακτικού σφάλματος: {{error}}",
     "t_ai_fix_syntax_with_ai": "Διόρθωση συντακτικού με AI",
     "t_ai_fix_syntax_with_ai_description": "Προσπάθεια διόρθωσης αυτού του συντακτικού σφάλματος χρησιμοποιώντας υπηρεσία LLM",
-    
     "t_confirm_delete_multiple_cells": "Διαγραφή {{count}} κελιών;",
     "t_confirm_delete_multiple_interrupt_notebook": "Αυτό το κύτταρο εκτελείται ακόμη - θα θέλατε να διακόψετε το σημειωματάριο;",
     "t_confirm_move_file": "Είστε σίγουροι; Θα μετακινηθεί από\n\n{{old_path}}\n\nσε\n\n{{new_path}};",
-    
-    
     "t_oopsie_pls_refresh": "Ουπς!! παρακαλώ ανανεώστε τον περιηγητή σας και όλα θα είναι εντάξει!",
-    
-    
     "t_key_run": "εκτέλεση κελιού",
     "t_key_run_add": "εκτέλεση κελιού και προσθήκη κελιού παρακάτω",
     "t_key_submit_all_changes": "υποβολή όλων των αλλαγών",
@@ -209,15 +196,12 @@
     "t_key_ctrl_c": "αντιγραφή επιλεγμένων κελιών",
     "t_key_ctrl_x": "αποκοπή επιλεγμένων κελιών",
     "t_key_ctrl_v": "επικόλληση επιλεγμένων κελιών",
-    
     "t_key_autosave_description": "Το αρχείο σημειωματαρίου αποθηκεύεται κάθε φορά που εκτελείτε ένα κύτταρο.",
     "t_key_selection_description": "Επιλέξτε πολλαπλά κύτταρα σύροντας ένα πλαίσιο επιλογής ξεκινώντας από τον χώρο μεταξύ των κελιών.",
-    
     "t_key_or": "ή",
-    
     "t_navigate_to_previous_page": "Επιστροφή",
-    
-    
+    "t_bonds_static_warning": "Βλέπετε μια στατική προεπισκόπηση. {{run_notebook_action}} για να ενεργοποιήσετε τη διάδραση",
+    "t_bonds_static_warning_inner": "Εκτελέστε αυτό το σημειωματάριο",
     "t_edit_or_run_this_notebook": "<strong>Επεξεργασία</strong> ή <strong>εκτέλεση</strong> αυτού του σημειωματαρίου",
     "t_edit_or_run_view_code": "Προβολή κώδικα",
     "t_edit_or_run_view_code_cancel": "Ακύρωση",
@@ -235,12 +219,10 @@
     "t_edit_or_run_open_the_notebook_file": "Ανοίξτε το σημειωματάριο από το αρχείο",
     "t_edit_or_run_open_the_notebook_file_description": "Πληκτρολογήστε το αποθηκευμένο όνομα αρχείου στο πλαίσιο <em>άνοιγμα</em>.",
     "t_edit_or_run_paste_url_in_the_open_box": "Επικολλήστε το URL στο πλαίσιο <em>Άνοιγμα</em>",
-    
     "t_time_minutes_one": "{{count}} λεπτό",
     "t_time_minutes_other": "{{count}} λεπτά",
     "t_time_seconds_one": "{{count}} δευτερόλεπτο",
     "t_time_seconds_other": "{{count}} δευτερόλεπτα",
-    
     "t_frontmatter_title": "Μεταδεδομένα",
     "t_frontmatter_description": "Αν δημοσιεύετε αυτό το σημειωματάριο στο διαδίκτυο, μπορείτε να ορίσετε τις παραμέτρους παρακάτω για να παρέχετε μεταδεδομένα HTML. Αυτό είναι χρήσιμο για τις μηχανές αναζήτησης και τα κοινωνικά δίκτυα.",
     "t_frontmatter_synchronized": "Μεταδεδομένα συγχρονίστηκαν ✔\n\nΑυτές οι παράμετροι θα χρησιμοποιηθούν σε μελλοντικές εξαγωγές.",
@@ -250,48 +232,37 @@
     "t_frontmatter_cancel": "Ακύρωση",
     "t_frontmatter_save": "Αποθήκευση",
     "t_frontmatter_preview": "Προεπισκόπηση",
-    
-    
+    "t_frontmatter_language_placeholder": "el-GR (Εισαγάγετε μια ετικέτα γλώσσας κατά BCP 47)",
     "t_logs_truncated": "{{count}} αρχεία καταγραφής δεν εμφανίζονται...",
     "t_logs_stdout": "Αυτό το κείμενο γράφτηκε στη <a href=\"https://en.wikipedia.org/wiki/Standard_streams\" target=\"_blank\">ροή τερματικού</a> κατά την εκτέλεση του κελιού. Δεν είναι η <em>τιμή επιστροφής</em> του κελιού.",
     "t_logs_click_for_more_info": "Κάντε κλικ για περισσότερες πληροφορίες",
-    
     "t_ready_notif_title": "Pluto: σημειωματάριο έτοιμο",
     "t_ready_notif_body": "✓ Όλα τα {{count}} βήματα ολοκληρώθηκαν",
     "t_ready_notif": "Ειδοποίηση όταν τελειώσει",
     "t_ready_notif_permission": "Το Pluto χρειάζεται άδεια για να εμφανίζει ειδοποιήσεις. <strong>Ενεργοποιήστε τις ειδοποιήσεις</strong> στις ρυθμίσεις του περιηγητή σας για να χρησιμοποιήσετε αυτή τη λειτουργία.",
-    
     "t_pkg_disables_str": "Η {{function}} απενεργοποιεί τον ενσωματωμένο διαχειριστή πακέτων του Pluto.",
     "t_pkg_stdlib": "Το {{package}} είναι μέρος της προεγκατεστημένης <em>τυπικής βιβλιοθήκης</em> της Julia.",
     "t_pkg_will_be_installed": "Το {{package}} θα εγκατασταθεί όταν εκτελέσετε αυτό το σημειωματάριο.",
     "t_pkg_is_installing": "Το {{package}} εγκαθίσταται...",
     "t_pkg_is_installed": "Το {{package}} είναι εγκατεστημένο στο σημειωματάριο.",
-    
     "t_pkg_not_found": "Το πακέτο {{package}} δεν βρέθηκε στο μητρώο. Μήπως κάνατε τυπογραφικό λάθος;",
     "t_pkg_will_be_installed_in_notebook": "Το {{package}} θα εγκατασταθεί στο σημειωματάριο όταν εκτελέσετε αυτό το κύτταρο.",
-    
     "t_pkg_installation_can_take": "Η εγκατάσταση μπορεί να διαρκέσει {{time_install}}.<br/>Μετά, φορτώνει σε {{time_load}}.",
     "t_pkg_update_packages": "Ενημέρωση πακέτων",
     "t_pkg_update_packages_description": "Θα θέλατε να ελέγξετε για ενημερώσεις και να τις εγκαταστήσετε; Θα δημιουργηθεί αντίγραφο ασφαλείας του αρχείου σημειωματαρίου.",
     "t_pkg_currently_busy": "Το Pkg είναι αυτή τη στιγμή απασχολημένο με άλλα πακέτα... δοκιμάστε ξανά αργότερα!",
     "t_pkg_toggle_terminal": "Εμφάνιση/απόκρυψη εξόδου τερματικού Pkg",
-    
     "t_pkg_go_to_help": "Μάθετε περισσότερα για τα πακέτα στο Pluto",
-    
     "t_save_all_changes": "Αποθήκευση όλων των αλλαγών",
     "t_save_all_changes_description": "Αποθήκευση και εκτέλεση όλων των αλλαγμένων κελιών",
     "t_file_change_detected": "Ανιχνεύτηκε αλλαγή αρχείου, το <b>σημειωματάριο ενημερώθηκε</b>",
     "t_file_saved": "Αποθηκεύτηκε",
-    
     "t_recording_ui_start_recording": "<strong>Έναρξη εγγραφής</strong>",
     "t_recording_ui_start_recording_muted": "<strong>Έναρξη εγγραφής</strong> (χωρίς ήχο)",
     "t_recording_ui_stop_recording": "<strong>Διακοπή εγγραφής</strong>",
     "t_recording_ui_back_to_recording": "Επιστροφή στην <strong>εγγραφή</strong> {{icon}}",
-    
     "t_presentation_previous_slide": "Προηγούμενη διαφάνεια",
     "t_presentation_next_slide": "Επόμενη διαφάνεια",
-    
-    
     "t_status_names": {
         "workspace": "Ρύθμιση workspace",
         "create_process": "Εκκίνηση Julia",
@@ -310,11 +281,9 @@
         "backend_responded": "Άνοιγμα αρχείου σημειωματαρίου",
         "backend_notebook_running": "Μετάβαση σε ζωντανή επεξεργασία"
     },
-    
     "t_tree_show_more_items": "περισσότερα",
     "t_table_no_columns": "Αυτός ο πίνακας δεν έχει στήλες",
     "t_table_no_rows": "Αυτός ο πίνακας δεν έχει γραμμές",
-    
     "t_undo_delete_one": "Το κύτταρο διαγράφηκε",
     "t_undo_delete_other": "{{count}} κύτταρα διαγράφηκαν",
     "t_undo_delete_link": "ΑΝΑΙΡΕΣΗ",

@@ -38,7 +38,12 @@ end
 function delete_computer!(computers::Dict{UUID,Computer}, cell_id::UUID)
     computer = pop!(computers, cell_id)
     UseEffectCleanups.trigger_cleanup(cell_id)
-    Base.visit(Base.delete_method, methods(computer.f).mt) # Make the computer function uncallable
+    # Make the computer function uncallable
+    if VERSION < v"1.12.0-0"
+        Base.visit(Base.delete_method, methods(computer.f).mt)
+    else
+        foreach(Base.delete_method, methods(computer.f))
+    end
 end
 
 parse_cell_id(filename::Symbol) = filename |> string |> parse_cell_id
@@ -125,7 +130,7 @@ function run_inside_trycatch(m::Module, f::Union{Expr,Function})::Tuple{Any,Unio
             f()
         end
     catch ex
-        bt = stacktrace(catch_backtrace())
+        bt = catch_backtrace()
         (CapturedException(ex, bt), nothing)
     end
 end
@@ -198,7 +203,7 @@ function run_expression(
         try
             try_macroexpand(m, notebook_id, cell_id, expr; capture_stdout)
         catch e
-            result = CapturedException(e, stacktrace(catch_backtrace()))
+            result = CapturedException(e, catch_backtrace())
             cell_results[cell_id], cell_runtimes[cell_id] = (result, nothing)
             return (result, nothing)
         end

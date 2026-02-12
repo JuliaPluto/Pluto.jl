@@ -85,19 +85,19 @@ export const Preamble = ({ any_code_differs, last_update_time, last_hot_reload_t
                   </div>
               `
             : // : state === "saving"
-            // ? html` <div id="saveall-container" class="overlay-button ${state}">Saving... <span class="saving-icon"></span></div> `
-            state === "saved" || state === "saving"
-            ? html`
-                  <div id="saveall-container" class="overlay-button ${state}">
-                      <span><span class="only-on-hover">${t("t_file_saved")}${nbsp}</span><span class="saved-icon pluto-icon"></span></span>
-                  </div>
-              `
-            : reload_state === "reloaded_from_file"
-            ? html`
-                  <div id="saveall-container" class="overlay-button ${state}">
-                      <span>${th("t_file_change_detected")}${nbsp}<span class="saved-icon pluto-icon"></span></span>
-                  </div>
-              `
-            : null}
+              // ? html` <div id="saveall-container" class="overlay-button ${state}">Saving... <span class="saving-icon"></span></div> `
+              state === "saved" || state === "saving"
+              ? html`
+                    <div id="saveall-container" class="overlay-button ${state}">
+                        <span><span class="only-on-hover">${t("t_file_saved")}${nbsp}</span><span class="saved-icon pluto-icon"></span></span>
+                    </div>
+                `
+              : reload_state === "reloaded_from_file"
+                ? html`
+                      <div id="saveall-container" class="overlay-button ${state}">
+                          <span>${th("t_file_change_detected")}${nbsp}<span class="saved-icon pluto-icon"></span></span>
+                      </div>
+                  `
+                : null}
     </preamble>`
 }

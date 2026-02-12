@@ -1,6 +1,6 @@
 @font-face {
     font-family: JuliaMono;
-    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.060/webfonts/JuliaMono-RegularLatin.woff2") format("woff2");
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.062/webfonts/JuliaMono-RegularLatin.woff2") format("woff2");
     font-display: swap;
     font-weight: 400;
     unicode-range: U+00-7F; /* Basic Latin characters */
@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: JuliaMono;
-    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.060/webfonts/JuliaMono-BoldLatin.woff2") format("woff2");
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.062/webfonts/JuliaMono-BoldLatin.woff2") format("woff2");
     font-display: swap;
     font-weight: 700;
     unicode-range: U+00-7F; /* Basic Latin characters */
@@ -16,21 +16,21 @@
 
 @font-face {
     font-family: JuliaMono;
-    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.060/webfonts/JuliaMono-Regular.woff2") format("woff2");
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.062/webfonts/JuliaMono-Regular.woff2") format("woff2");
     font-display: swap;
     font-weight: 400;
 }
 
 @font-face {
     font-family: JuliaMono;
-    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.060/webfonts/JuliaMono-Bold.woff2") format("woff2");
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.062/webfonts/JuliaMono-Bold.woff2") format("woff2");
     font-display: swap;
     font-weight: 700;
 }
 
 @font-face {
     font-family: JuliaMono;
-    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.060/webfonts/JuliaMono-RegularItalic.woff2") format("woff2");
+    src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@0.062/webfonts/JuliaMono-RegularItalic.woff2") format("woff2");
     font-display: swap;
     font-weight: 400;
     font-style: italic;

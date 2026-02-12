@@ -129,13 +129,13 @@ const create_ws_connection = (address, { on_message, on_socket_close }, timeout_
                     } catch (process_err) {
                         console.error("Failed to process message from websocket", process_err, { message })
                         // prettier-ignore
-                        alert(`Something went wrong! You might need to refresh the page.\n\nPlease open an issue on https://github.com/fonsp/Pluto.jl with this info:\n\nFailed to process update\n${process_err.message}\n\n${JSON.stringify(event)}`)
+                        alert(`Something went wrong! You might need to refresh the page.\n\nPlease open an issue on https://github.com/JuliaPluto/Pluto.jl with this info:\n\nFailed to process update\n${process_err.message}\n\n${JSON.stringify(event)}`)
                     }
                 } catch (unpack_err) {
                     console.error("Failed to unpack message from websocket", unpack_err, { event })
 
                     // prettier-ignore
-                    alert(`Something went wrong! You might need to refresh the page.\n\nPlease open an issue on https://github.com/fonsp/Pluto.jl with this info:\n\nFailed to unpack message\n${unpack_err}\n\n${JSON.stringify(event)}`)
+                    alert(`Something went wrong! You might need to refresh the page.\n\nPlease open an issue on https://github.com/JuliaPluto/Pluto.jl with this info:\n\nFailed to unpack message\n${unpack_err}\n\n${JSON.stringify(event)}`)
                 }
             })
         }
@@ -235,6 +235,12 @@ export const ws_address_from_base = (/** @type {string | URL} */ base_url) => {
     const ws_url_with_secret = with_query_params(ws_url, { secret: new URL(base_url).searchParams.get("secret") })
 
     return ws_url_with_secret
+}
+
+export const auth_check_url_from_ws = (/** @type {string | URL} */ ws_url) => {
+    const auth_url = new URL("./auth-check", ws_url)
+    auth_url.protocol = auth_url.protocol.replace("ws", "http")
+    return auth_url.toString()
 }
 
 const default_ws_address = () => ws_address_from_base(window.location.href)
@@ -428,6 +434,7 @@ export const create_pluto_connection = async ({
             return u.message
         } catch (ex) {
             console.error("connect() failed", ex)
+            alert_if_not_authenticated(ws_address, ex).catch(() => null) // No await, we want this to run in the background
             await Promises.delay(retry_after_connect_failure_delay)
             return await connect()
         }
@@ -435,4 +442,16 @@ export const create_pluto_connection = async ({
     await connect()
 
     return /** @type {PlutoConnection} */ (client)
+}
+
+const alert_if_not_authenticated = async (/** @type {string | URL} */ ws_url, ex) => {
+    if (ex instanceof CloseEvent) {
+        if (ex.code === 1006) {
+            const auth_url = auth_check_url_from_ws(ws_url)
+            const response = await fetch(auth_url)
+            if (response.status === 403 || response.status === 401) {
+                alert("This window has lost authentication to the Pluto server. Please refresh the page to continue.")
+            }
+        }
+    }
 }

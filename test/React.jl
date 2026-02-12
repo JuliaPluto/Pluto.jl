@@ -511,9 +511,9 @@ import Pluto.Configuration: Options, EvaluationOptions
             show(io::IO, x::Ref{Tuple{Int,Symbol}}) = write(io, \"🐟\")
         end"),
 
-        Cell("Base.isodd(n::Integer) = \"🎈\""),
-        Cell("Base.isodd(28)"),
-        Cell("isodd(29)"),
+        Cell("Base.tand(n::Integer) = \"🎈\""),
+        Cell("Base.tand(28)"),
+        Cell("tand(29)"),
 
         Cell("using Dates"),
         Cell("year(DateTime(31))"),
@@ -638,22 +638,22 @@ import Pluto.Configuration: Options, EvaluationOptions
         @test notebook.cells[25].output.body isa Dict
 
         @test_nowarn update_run!(🍭, notebook, notebook.cells[28:29])
-        @test notebook.cells[28].output.body == "false"
-        @test notebook.cells[29].output.body == "true"
+        @test notebook.cells[28].output.body == string(tand(28))
+        @test notebook.cells[29].output.body == string(tand(29))
         @test_nowarn update_run!(🍭, notebook, notebook.cells[27])
         @test notebook.cells[28].output.body == "\"🎈\""
-        @test notebook.cells[29].output.body == "\"🎈\"" # adding the overload doesn't trigger automatic re-eval because `isodd` doesn't match `Base.isodd`
+        @test notebook.cells[29].output.body == "\"🎈\"" # adding the overload doesn't trigger automatic re-eval because `tand` doesn't match `Base.tand`
         @test_nowarn update_run!(🍭, notebook, notebook.cells[28:29])
         @test notebook.cells[28].output.body == "\"🎈\""
         @test notebook.cells[29].output.body == "\"🎈\""
 
         setcode!(notebook.cells[27], "")
         update_run!(🍭, notebook, notebook.cells[27])
-        @test notebook.cells[28].output.body == "false"
-        @test notebook.cells[29].output.body == "true" # removing the overload doesn't trigger automatic re-eval because `isodd` doesn't match `Base.isodd`
+        @test notebook.cells[28].output.body == string(tand(28))
+        @test notebook.cells[29].output.body == string(tand(29)) # removing the overload doesn't trigger automatic re-eval because `tand` doesn't match `Base.tand`
         update_run!(🍭, notebook, notebook.cells[28:29])
-        @test notebook.cells[28].output.body == "false"
-        @test notebook.cells[29].output.body == "true"
+        @test notebook.cells[28].output.body == string(tand(28))
+        @test notebook.cells[29].output.body == string(tand(29))
     end
 
     @testset "Using external libraries" begin

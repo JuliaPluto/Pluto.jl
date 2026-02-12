@@ -25,40 +25,54 @@ begin
         # Activate the environment
         copy!(LOAD_PATH, new_LP)
         Base.ACTIVE_PROJECT[] = new_AP
-
-        # Set up our notebook boot package environment by adding a single package:
-        path = joinpath(@__DIR__, "PlutoRunner")
-        try
-            Pkg.develop([Pkg.PackageSpec(; path)]; io=devnull)
-        catch
-            @warn "Something went wrong while initializing the notebook boot environment... Trying again and showing you the output."
-            Pkg.develop([Pkg.PackageSpec(; path)])
-        end
-
-        # Resolve
-        try
-            Pkg.resolve(; io=devnull) # supress IO
-        catch
-            @warn "Something went wrong while initializing the notebook boot environment... Trying again and showing you the output."
+        
+        function setup()
+            # Set up our notebook boot package environment by adding a single package:
+            path = joinpath(@__DIR__, "PlutoRunner")
             try
-                Pkg.resolve()
+                Pkg.develop([Pkg.PackageSpec(; path)])
+                # Pkg.develop([Pkg.PackageSpec(; path)]; io=devnull)
+            catch
+                @warn "Something went wrong while initializing the notebook boot environment... Trying again and showing you the output."
+                Pkg.develop([Pkg.PackageSpec(; path)])
+            end
+    
+            # Resolve
+            try
+                Pkg.resolve(; io=devnull) # supress IO
+            catch
+                @warn "Something went wrong while initializing the notebook boot environment... Trying again and showing you the output."
+                try
+                    Pkg.resolve()
+                catch e
+                    @error "Failed to resolve notebook boot environment" exception = (e, catch_backtrace())
+                end
+            end
+    
+            # Instantiate
+            try
+                # we don't suppress IO for this one because it can take very long, and that would be a frustrating experience without IO
+                # precompilation switched off because of https://github.com/fonsp/Pluto.jl/issues/875
+                Pkg.instantiate(; update_registry=false, allow_autoprecomp=false)
             catch e
-                @error "Failed to resolve notebook boot environment" exception = (e, catch_backtrace())
+                @error "Failed to instantiate notebook boot environment" exception = (e, catch_backtrace())
             end
         end
 
-        # Instantiate
-        try
-            # we don't suppress IO for this one because it can take very long, and that would be a frustrating experience without IO
-            # precompilation switched off because of https://github.com/fonsp/Pluto.jl/issues/875
-            Pkg.instantiate(; update_registry=false, allow_autoprecomp=false)
-        catch e
-            @error "Failed to instantiate notebook boot environment" exception = (e, catch_backtrace())
+        if !isfile(joinpath(new_AP, "Project.toml")) || !isfile(joinpath(new_AP, "Manifest.toml"))
+            setup()
         end
 
-        # Import PlutoRunner into Main
-        import PlutoRunner
-
+        try
+            # Import PlutoRunner into Main
+            # try the first time without setup
+            # This might trigger precompilation, which is actually what we want.
+            import PlutoRunner
+        catch
+            # this means that setup is needed.
+            setup()
+            import PlutoRunner
+        end
     finally
         # Reset the pkg environment
         copy!(LOAD_PATH, original_LP)

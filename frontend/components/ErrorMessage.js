@@ -11,6 +11,23 @@ import { localized_list_htl, t, th } from "../common/lang.js"
 
 const nbsp = "\u00A0"
 
+/**
+ * See the matching Julia file, Exception.jl in PlutoRunner.
+ * @typedef {Object} StackFrame
+ * @property {string} call
+ * @property {string} call_short
+ * @property {string|null} func
+ * @property {boolean} inlined
+ * @property {boolean} from_c
+ * @property {string} file
+ * @property {string} path
+ * @property {number} line
+ * @property {string} linfo_type
+ * @property {string|null} url
+ * @property {string|null} source_package
+ * @property {string|null} parent_module
+ */
+
 const extract_cell_id = (/** @type {string} */ file) => {
     if (file.includes("#@#==#")) return null
     const sep = "#==#"
@@ -32,6 +49,9 @@ const focus_line = (cell_id, line) =>
         })
     )
 
+/**
+ * @param {{frame: StackFrame}} props
+ */
 const DocLink = ({ frame }) => {
     let pluto_actions = useContext(PlutoActionsContext)
 
@@ -44,8 +64,8 @@ const DocLink = ({ frame }) => {
 
     const nb = pluto_actions.get_notebook()
     const pkg_name = frame.source_package
-    const builtin = ["Main", "Core", "Base"].includes(pkg_name)
-    const installed = nb?.nbpkg?.installed_versions?.[frame.source_package] != null
+    const builtin = ["Main", "Core", "Base"].includes(pkg_name ?? "")
+    const installed = nb?.nbpkg?.installed_versions?.[frame.source_package ?? ""] != null
     if (!builtin && nb?.nbpkg != null && !installed) return null
 
     return html` ${nbsp}<span
@@ -97,7 +117,13 @@ const StackFrameFilename = ({ frame, cell_id }) => {
 
 const at = html`<span> ${t("t_stack_frame_location")}${nbsp}</span>`
 
-const ignore_funccall = (frame) => frame.call === "top-level scope"
+const ignore_funccall = (/** @type {StackFrame} */ frame) => {
+    if (frame.call === "top-level scope") return true
+    // In Julia 1.12, you sometimes get the top-level code (like calling sqrt(-1) in a cell) as a "macro expansion" when you run the cell again a second time. 🤷
+    if (frame.call === "macro expansion" && !frame.file.includes("#@#==#") && extract_cell_id(frame.file) != null) return true
+
+    return false
+}
 const ignore_location = (frame) => frame.file === "none"
 
 const funcname_args = (call) => {
@@ -150,7 +176,7 @@ const Funccall = ({ frame }) => {
                       e.preventDefault()
                       set_expanded(true)
                   }}
-                  >...show types...</a
+                  >${t("t_show_types")}</a
               >`
             : null}`
 }
@@ -299,6 +325,8 @@ const frame_is_important_heuristic = (frame, frame_index, limited_stacktrace, fr
     return true
 }
 
+const frame_is_toplevel_disguised_as_macro_expansion = (frame) => {}
+
 const AnsiUpLine = (/** @type {{value: string}} */ { value }) => {
     const node_ref = useRef(/** @type {HTMLElement?} */ (null))
 
@@ -316,6 +344,15 @@ const AnsiUpLine = (/** @type {{value: string}} */ { value }) => {
     return value === "" ? html`<p><br /></p>` : html`<p ref=${node_ref}>${did_ansi_up.current ? null : without_ansi_chars}</p>`
 }
 
+/**
+ * Display runtime errors with stack trace.
+ * @param {Object} props
+ * @param {string} props.msg
+ * @param {StackFrame[]} props.stacktrace
+ * @param {string} [props.plain_error]
+ * @param {string} props.cell_id
+ * @returns {any}
+ */
 export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
     let pluto_actions = useContext(PlutoActionsContext)
 
@@ -366,7 +403,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
                 html`<p>Tried to reevaluate an <code>include</code> call, this is not supported. You might need to restart this notebook from the main menu.</p>
                     <p>
                         For a workaround, use the alternative version of <code>include</code> described here:
-                        <a target="_blank" href="https://github.com/fonsp/Pluto.jl/issues/115#issuecomment-661722426">GH issue 115</a>
+                        <a target="_blank" href="https://github.com/JuliaPluto/Pluto.jl/issues/115#issuecomment-661722426">GH issue 115</a>
                     </p>
                     <p>In the future, <code>include</code> will be deprecated, and this will be the default.</p>`,
         },
@@ -440,13 +477,18 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
                 const erred_upstreams = get_erred_upstreams(notebook, cell_id)
 
                 // Verify that the UndefVarError is indeed about a variable from an upstream cell.
-                const match = x.match(/UndefVarError: (.*) not defined/)
+                const match = x.match(/UndefVarError: (.*) not defined in (.*).*/)
                 let sym = (match?.[1] ?? "").replaceAll("`", "")
+                let module = (match?.[2] ?? "").replaceAll("`", "").replaceAll(/Main\.var\"workspace#\d+\"/g, "this notebook")
                 const undefvar_is_from_upstream = Object.values(notebook?.cell_dependencies ?? {}).some((map) =>
                     Object.keys(map.downstream_cells_map).includes(sym)
                 )
 
                 if (Object.keys(erred_upstreams).length === 0 || !undefvar_is_from_upstream) {
+                    if (sym && module) {
+                        return html` <p>UndefVarError: <code>${sym}</code> not defined in ${module}.</p>
+                            <p>${x.replace(/UndefVarError.*\n?/, "")}</p>`
+                    }
                     return html`<p>${x}</p>`
                 }
 
@@ -499,7 +541,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
 
     const first_stack_from_here = stacktrace.findIndex((frame) => extract_cell_id(frame.file) != null)
 
-    const limited = !show_more && first_stack_from_here != -1 && first_stack_from_here < stacktrace.length - 1
+    const limited = !show_more && first_stack_from_here !== -1 && first_stack_from_here < stacktrace.length - 1
 
     const limited_stacktrace = (limited ? stacktrace.slice(0, first_stack_from_here + 1) : stacktrace).filter(
         (frame) => !(ignore_location(frame) && ignore_funccall(frame))
@@ -509,7 +551,8 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
 
     const [stacktrace_waiting_to_view, set_stacktrace_waiting_to_view] = useState(true)
     useEffect(() => {
-        set_stacktrace_waiting_to_view(true)
+        const from_another_cell = first_stack_from_here !== -1 && extract_cell_id(stacktrace[first_stack_from_here].file) !== cell_id
+        set_stacktrace_waiting_to_view(!from_another_cell)
     }, [msg, stacktrace, cell_id])
 
     return html`<jlerror>
@@ -522,47 +565,47 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
         ${stacktrace.length == 0 || !(matched_rewriter.show_stacktrace?.() ?? true)
             ? null
             : stacktrace_waiting_to_view
-            ? html`<section class="stacktrace-waiting-to-view">
-                  <button onClick=${() => set_stacktrace_waiting_to_view(false)}>${t("t_show_stack_trace")}</button>
-              </section>`
-            : html`<section>
-                  <div class="stacktrace-header">
-                      <secret-h1>${t("t_stack_trace")}</secret-h1>
-                      <p>${t("t_here_is_what_happened_the_most_recent_locations_are_first")}</p>
-                  </div>
+              ? html`<section class="stacktrace-waiting-to-view">
+                    <button onClick=${() => set_stacktrace_waiting_to_view(false)}>${t("t_show_stack_trace")}</button>
+                </section>`
+              : html`<section>
+                    <div class="stacktrace-header">
+                        <secret-h1>${t("t_stack_trace")}</secret-h1>
+                        <p>${t("t_here_is_what_happened_the_most_recent_locations_are_first")}</p>
+                    </div>
 
-                  <ol>
-                      ${limited_stacktrace.map((frame, frame_index) => {
-                          const frame_cell_id = extract_cell_id(frame.file)
-                          const from_this_notebook = frame_cell_id != null
-                          const from_this_cell = cell_id === frame_cell_id
-                          const important = frame_is_important_heuristic(frame, frame_index, limited_stacktrace, frame_cell_id)
+                    <ol>
+                        ${limited_stacktrace.map((frame, frame_index) => {
+                            const frame_cell_id = extract_cell_id(frame.file)
+                            const from_this_notebook = frame_cell_id != null
+                            const from_this_cell = cell_id === frame_cell_id
+                            const important = frame_is_important_heuristic(frame, frame_index, limited_stacktrace, frame_cell_id)
 
-                          return html`<li class=${cl({ from_this_notebook, from_this_cell, important })}>
-                              <div class="classical-frame">
-                                  <${Funccall} frame=${frame} />
-                                  <div class="frame-source">
-                                      ${at}<${StackFrameFilename} frame=${frame} cell_id=${cell_id} />
-                                      <${DocLink} frame=${frame} />
-                                  </div>
-                              </div>
-                              ${from_this_notebook ? html`<${LinePreview} frame=${frame} num_context_lines=${from_this_cell ? 1 : 2} />` : null}
-                          </li>`
-                      })}
-                      ${limited
-                          ? html`<li class="important">
-                                <a
-                                    href="#"
-                                    onClick=${(e) => {
-                                        set_show_more(true)
-                                        e.preventDefault()
-                                    }}
-                                    >${t("t_show_more")}</a
-                                >
+                            return html`<li class=${cl({ from_this_notebook, from_this_cell, important })}>
+                                <div class="classical-frame">
+                                    <${Funccall} frame=${frame} />
+                                    <div class="frame-source">
+                                        ${at}<${StackFrameFilename} frame=${frame} cell_id=${cell_id} />
+                                        <${DocLink} frame=${frame} />
+                                    </div>
+                                </div>
+                                ${from_this_notebook ? html`<${LinePreview} frame=${frame} num_context_lines=${from_this_cell ? 1 : 2} />` : null}
                             </li>`
-                          : null}
-                  </ol>
-              </section>`}
+                        })}
+                        ${limited
+                            ? html`<li class="important">
+                                  <a
+                                      href="#"
+                                      onClick=${(e) => {
+                                          set_show_more(true)
+                                          e.preventDefault()
+                                      }}
+                                      >${t("t_show_more")}</a
+                                  >
+                              </li>`
+                            : null}
+                    </ol>
+                </section>`}
         ${pluto_actions.get_session_options?.()?.server?.dismiss_motivational_quotes !== true ? html`<${Motivation} stacktrace=${stacktrace} />` : null}
     </jlerror>`
 }

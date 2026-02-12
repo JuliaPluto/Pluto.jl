@@ -1,0 +1,40 @@
+{
+    "extends": "@parcel/config-default",
+    "resolvers": [
+        "parcel-resolver-like-a-browser",
+        "..."
+    ],
+    "reporters": [
+        "...",
+        "parcel-reporter-bundle-manifest"
+    ],
+    "transformers": {
+        "*.svg": [
+            "...",
+            "@parcel/transformer-inline"
+        ],
+        "**/alegreya*.woff2": [
+            "...",
+            "@parcel/transformer-inline"
+        ],
+        "**/Vollkorn*.woff2": [
+            "...",
+            "@parcel/transformer-inline"
+        ]
+    },
+    "optimizers": {
+        "*.html": [],
+        "*.svg": [
+            "...",
+            "@parcel/optimizer-data-url"
+        ],
+        "**/alegreya*.woff2": [
+            "...",
+            "@parcel/optimizer-data-url"
+        ],
+        "**/Vollkorn*.woff2": [
+            "...",
+            "@parcel/optimizer-data-url"
+        ]
+    }
+}

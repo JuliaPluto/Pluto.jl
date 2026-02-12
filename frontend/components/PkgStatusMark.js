@@ -2,6 +2,7 @@ import { t, th } from "../common/lang.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import _ from "../imports/lodash.js"
 import { html, useEffect, useState } from "../imports/Preact.js"
+import { InlineIonicon } from "./PlutoLandUpload.js"
 
 export const nbpkg_fingerprint = (nbpkg) => (nbpkg == null ? [null] : Object.entries(nbpkg).flat())
 
@@ -47,11 +48,25 @@ export const package_status = ({ nbpkg, package_name, available_versions, is_dis
 
     package_url = package_url ?? `https://juliahub.com/ui/Packages/General/${package_name}`
 
-    const chosen_version = nbpkg?.installed_versions[package_name] ?? null
+    let chosen_version = nbpkg?.installed_versions[package_name] ?? null
+    if (chosen_version === "nothing") chosen_version = "..."
     const nbpkg_waiting_for_permission = nbpkg?.waiting_for_permission ?? false
     const busy = !nbpkg_waiting_for_permission && ((nbpkg?.busy_packages ?? []).includes(package_name) || !(nbpkg?.instantiated ?? true))
 
     const package_name_pretty = html`<a class="package-name" href=${package_url}><b>${package_name}</b></a> `
+
+    const nbsp = "\u00A0"
+    const edit = html`${nbsp}<a
+            href="#"
+            title="Edit package versions"
+            class="edit_package_version"
+            onClick=${(e) => {
+                window.dispatchEvent(new CustomEvent("open pluto project toml editor"))
+                e.preventDefault()
+            }}
+        >
+            ${InlineIonicon("build-outline")}
+        </a>`
 
     if (is_disable_pkg) {
         const f_name = package_name
@@ -69,21 +84,21 @@ export const package_status = ({ nbpkg, package_name, available_versions, is_dis
 
                 hint_raw = t("t_pkg_will_be_installed", { package: `${package_name} (v${_.last(available_versions)})` })
                 hint = th("t_pkg_will_be_installed", {
-                    package: html`<header>${package_name_pretty} <pkg-version>v${_.last(available_versions)}</pkg-version></header>`,
+                    package: html`<header>${package_name_pretty} <pkg-version>v${_.last(available_versions)}${edit}</pkg-version></header>`,
                 })
             } else if (busy) {
                 status = "busy"
 
                 hint_raw = t("t_pkg_is_installing", { package: `${package_name} (v${chosen_version})` })
                 hint = th("t_pkg_is_installing", {
-                    package: html`<header>${package_name_pretty}${" "}<pkg-version>v${chosen_version}</pkg-version></header>`,
+                    package: html`<header>${package_name_pretty}${" "}<pkg-version>v${chosen_version}${edit}</pkg-version></header>`,
                 })
             } else {
                 status = "installed"
 
                 hint_raw = t("t_pkg_is_installed", { package: `${package_name} (v${chosen_version})` })
                 hint = th("t_pkg_is_installed", {
-                    package: html`<header>${package_name_pretty}${" "}<pkg-version>v${chosen_version}</pkg-version></header>`,
+                    package: html`<header>${package_name_pretty}${" "}<pkg-version>v${chosen_version}${edit}</pkg-version></header>`,
                 })
 
                 offer_update = can_update(chosen_version, available_versions)
@@ -104,7 +119,7 @@ export const package_status = ({ nbpkg, package_name, available_versions, is_dis
                 hint_raw = t("t_pkg_will_be_installed_in_notebook", { package: `${package_name} (v${_.last(available_versions)})` })
 
                 hint = th("t_pkg_will_be_installed_in_notebook", {
-                    package: html`<header>${package_name_pretty} <pkg-version>v${_.last(available_versions)}</pkg-version></header>`,
+                    package: html`<header>${package_name_pretty} <pkg-version>v${_.last(available_versions)}${edit}</pkg-version></header>`,
                 })
             }
         }
@@ -145,12 +160,12 @@ export const PkgStatusMark = ({ package_name, pluto_actions, notebook_id, nbpkg 
             className=${status === "busy"
                 ? "busy"
                 : status === "installed"
-                ? "installed"
-                : status === "not_found"
-                ? "not_found"
-                : status === "will_be_installed"
-                ? "will_be_installed"
-                : ""}
+                  ? "installed"
+                  : status === "not_found"
+                    ? "not_found"
+                    : status === "will_be_installed"
+                      ? "will_be_installed"
+                      : ""}
         >
             <button
                 onClick=${(event) => {

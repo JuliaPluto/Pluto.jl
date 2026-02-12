@@ -55,5 +55,5 @@ export const detect_deserializer = (/** @type {string} */ topaste) =>
     topaste.trim().startsWith(JULIA_REPL_PROMPT)
         ? deserialize_repl
         : topaste.match(/# ╔═╡ ........-....-....-....-............/g)?.length
-        ? deserialize_cells
-        : null
+          ? deserialize_cells
+          : null

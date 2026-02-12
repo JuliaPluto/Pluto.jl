@@ -180,22 +180,24 @@ export const TreeView = ({ mime, body, cell_id, persist_js_state, sanitize_html 
     return html`<pluto-tree class="collapsed ${body.type}" onclick=${onclick} ref=${node_ref}>${inner}</pluto-tree>`
 }
 
-const EmptyCols = ({ colspan = 999 }) => html`<thead>
-    <tr class="empty">
-        <td colspan=${colspan}>
-            <div>⌀ <small>${t("t_table_no_columns")}</small></div>
-        </td>
-    </tr>
-</thead>`
+const EmptyCols = ({ colspan = 999 }) =>
+    html`<thead>
+        <tr class="empty">
+            <td colspan=${colspan}>
+                <div>⌀ <small>${t("t_table_no_columns")}</small></div>
+            </td>
+        </tr>
+    </thead>`
 
-const EmptyRows = ({ colspan = 999 }) => html`<tr class="empty">
-    <td colspan=${colspan}>
-        <div>
-            <div>⌀</div>
-            <small>${t("t_table_no_rows")}</small>
-        </div>
-    </td>
-</tr>`
+const EmptyRows = ({ colspan = 999 }) =>
+    html`<tr class="empty">
+        <td colspan=${colspan}>
+            <div>
+                <div>⌀</div>
+                <small>${t("t_table_no_rows")}</small>
+            </div>
+        </td>
+    </tr>`
 
 export const TableView = ({ mime, body, cell_id, persist_js_state, sanitize_html }) => {
     let pluto_actions = useContext(PlutoActionsContext)
@@ -203,16 +205,17 @@ export const TableView = ({ mime, body, cell_id, persist_js_state, sanitize_html
 
     const mimepair_output = (pair) =>
         html`<${SimpleOutputBody} cell_id=${cell_id} mime=${pair[1]} body=${pair[0]} persist_js_state=${persist_js_state} sanitize_html=${sanitize_html} />`
-    const more = (dim) => html`<${More}
-        on_click_more=${() =>
-            actions_show_more({
-                pluto_actions,
-                cell_id,
-                node_ref,
-                objectid: body.objectid,
-                dim,
-            })}
-    />`
+    const more = (dim) =>
+        html`<${More}
+            on_click_more=${() =>
+                actions_show_more({
+                    pluto_actions,
+                    cell_id,
+                    node_ref,
+                    objectid: body.objectid,
+                    dim,
+                })}
+        />`
     // More than the columns, not big enough to break Firefox (https://bugzilla.mozilla.org/show_bug.cgi?id=675417)
     const maxcolspan = 3 + (body?.schema?.names?.length ?? 1)
     const thead =

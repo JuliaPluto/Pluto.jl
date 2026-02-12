@@ -1,13 +1,9 @@
 {
-
     "t_language_name": "Norsk bokmål",
-
     "t_my_work": "Mitt arbeid",
     "t_newnotebook": "Opprett en <strong>ny notebook</strong>",
     "t_welcome_to_pluto": "velkommen til {{pluto}}",
-    "t_confirmdeletencells": "Er du sikker på at du vil slette {{count}} celler?",
     "t_FORGET": "GLEM",
-
     "t_live_docs_search_placeholder": "Søk i dokumentasjon...",
     "t_live_docs_body": "<p>Velkommen til <b>Live docs</b>! Hold dette lille vinduet åpent mens du jobber med notebooken, så får du dokumentasjon av alt du skriver!</p><p>Du kan også skrive en søkefrase ovenfor.</p><hr><p><em>Står du fortsatt fast? Her er <a target=\"_blank\" href=\"https://julialang.org/about/help/\">noen tips</a>.</em></p>",
     "t_panel_status": "Prosessstatus",
@@ -18,8 +14,6 @@
     "t_panel_status_progress_inner": "({{done}}/{{total}})",
     "t_panel_close": "Lukk panel",
     "t_panel_popout": "Åpne panel i eget vindu",
-
-
     "t_stop_notebook_session": "Stopp økt",
     "t_shut_down_notebook": "Avslutt notebook",
     "t_start_notebook_in_background": "Åpne notebook i bakgrunnen",
@@ -44,13 +38,11 @@
     "t_cell_indirectly_disabled_in_file_tooltip": "Denne cellen er indirekte flagget som deaktivert i filen. Klikk for å finne ut mer!",
     "t_cell_disabled_in_file_explanation": "Denne cellen er lagret i notebookfilen som en Julia <em>kommentar</em>, i stedet for <em>kode</em>.<br />Dette gjør at den ikke vil kjøre når notebooken kjøres som et skript utenfor Pluto.<br />Bruk kontekstmenyen for å reaktivere cellen.",
     "t_cell_indirectly_disabled_in_file_explanation": "Denne cellen er lagret i notebookfilen som en Julia <em>kommentar</em>, i stedet for <em>kode</em>.<br />Dette gjør at den ikke vil kjøre når notebooken kjøres som et skript utenfor Pluto.<br />En oppstrøms celle <em>deaktiverer denne filen</em> <b>indirekte</b>; aktiver {{upstreamLink}} for å påvirke denne cellen.",
-
+    "t_cell_upstreamLink": "den forrige cellen",
     "t_language_picker_description": "Endre språket til grensesnittet",
     "t_refresh_to_see_language_change_confirm": "Språk endret! Vil du oppdatere siden for å se endringene?",
-
-
     "t_anonymous_function_abbr": "En (mini-)funksjon som er definert uten 'function'-nøkkelordet, men med -> eller 'do'.",
-    "t_display_complete_type_information_of_this_function_call": "Vis dette funksjonskallets fullstendige typeinformasjon", 
+    "t_display_complete_type_information_of_this_function_call": "Vis dette funksjonskallets fullstendige typeinformasjon",
     "t_multiple_expressions_in_one_cell": "Flere uttrykk i én celle",
     "t_how_would_you_like_to_fix_it": "Hvordan vil du løse dette?",
     "t_split_this_cell_into_cells": "Splitt denne cellen inn i {{count}} celler",
@@ -62,6 +54,7 @@
     "t_another_cell_defining_xs_contains_errors": "En annen celle som definerer {{symbols}} inneholder feil.",
     "t_error_message": "Feilmelding",
     "t_stack_trace": "Stack trace",
+    "t_header_list_of_syntax_errors": "Syntaksfeil",
     "t_here_is_what_happened_the_most_recent_locations_are_first": "Følgende er hva som skjedde, med de nyeste lokasjonene først:",
     "t_show_stack_trace": "Vis stack trace...",
     "t_stack_frame_location": "fra",
@@ -92,11 +85,9 @@
     "t_package_could_not_load": "<p>Pakken <strong>{{package}}.jl</strong> kunne ikke lastes inn fordi den feilet under initialisering.</p><p>Det er ikke sniltO! Ting du kan prøve:</p>",
     "t_package_could_not_load_things_you_could_try": "<ul><li>Restart notebooken.</li><li>Prøv en annen Julia-versjon.</li><li>Kontakt utviklerne av {{package}}.jl angående denne feilen.</li></ul>",
     "t_might_find_info_in_pkg_log": "Du kan kanskje finne nyttig informasjon i pakkeinstallasjonsloggen:",
-
     "t_edit_frontmatter": "Rediger frontmatter",
     "t_start_presentation": "Begynn presentasjon",
     "t_close": "Lukk",
-
     "t_export_action_ellipsis": "Eksporter...",
     "t_export_category_export": "eksporter",
     "t_export_category_record": "ta opp",
@@ -109,11 +100,9 @@
     "t_export_card_record": "Ta opp",
     "t_export_card_record_description": "<em>(forhåndsvisning)</em> Fang hele notebooken og alle endringer du gjør.",
     "t_export_card_pride_month_message": "Fremtiden er <strong>skeiv</strong>!",
-
     "t_save_notebook_ellipsis": "Lagre notebook...",
     "t_save_notebook_button_label_when_currently_not_saved": "Velg",
     "t_save_notebook_button_label_when_currently_saved": "Flytt",
-
     "t_process_status_loading_binder": "Laster binder...",
     "t_process_status_reconnecting": "Kobler til på nytt...",
     "t_process_status_loading": "Laster...",
@@ -125,22 +114,20 @@
     "t_process_restart_action_short": "restart",
     "t_process_give_permission_to_run_code": "Kjør notebookkode",
     "t_process_running_cells": "Kjører celler... ({{done}}/{{total}} ferdig)",
-
     "t_safe_preview": "Sikker forhåndsvisning",
     "t_safe_preview_not_executed": "Kode kjøres ikke i <em>Sikker forhåndsvisning</em>",
     "t_safe_preview_not_rendered": "Skripter og stiler blir ikke rendret i <em>Sikker forhåndsvisning</em>",
+    "t_safe_preview_confirm_warning": "Advarsel",
     "t_safe_preview_confirm_before": "Er du sikker på at du stoler på denne filen?",
     "t_safe_preview_confirm_before_danger": "⚠️ Fare!",
     "t_safe_preview_confirm_after": "En ondsinnet notebook kan stjele passord og data.",
     "t_safe_preview_body": "Du leser og redigerer nå denne filen uten å kjøre Julia-kode.",
     "t_safe_preview_run_this_notebook": "Når du er klar, kan du {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "kjøre denne notebooken",
-
     "t_instant_feedback_ellipsis": "Øyeblikkelig tilbakemelding...",
     "t_instant_feedback_send": "Send",
     "t_how_can_we_improve": "🙋 Hvordan kan vi gjøre {{pluto}} bedre?",
     "t_FAQ": "FAQ",
-
     "t_loading_cells": "Laster celler...",
     "t_reading_hidden_code": "👀 Leser gjemt kode",
     "t_enable_and_run_cell": "Aktiver og kjør cellen",
@@ -162,12 +149,9 @@
     "t_save_cell": "Lagre kode uten å kjøre",
     "t_jump_cell": "Denne cellen avhenger av en deaktivert celle",
     "t_run_cell": "Kjør celle (Shift + Enter)",
-
+    "t_help_about_tab_navigation_inside_cell": "Trykk Esc og deretter Tab for å fortsette navigasjonen.",
     "t_cell_is_disabled": "Denne cellen er deaktivert. {{link}} for å kjøre koden.",
     "t_cell_is_disabled_link": "Aktiver denne cellen",
-
-
-
     "t_ask_ai_action": "Spør AI",
     "t_ask_ai_action_description": "Spør AI om denne cellen",
     "t_ai_prompt_generator_title": "AI-ledetekstgenerator",
@@ -178,14 +162,12 @@
     "t_copy_action_description": "Kopier til utklippstavle",
     "t_copy_action_complete": "Kopiert!",
     "t_copy_header_id_action_description": "Klikk for å kopiere URL-en til denne overskriften",
-
     "t_ai_permission_prompt_title": "Bruk AI til å fikse syntaksfeil?",
     "t_ai_permission_prompt_body": "Pluto vil sende kode fra denne cellen til en kommersiell LLM-tjeneste for å fikse syntaksfeil. Oppdatert kode vil ikke kjøre uten bekreftelse.",
     "t_ai_permission_prompt_body_2": "Innsendt kode kan brukes (anonymt) av Pluto-utviklere for å forbedre AI-tjenesten.",
     "t_dont_ask_again": "Ikke spør igjen",
     "t_no": "Nei",
     "t_yes": "Ja",
-
     "t_ai_accept_and_close": "Godta AI-syntaksfiksen og lukk",
     "t_ai_decline_and_close": "Avslå AI-syntaksfiksen og lukk",
     "t_ai_accept_and_run": "Godta og kjør",
@@ -196,15 +178,10 @@
     "t_ai_syntax_fix_failed": "Klarte ikke å fikse syntaksfeil: {{error}}",
     "t_ai_fix_syntax_with_ai": "Fiks syntaks med AI",
     "t_ai_fix_syntax_with_ai_description": "Forsøk å fikse denne syntaksfeilen ved hjelp av en LLM-tjeneste",
-
     "t_confirm_delete_multiple_cells": "Slett {{count}} celler?",
     "t_confirm_delete_multiple_interrupt_notebook": "Denne cellen kjører fortsatt - vil du avbryte notebooken?",
     "t_confirm_move_file": "Er du sikker? Vil flytte fra\n\n{{old_path}}\n\ntil\n\n{{new_path}}?",
-
-
     "t_oopsie_pls_refresh": "Oops!! last inn nettleseren din på nytt så blir alt i orden!",
-
-
     "t_key_run": "kjør celle",
     "t_key_run_add": "kjør celle og legg til celle under",
     "t_key_submit_all_changes": "send inn alle endringer",
@@ -220,17 +197,12 @@
     "t_key_ctrl_c": "kopier valgte celler",
     "t_key_ctrl_x": "klipp ut valgte celler",
     "t_key_ctrl_v": "lim inn valgte celler",
-
     "t_key_autosave_description": "notebookfilen lagres hver gang du kjører en celle.",
     "t_key_selection_description": "Velg flere celler samtidig ved å dra en valgboks fra mellomrommet mellom to celler.",
-
     "t_key_or": "eller",
-
     "t_navigate_to_previous_page": "Gå tilbake",
-
     "t_bonds_static_warning": "Du ser på et statisk dokument. {{run_notebook_action}} for å aktivere interaktivitet.",
     "t_bonds_static_warning_inner": "Kjør denne notebooken",
-
     "t_edit_or_run_this_notebook": "<strong>Rediger</strong> eller <strong>kjør</strong> notebooken",
     "t_edit_or_run_view_code": "Vis kode",
     "t_edit_or_run_view_code_cancel": "Avbryt",
@@ -248,12 +220,10 @@
     "t_edit_or_run_open_the_notebook_file": "Åpne notebookfilen",
     "t_edit_or_run_open_the_notebook_file_description": "Skriv det lagrede filnavnet i <em>åpne</em>-boksen.",
     "t_edit_or_run_paste_url_in_the_open_box": "Lim inn URL i <em>Åpne</em>-boksen",
-
     "t_time_minutes_one": "{{count}} minutt",
     "t_time_minutes_other": "{{count}} minutter",
     "t_time_seconds_one": "{{count}} sekund",
     "t_time_seconds_other": "{{count}} sekunder",
-
     "t_frontmatter_title": "Frontmatter",
     "t_frontmatter_description": "Hvis du publiserer denne notebooken på nettet, kan du sette parameterne nedenfor for å gi HTML-metadata. Dette er nyttig for søkemotorer og sosiale medier.",
     "t_frontmatter_synchronized": "Frontmatter synkronisert ✓\n\nDisse parameterne vil bli brukt i fremtidige eksporter.",
@@ -263,48 +233,48 @@
     "t_frontmatter_cancel": "Avbryt",
     "t_frontmatter_save": "Lagre",
     "t_frontmatter_preview": "Forhåndsvisning",
-
-
+    "t_frontmatter_language_placeholder": "nb-NO (skriv inn en BCP 47 språkkode)",
+    "t_plutoland_upload_description": "Last opp denne notebooken til {{plutoland}}, en gratis hostingtjeneste for Pluto-notebooks:",
+    "t_plutoland_upload_description_recording": "Last opp dette opptaket til {{plutoland}}, en gratis hostingtjeneste for Pluto-opptak:",
+    "t_plutoland_upload_upload": "Last opp til {{plutoland}}",
+    "t_plutoland_upload_uploading": "Laster opp...",
+    "t_plutoland_download": "Last ned HTML-fil",
+    "t_plutoland_download_description": "Lagre HTML-eksportfilen til disken din",
+    "t_plutoland_download_description_recording": "Lagre HTML-eksportfilen på datamaskinen din",
+    "t_plutoland_choose_up_or_down": "Velg ↑ eller ↓",
+    "t_plutoland_upload_success": "Opplastet! Du kan dele denne URL-en:",
+    "t_plutoland_upload_success_recording": "Opplastet! Se opptaket ditt her:",
+    "t_plutoland_upload_delete": "Slett permanent fra pluto.land",
     "t_logs_truncated": "{{count}} logger sjult...",
     "t_logs_stdout": "Denne teksten ble skrevet til <a href=\"https://en.wikipedia.org/wiki/Standard_streams\" target=\"_blank\">terminalstrømmen</a> mens cellen kjørte. Den er ikke <em>returverdien</em> til cellen.",
     "t_logs_click_for_more_info": "Klikk for mer info",
-
     "t_ready_notif_title": "Pluto: notebook klar",
     "t_ready_notif_body": "✓ Alle {{count}} steg fullført",
     "t_ready_notif": "Varsle når ferdig",
     "t_ready_notif_permission": "Pluto trenger tillatelse til å vise varsler. <strong>Aktiver varsler</strong> i nettleserinnstillingene dine for å bruke denne funksjonen.",
-
     "t_pkg_disables_str": "{{function}} deaktiverer Plutos innebygde pakkebehandler.",
     "t_pkg_stdlib": "{{package}} er del av Julias forhåndsinstallerte <em>standardbibliotek</em>.",
     "t_pkg_will_be_installed": "{{package}} vil bli installert når du kjører denne notebooken.",
     "t_pkg_is_installing": "{{package}} installeres...",
     "t_pkg_is_installed": "{{package}} er installert i notebooken.",
-
     "t_pkg_not_found": "Pakken {{package}} ble ikke funnet registeret. Skrev du feil?",
     "t_pkg_will_be_installed_in_notebook": "{{package}} vil bli installert i notebooken når du kjører denne cellen.",
-
     "t_pkg_installation_can_take": "Installasjon kan ta {{time_install}}.<br/>Etterpå laster den inn {{time_load}}.",
     "t_pkg_update_packages": "Oppdater pakker",
     "t_pkg_update_packages_description": "Vil du sjekke etter oppdateringer og installere dem? En sikkerhetskopi av notebookfilen vil bli opprettet.",
     "t_pkg_currently_busy": "Pkg er opptatt med andre pakker for øyeblikket... kom tilbake senere!",
     "t_pkg_toggle_terminal": "Vis/skjul Pkg-terminalutdata",
-
     "t_pkg_go_to_help": "Lær mer om pakker i Pluto",
-
     "t_save_all_changes": "Lagre alle endringer",
     "t_save_all_changes_description": "Lagre og kjør alle endrede celler",
     "t_file_change_detected": "Filendring oppdaget, <b>notebook oppdatert</b>",
     "t_file_saved": "Lagret",
-
     "t_recording_ui_start_recording": "<strong>Start opptak</strong>",
     "t_recording_ui_start_recording_muted": "<strong>Start opptak</strong> (ingen lyd)",
     "t_recording_ui_stop_recording": "<strong>Stopp opptak</strong>",
     "t_recording_ui_back_to_recording": "Tilbake til <strong>opptak</strong> {{icon}}",
-
     "t_presentation_previous_slide": "Forrige lysbilde",
     "t_presentation_next_slide": "Neste lysbilde",
-
-
     "t_status_names": {
         "workspace": "Arbeidsområdeoppsett",
         "create_process": "Start Julia",
@@ -323,14 +293,29 @@
         "backend_responded": "Åpner notebookfil",
         "backend_notebook_running": "Bytter til live-redigering"
     },
-
     "t_tree_show_more_items": "mer",
     "t_table_no_columns": "Denne tabellen har ingen kolonner",
     "t_table_no_rows": "Denne tabellen har ingen rader",
-
     "t_undo_delete_one": "Celle slettet",
     "t_undo_delete_other": "{{count}} celler slettet",
     "t_undo_delete_link": "ANGRE",
     "t_auto_disabled": "{{another_cell}} har blitt deaktivert fordi den også definerte {{variable}}.",
-    "t_auto_disabled_link": "En annen celle"
+    "t_auto_disabled_link": "En annen celle",
+    "t_project_toml_editor_title": "Project.toml (funksjonsforhåndsvisning)",
+    "t_project_toml_editor_description": "Denne notebooken har sitt eget pakke-miljø. Du kan redigere Project.toml-filen for å angi hvilke pakker som brukes.",
+    "t_project_toml_editor_what_is_project_toml": "Hva er Project.toml?",
+    "t_project_toml_editor_compat_description": "Du kan endre oppføringene for å angi pakkeversjoner som brukes i denne notebooken. Ved å legge til kan du bruke uregistrerte eller lokale pakker",
+    "t_project_toml_editor_feature_preview_note": "<strong>Merk:</strong> Dette er en forhåndsvisning av en funksjon. Det fungerer kanskje ikke alltid som forventet. Gi oss gjerne tilbakemelding",
+    "t_project_toml_editor_status_tab_note": "Etter lagring kan du bruke Status-fanen for å se loggene.",
+    "t_project_toml_editor_backup_checkbox": "Opprett en sikkerhetskopi av notebooken før lagring?",
+    "t_project_toml_editor_cancel": "Avbryt",
+    "t_project_toml_editor_save": "Lagre og løse",
+    "t_project_toml_editor_placeholder": "Dette er en TOML-fil. Du kan angi metadata for prosjektet ditt her.",
+    "t_project_toml_editor_wait_cells": "Vent på at alle celler er ferdig med å kjøre.",
+    "t_project_toml_editor_wait_packages": "Vent på at alle pakkeoperasjoner er fullført (også i andre notebooks).",
+    "t_project_toml_editor_synchronized": "Project TOML synkronisert ✔\n\nSe loggene i Status-fanen.",
+    "t_project_toml_editor_sync_failed": "Project TOML-synkronisering feilet: {{error}}",
+    "t_project_toml_editor_start_notebook_first": "Du må starte notebooken før du kan redigere Project.toml. Dette kan bli støttet i fremtiden.",
+    "t_project_toml_editor_version_latest": "Nyeste",
+    "t_project_toml_editor_version_latest_compatible": "Nyeste kompatible"
 }

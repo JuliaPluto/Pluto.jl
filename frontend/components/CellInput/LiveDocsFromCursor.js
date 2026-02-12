@@ -1,4 +1,5 @@
 import { EditorState, syntaxTree } from "../../imports/CodemirrorPlutoSetup.js"
+import { sorted_keywords } from "./pluto_autocomplete.js"
 import { ScopeStateField } from "./scopestate_statefield.js"
 
 let get_root_variable_from_expression = (cursor) => {
@@ -29,22 +30,7 @@ let VALID_DOCS_TYPES = [
     "Signature",
     "ParametrizedExpression",
 ]
-let keywords_that_have_docs_and_are_cool = [
-    "import",
-    "export",
-    "try",
-    "catch",
-    "finally",
-    "quote",
-    "do",
-    "struct",
-    "mutable",
-    "module",
-    "baremodule",
-    "if",
-    "let",
-    ".",
-]
+let keywords_that_have_docs_and_are_cool = [...sorted_keywords, "."]
 
 let is_docs_searchable = (/** @type {import("../../imports/CodemirrorPlutoSetup.js").TreeCursor} */ cursor) => {
     if (keywords_that_have_docs_and_are_cool.includes(cursor.name)) {
@@ -100,7 +86,7 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
         do {
             verbose && console.group(`Iteration #${iterations}`)
             try {
-                verbose && console.log("cursor", cursor.toString())
+                verbose && console.log(`cursor (${cursor.name}):`, cursor.toString())
 
                 // Just to make sure we don't accidentally end up in an infinite loop
                 if (iterations > 100) {
@@ -125,6 +111,10 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                 }
 
                 verbose && console.log(`parents:`, parents)
+
+                if (sorted_keywords.includes(cursor.name)) {
+                    return cursor.toString()
+                }
 
                 let index_of_struct_in_parents = parents.indexOf("StructDefinition")
                 if (index_of_struct_in_parents !== -1) {
@@ -261,7 +251,7 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                 }
 
                 // If we happen to be anywhere else in a function declaration, we want the function name
-                // `function X() ... end` should yield `X`
+                // `function X() ... end` to yield `X`
                 if (cursor.name === "FunctionDefinition") {
                     cursor.firstChild() // "function"
                     cursor.nextSibling() // Identifier

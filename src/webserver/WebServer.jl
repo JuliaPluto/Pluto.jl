@@ -144,7 +144,10 @@ function run!(session::ServerSession)
         is_first_run[] = false
         @info "Loading..."
     end
-
+    if !session.options.security.require_secret_for_open_links
+        @warn "Dangerous setting:\n\n\trequire_secret_for_open_links = false\n\nDo not use this setting on your own computer – it allows any website to run arbitrary code on your computer. Only use this on an isolated disposable server like Binder, or when using your own authentication layer."
+    end
+        
     warn_julia_compat()
 
     pluto_router = http_router_for(session)

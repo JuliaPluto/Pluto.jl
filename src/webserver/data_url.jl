@@ -69,14 +69,10 @@ function download_cool(url::AbstractString, path::AbstractString=tempname())
 		@assert comma_index isa Int "Invalid data URL."
 		
 		metadata_str = url[length("data:")+1:comma_index-1]
-		metadata_parts = split(metadata_str, ';'; limit=2)
-
-		if length(metadata_parts) == 2
-			@assert metadata_parts[2] == "base64" "Invalid data URL."
-		end
+		metadata_parts = split(metadata_str, ';')
 		
 		mime = MIME(first(metadata_parts))
-		is_base64 = length(metadata_parts) == 2
+		is_base64 = "base64" ∈ metadata_parts
 
 		data_str = SubString(url, comma_index+1)
 		

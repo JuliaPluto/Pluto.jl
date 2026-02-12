@@ -86,7 +86,7 @@ begin
 	"""
 	struct AppendonlyMarker{T} <: AbstractVector{T}
 		mutable_source::Vector{T}
-		length_at_time_of_creation::Int64
+		length_at_time_of_creation::Int
 	end
 	AppendonlyMarker(arr::Vector) = AppendonlyMarker(arr, length(arr))
 	

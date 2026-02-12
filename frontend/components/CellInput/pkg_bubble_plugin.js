@@ -149,20 +149,22 @@ function pkg_decorations(view, { pluto_actions, notebook_id, nbpkg }) {
                 } else if (thing.type === "implicit_using") {
                     if (thing.name === "HypertextLiteral") {
                         let deco = Decoration.widget({
-                            widget: new ReactWidget(html`<span style=${{ position: "relative" }}>
-                                <div
-                                    style=${{
-                                        position: `absolute`,
-                                        display: `inline`,
-                                        left: 0,
-                                        whiteSpace: `nowrap`,
-                                        opacity: 0.3,
-                                        pointerEvents: `none`,
-                                    }}
-                                >
-                                    : @htl, @htl_str
-                                </div>
-                            </span>`),
+                            widget: new ReactWidget(
+                                html`<span style=${{ position: "relative" }}>
+                                    <div
+                                        style=${{
+                                            position: `absolute`,
+                                            display: `inline`,
+                                            left: 0,
+                                            whiteSpace: `nowrap`,
+                                            opacity: 0.3,
+                                            pointerEvents: `none`,
+                                        }}
+                                    >
+                                        : @htl, @htl_str
+                                    </div>
+                                </span>`
+                            ),
                             side: 1,
                         })
                         return deco.range(thing.to)

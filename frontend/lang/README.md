@@ -12,7 +12,7 @@ Localizing Pluto is a great way to help the Julia community, because it makes Ju
 
 We also want to break the tradition that "programming is in English". Programming is for everyone, and we hope that computers can be used regardless of language and culture.
 
-Your work is also an **open source** contribution! Because you contribute localizations via git and github, you will be listed in the Pluto contributors list (https://github.com/fonsp/Pluto.jl), and in the Pluto release notes (https://github.com/fonsp/Pluto.jl/releases).
+Your work is also an **open source** contribution! Because you contribute localizations via git and github, you will be listed in the Pluto contributors list (https://github.com/JuliaPluto/Pluto.jl), and in the Pluto release notes (https://github.com/JuliaPluto/Pluto.jl/releases).
 
 
 
@@ -87,7 +87,7 @@ You use the `_one`, `_other`, `_zero`, `_two`, `_few`, `_many`, and `_other` suf
 
 ## How to contribute
 
-Before you start, take a look at [the Issues and PRs labeled "language"](https://github.com/fonsp/Pluto.jl/issues?q=label%3Alanguage). Someone else might already be working on this language, and you could collaborate!
+Before you start, take a look at [the Issues and PRs labeled "language"](https://github.com/JuliaPluto/Pluto.jl/issues?q=label%3Alanguage). Someone else might already be working on this language, and you could collaborate!
 
 
 ### Initial setup:
@@ -121,6 +121,8 @@ Feel free to get creative! You don't need to match the English text exactly, jus
 
 With Pluto, we try to keep an **informal and clear style**, using simple and positive language. What would that look like in your language?
 
+If your language contains gender-specific words, please make an effort to use gender-neutral language. (In some languages, this means being careful to not assume that the user is masculine.) We want Pluto to feel inclusive!
+
 ## Using AI
 Feel free to use AI to help with writing the localization strings. (For example, copy the complete JSON file into ChatGPT and ask kindly for a translation.) But we do ask you to **check every localization string** yourself, and make sure that it is correct.
 
@@ -132,12 +134,14 @@ Also think about the **writing style**. Does the AI generate text in a style (fo
 > @fonsp used Cursor Tab (AI autocomplete), but found it only a bit useful. But he thinks that it was sometimes nicer and more fun to think of the text yourself. 
 > 
 > @pankgeorg used Claude Code to generate the full json file at once, and then tweaked it manually. He was pretty happy with the result.
+> 
+> @rgouveiamendes used Copilot to translate all the values in the json file from English to Portuguese. Then, he reviewed each string. Few changes were needed. Executing the local copy of Pluto led to some final refinements.
 
 ## Modifying existing languages
 You are free to modify existing localization strings contributed by other people, if you see a way to improve! For large changes, we ask you to contact previous authors and find a consensus together.
 
 ## New languages
-If you want to contribute a new language/dialect that does not yet have a JSON file, then go for it! The Pluto developers are happy to set this up for you, but you can also try it yourself. Take a look at how another language (like "nederlands" (`nl`)) is set up, and copy the structure.
+If you want to contribute a new language/dialect that does not yet have a JSON file, then go for it! The Pluto developers are happy to set this up for you, but you can also try it yourself. Take a look at how another language (like "nederlands_nl" (`nl-NL`)) is set up, and copy the structure.
 
 **All languages and dialects are welcome!** Even if the language is not spoken by many people, or less represented in the scientific programming world, we would really like your contribution!
 

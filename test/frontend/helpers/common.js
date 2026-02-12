@@ -127,9 +127,11 @@ export const waitForContentToChange = async (page, selector, currentContent) => 
 export const waitForContentToBecome = async (
     /** @type {import("puppeteer").Page} */ page,
     /** @type {string} */ selector,
-    /** @type {string} */ targetContent
+    /** @type {string} */ targetContent,
+    /** @type {{ timeout?: number }} */ options = {}
 ) => {
-    await page.waitForSelector(selector, { visible: targetContent !== "" })
+    const timeout = options.timeout ?? 30000
+    await page.waitForSelector(selector, { visible: targetContent !== "", timeout })
     try {
         await page.waitForFunction(
             (selector, targetContent) => {
@@ -137,7 +139,7 @@ export const waitForContentToBecome = async (
                 // https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent#differences_from_innertext
                 return element !== null && element.textContent === targetContent
             },
-            { polling: 100 },
+            { polling: 100, timeout },
             selector,
             targetContent
         )
@@ -148,9 +150,13 @@ export const waitForContentToBecome = async (
     return getTextContent(page, selector)
 }
 
-export const clickAndWaitForNavigation = async (page, selector) => {
-    let t = with_connections_debug(page, () => page.waitForNavigation({ waitUntil: "networkidle0" })).catch((e) => {
+export const clickAndWaitForNavigation = async (/** @type {import("puppeteer").Page} */ page, /** @type {string} */ selector) => {
+    // Use a shorter timeout for networkidle0 since it can be unreliable with persistent connections
+    // Fall back to domcontentloaded if networkidle0 times out
+    let t = with_connections_debug(page, () => page.waitForNavigation({ waitUntil: "networkidle0", timeout: 10000 })).catch((e) => {
         console.warn("Network idle never happened after navigation... weird!", e)
+        // Fallback to domcontentloaded which is more reliable
+        return page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
     })
     await page.click(selector)
     await t

@@ -338,8 +338,8 @@ export const Cell = ({
             ${code_not_trusted_yet
                 ? html`<${SafePreviewOutput} />`
                 : cell_api_ready
-                ? html`<${CellOutput} errored=${errored} ...${output} sanitize_html=${sanitize_html} cell_id=${cell_id} />`
-                : html``}
+                  ? html`<${CellOutput} errored=${errored} ...${output} sanitize_html=${sanitize_html} cell_id=${cell_id} />`
+                  : html``}
             <${CellInput}
                 local_code=${cell_input_local?.code ?? code}
                 remote_code=${code}
@@ -415,22 +415,22 @@ export const Cell = ({
                       }}
                   ></div>`
                 : depends_on_skipped_cells
-                ? html`<div
-                      class="depends_on_skipped_marker"
-                      title=${t("t_cell_indirectly_disabled_in_file_tooltip")}
-                      onClick=${(e) => {
-                          open_pluto_popup({
-                              type: "info",
-                              source_element: e.target,
-                              body: th("t_cell_indirectly_disabled_in_file_explanation", {
-                                  upstreamLink: html`<span onClick=${skip_as_script_jump} style="cursor: pointer; text-decoration: underline">
-                                      the upstream one</span
-                                  >`,
-                              }),
-                          })
-                      }}
-                  ></div>`
-                : null}
+                  ? html`<div
+                        class="depends_on_skipped_marker"
+                        title=${t("t_cell_indirectly_disabled_in_file_tooltip")}
+                        onClick=${(e) => {
+                            open_pluto_popup({
+                                type: "info",
+                                source_element: e.target,
+                                body: th("t_cell_indirectly_disabled_in_file_explanation", {
+                                    upstreamLink: html`<span onClick=${skip_as_script_jump} style="cursor: pointer; text-decoration: underline">
+                                        ${t("t_cell_upstreamLink")}</span
+                                    >`,
+                                }),
+                            })
+                        }}
+                    ></div>`
+                  : null}
         </pluto-cell>
     `
 }

@@ -50,6 +50,7 @@ include("./Configuration.jl")
 include("./evaluation/Tokens.jl")
 include("./evaluation/Throttled.jl")
 include("./runner/PlutoRunner/src/PlutoRunner.jl")
+include("./packages/temp dir in scratch.jl")
 include("./packages/PkgCompat.jl")
 include("./webserver/Status.jl")
 
@@ -59,6 +60,7 @@ include("./notebook/saving and loading.jl")
 include("./notebook/frontmatter.jl")
 include("./notebook/Events.jl")
 include("./webserver/Session.jl")
+include("./webserver/timer callback.jl")
 include("./webserver/PutUpdates.jl")
 
 include("./analysis/Parse.jl")
@@ -69,7 +71,6 @@ include("./analysis/MoreAnalysis.jl")
 include("./evaluation/WorkspaceManager.jl")
 include("./evaluation/MacroAnalysis.jl")
 include("./packages/IOListener.jl")
-include("./packages/precompile_isolated.jl")
 include("./packages/Packages.jl")
 include("./packages/PkgUtils.jl")
 include("./evaluation/Run.jl")
@@ -99,15 +100,15 @@ include("./precompile.jl")
 const pluto_boot_environment_path = Ref{String}()
 
 function julia_compat_issue(short::String)
-    if short == "1.12"
-        "Check [https://github.com/fonsp/Pluto.jl/issues/3005](https://github.com/fonsp/Pluto.jl/issues/3005)"
+    if short == "1.13"
+        "Check [https://github.com/fonsp/Pluto.jl/issues/3389](https://github.com/fonsp/Pluto.jl/issues/3389)"
     else
         "Search [github.com/fonsp/Pluto.jl/issues](https://github.com/fonsp/Pluto.jl/issues) for `Julia $short`"
     end
 end
 
 function warn_julia_compat()
-    if VERSION > v"1.11.9999"
+    if VERSION > v"1.12.9999"
         short = "$(VERSION.major).$(VERSION.minor)"
         msg = "# WARNING: Unsupported Julia version\nPluto (`$(PLUTO_VERSION)`) is running on a new version of Julia (`$(VERSION)`). Support for Julia $short will be added in a later Pluto release.\n\nYou can try:\n$(
             "  1. Update Pluto using `Pkg.update(\"Pluto\")`.\n" *

@@ -159,7 +159,7 @@ const validFor = (/** @type {string} */ text) => {
 
 const not_explicit_and_too_boring = (/** @type {autocomplete.CompletionContext} */ ctx, allow_strings = false) => {
     if (ctx.explicit) return false
-    if (ctx.matchBefore(/[ =)+-/,*:'"]$/)) return true
+    if (ctx.matchBefore(/[\s=\)+-/,*:'\(;\[\]\{\}"]$/)) return true
     if (ctx.tokenBefore(["IntegerLiteral", "FloatLiteral", "LineComment", "BlockComment", "Symbol"]) != null) return true
     if (!allow_strings) {
         if (ctx.tokenBefore([...STRING_NODE_NAMES]) != null) {
@@ -246,7 +246,7 @@ const julia_code_completions_to_cm =
                         // (quick) fix for identifiers that need to be escaped
                         // Ideally this is done with Meta.isoperator on the julia side
                         let text_to_apply =
-                            completion_type === "method" ? to_complete : is_field_expression ? override_text_to_apply_in_field_expression(text) ?? text : text
+                            completion_type === "method" ? to_complete : is_field_expression ? (override_text_to_apply_in_field_expression(text) ?? text) : text
 
                         value_type = value_type === "Function" && text.startsWith("@") ? "Macro" : value_type
 
@@ -399,6 +399,7 @@ const global_variables_completion =
 /** @returns {autocomplete.CompletionSource} */
 const make_it_julian = (/** @type {autocomplete.CompletionSource} */ source) => (/** @type {autocomplete.CompletionContext} */ ctx) => {
     const c = source(ctx)
+    if (c instanceof Promise) throw "Oh nooooo"
     return c == null
         ? null
         : {
@@ -410,7 +411,7 @@ const make_it_julian = (/** @type {autocomplete.CompletionSource} */ source) => 
 
 // Get this list with
 // import REPL; REPL.REPLCompletions.sorted_keywords ∪ REPL.REPLCompletions.sorted_keyvals |> repr |> clipboard
-const sorted_keywords = [
+export const sorted_keywords = [
     "abstract type",
     "baremodule",
     "begin",

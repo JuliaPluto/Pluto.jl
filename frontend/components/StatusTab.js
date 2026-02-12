@@ -43,6 +43,8 @@ init_process
 
 pkg
 
+write_project_toml
+
 analysis
 waiting_for_others
 resolve
@@ -108,9 +110,12 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
 
     useEffect(() => {
         if (busy || mystatus.success === false) {
-            let handle = setTimeout(() => {
-                set_is_open(true)
-            }, Math.max(100, 500 - path.length * 200))
+            let handle = setTimeout(
+                () => {
+                    set_is_open(true)
+                },
+                Math.max(100, 500 - path.length * 200)
+            )
 
             return () => clearTimeout(handle)
         }
@@ -122,9 +127,12 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
                 // let audio = new Audio("https://proxy.notificationsounds.com/message-tones/succeeded-message-tone/download/file-sounds-1210-succeeded.mp3")
                 // audio.play()
 
-                let handle = setTimeout(() => {
-                    set_is_open(false)
-                }, 1800 - path.length * 200)
+                let handle = setTimeout(
+                    () => {
+                        set_is_open(false)
+                    },
+                    1800 - path.length * 200
+                )
 
                 return () => clearTimeout(handle)
             }
@@ -207,8 +215,8 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
               ${is_open && mystatus.name === "pkg"
                   ? html`<${PkgTerminalView} value=${nbpkg?.terminal_outputs?.nbpkg_sync} />`
                   : is_open && mystatus.name === "backend_launch"
-                  ? html`<${PkgTerminalView} value=${backend_launch_logs} />`
-                  : undefined}
+                    ? html`<${PkgTerminalView} value=${backend_launch_logs} />`
+                    : undefined}
           </pl-status>`
 }
 

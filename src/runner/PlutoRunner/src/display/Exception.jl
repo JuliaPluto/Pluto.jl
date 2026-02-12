@@ -114,7 +114,7 @@ function pretty_stackcall(frame::Base.StackFrame, linfo::Core.CodeInfo)
 end
 
 function pretty_stackcall(frame::Base.StackFrame, linfo::Union{Core.MethodInstance, Core.CodeInstance})
-    if linfo.def isa Method
+    if linfo.def isa Union{Method,Core.MethodInstance}
         @static if isdefined(Base.StackTraces, :show_spec_linfo) && hasmethod(Base.StackTraces.show_spec_linfo, Tuple{IO, Base.StackFrame})
             sprint(Base.StackTraces.show_spec_linfo, frame; context=:backtrace => true)
         else

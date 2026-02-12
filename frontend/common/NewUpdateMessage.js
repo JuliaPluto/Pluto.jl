@@ -28,7 +28,7 @@ export const new_update_message = (client) =>
         })
 
 const fetch_pluto_releases = async () => {
-    let response = await fetch("https://api.github.com/repos/fonsp/Pluto.jl/releases", {
+    let response = await fetch("https://api.github.com/repos/JuliaPluto/Pluto.jl/releases", {
         method: "GET",
         mode: "cors",
         cache: "no-cache",

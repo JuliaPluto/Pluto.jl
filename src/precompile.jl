@@ -63,6 +63,8 @@ PrecompileTools.@compile_workload begin
             capture_stdout=false,
         )
     )
+    
+    finalize(s)
 end
 
 using PrecompileSignatures: @precompile_signatures

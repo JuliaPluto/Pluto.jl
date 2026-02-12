@@ -1,10 +1,4 @@
 {
-    "prettier.printWidth": 160,
-    "prettier.tabWidth": 4,
-    "prettier.semi": false,
-    "prettier.quoteProps": "consistent",
-    "prettier.singleQuote": false,
-    
     "editor.formatOnSave": false,
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -16,9 +10,6 @@
     },
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    },
-    "i18n-ally.localesPaths": [
-        "frontend/lang"
-    ]
+        "editor.formatOnSave": false
+    }
 }

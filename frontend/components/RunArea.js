@@ -66,7 +66,7 @@ export const RunArea = ({
             <button onDblClick=${on_double_click} onClick=${fmap[`on_${action}`]} class="runcell" title=${titlemap[action]}>
                 <span></span>
             </button>
-            <span class="runtime">${prettytime(running ? local_time_running_ns ?? runtime : runtime)}</span>
+            <span class="runtime">${prettytime(running ? (local_time_running_ns ?? runtime) : runtime)}</span>
         </pluto-runarea>
     `
 }

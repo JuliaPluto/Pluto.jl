@@ -20,8 +20,21 @@ completion_value_type_inner(x::Module) = :Module
 completion_value_type_inner(x::AbstractArray) = :Array
 completion_value_type_inner(x::Any) = :Any
 
+
+function source_module(c::ModuleCompletion)
+    if VERSION >= v"1.12.0-a" && is_pluto_workspace(c.parent)
+        sym = completion_str_to_symbol(c.mod)
+        isdefined(c.parent, sym) ? 
+            which(c.parent, sym) : c.parent
+    else
+        c.parent
+    end
+end
+
+completion_str_to_symbol(s::String) = endswith(s, "\"") ? Symbol("@$(s[begin:end-1])_str") : Symbol(s)
+
 completion_value_type(c::ModuleCompletion) = try
-    completion_value_type_inner(getfield(c.parent, Symbol(c.mod)))::Symbol
+    completion_value_type_inner(getfield(c.parent, completion_str_to_symbol(c.mod)))::Symbol
 catch
     :unknown
 end
@@ -68,26 +81,25 @@ function is_pluto_controlled(m::Module)
     parent != m && is_pluto_controlled(parent)
 end
 
-function completions_exported(cs::Vector{<:Completion})
-    map(cs) do c
-        if c isa ModuleCompletion
-            sym = Symbol(c.mod)
-            @static if isdefined(Base, :ispublic)
-                Base.ispublic(c.parent, sym)
-            else
-                Base.isexported(c.parent, sym)
-            end
+function completion_exported(c::Completion)
+    if c isa ModuleCompletion
+        sym = completion_str_to_symbol(c.mod)
+        @static if isdefined(Base, :ispublic)
+            Base.ispublic(source_module(c), sym)
         else
-            true
+            Base.isexported(c.parent, sym)
         end
+    else
+        true
     end
 end
 
-completion_from_notebook(c::ModuleCompletion) =
-    is_pluto_workspace(c.parent) &&
+function completion_from_notebook(c::ModuleCompletion)
     c.mod != "include" &&
     c.mod != "eval" &&
-    !startswith(c.mod, "#")
+    !startswith(c.mod, "#") &&
+    is_pluto_workspace(source_module(c))
+end
 completion_from_notebook(c::Completion) = false
 
 completion_type(::REPLCompletions.PathCompletion) = :path
@@ -168,17 +180,18 @@ function completion_fetcher(query::String, query_full::String, workspace::Module
     end
     # Add this if you are seeing keyword completions twice in results
     # filter!(!is_keyword_completion, results)
-
-    exported = completions_exported(results)
-    smooshed_together = map(zip(results, exported)) do (result, rexported)
-        (
+    smooshed_together = map(results) do result
+        r = (
             completion_contents(result)::String,
             completion_value_type(result)::Symbol,
-            rexported::Bool,
+            completion_exported(result)::Bool,
             completion_from_notebook(result)::Bool,
             completion_type(result)::Symbol,
             completion_special_symbol_value(result),
         )
+        
+        # @info "yeah" result rexported r
+        r
     end
 
     sort!(smooshed_together; alg=MergeSort, by=basic_completion_priority)

@@ -42,6 +42,9 @@ function open_url(session::ServerSession, url::AbstractString; kwargs...)
     return notebook
 end
 
+
+const notebook_loading_lock = ReentrantLock()
+
 "Open the notebook at `path` into `session::ServerSession` and run it. Returns the `Notebook`."
 function open(session::ServerSession, path::AbstractString; 
     execution_allowed::Bool=true,
@@ -60,17 +63,25 @@ function open(session::ServerSession, path::AbstractString;
         readwrite(path, new_path)
         path = new_path
     end
-
-    for notebook in values(session.notebooks)
-        if isfile(notebook.path) && realpath(notebook.path) == realpath(tamepath(path))
-            throw(NotebookIsRunningException(notebook))
+    
+    notebook = lock(notebook_loading_lock) do
+        # is this path already open?
+        for notebook in values(session.notebooks)
+            if isfile(notebook.path) && realpath(notebook.path) == realpath(tamepath(path))
+                throw(NotebookIsRunningException(notebook))
+            end
         end
+
+        # load the notebook
+        notebook = load_notebook(tamepath(path); disable_writing_notebook_files=session.options.server.disable_writing_notebook_files)
+        notebook.notebook_id = notebook_id
+        
+        session.notebooks[notebook.notebook_id] = notebook
+        return notebook
     end
     
-    notebook = load_notebook(tamepath(path); disable_writing_notebook_files=session.options.server.disable_writing_notebook_files)
+    # handle "Safe Preview" mode
     execution_allowed = execution_allowed && !haskey(notebook.metadata, "risky_file_source")
-
-    notebook.notebook_id = notebook_id
     if !isnothing(risky_file_source)
         notebook.metadata["risky_file_source"] = risky_file_source
     end
@@ -84,7 +95,6 @@ function open(session::ServerSession, path::AbstractString;
         Pluto.set_frontmatter!(notebook, nothing)
     end
 
-    session.notebooks[notebook.notebook_id] = notebook
     
     if execution_allowed && session.options.evaluation.run_notebook_on_load
         Pluto._report_business_cells_planned!(notebook)

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { render, Component, h, cloneElement, createContext, createRef, hydrate } from "https://esm.sh/preact@10.13.2?pin=v113&target=es2020"
+import { render, Component, h, cloneElement, createContext, createRef, hydrate } from "https://esm.sh/preact@10.27.2?pin=v113&target=es2020"
 import {
     //
     useEffect,
@@ -10,7 +10,7 @@ import {
     useCallback,
     useContext,
     useErrorBoundary,
-} from "https://esm.sh/preact@10.13.2/hooks?pin=v113&target=es2020"
+} from "https://esm.sh/preact@10.27.2/hooks?pin=v113&target=es2020"
 
 import htm from "https://esm.sh/htm@3.1.1?pin=v113&target=es2020"
 

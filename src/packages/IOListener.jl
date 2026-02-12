@@ -13,7 +13,9 @@ Base.@kwdef struct IOListener
 end
 
 function trigger(listener::IOListener)
+    # if there is data...
     if !eof(listener.buffer) && isreadable(listener.buffer)
+        # ...process it and...
         newdata = readavailable(listener.buffer)
         isempty(newdata) && return
         s = String(newdata)
@@ -23,6 +25,7 @@ function trigger(listener::IOListener)
         )
         new_contents = ANSIEmulation.build_str(listener.ansi_state)
 
+        # ...trigger the callback.
         listener.callback(new_contents)
     end
 end
@@ -50,12 +53,14 @@ function stoplistening(listener::IOListener)
     end
 end
 
+# replace all pkg loading spinner states by the same character. the pluto frontend will make that character spin using CSS magic.
 freeze_loading_spinners(s::AbstractString) = replace(s, '◑' => '◐', '◒' => '◐', '◓' => '◐')
 
-phasemessage(iolistener, phase::String) = phasemessage(iolistener.buffer, phase)
+"write a text with bold formatting"
 function phasemessage(io::IO, phase::String)
     ioc = IOContext(io, :color=>true)
     printstyled(ioc, "\n$phase...\n"; bold=true)
     printstyled(ioc, "===\n"; color=:light_black)
 end
+phasemessage(iolistener, phase::String) = phasemessage(iolistener.buffer, phase)
 

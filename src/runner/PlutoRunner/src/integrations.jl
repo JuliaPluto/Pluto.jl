@@ -134,7 +134,7 @@ const integrations = Integration[
             pluto_showable(::MIME"application/vnd.pluto.table+object", x::Any) = try Tables.rowaccess(x)::Bool catch; false end
             pluto_showable(::MIME"application/vnd.pluto.table+object", t::Type) = false
             pluto_showable(::MIME"application/vnd.pluto.table+object", t::AbstractVector{<:NamedTuple}) = false
-            pluto_showable(::MIME"application/vnd.pluto.table+object", t::AbstractVector{<:Dict{Symbol,<:Any}}) = false
+            pluto_showable(::MIME"application/vnd.pluto.table+object", t::AbstractVector{<:AbstractDict}) = false
             pluto_showable(::MIME"application/vnd.pluto.table+object", t::AbstractVector{Union{}}) = false
 
         end,
@@ -169,6 +169,19 @@ const integrations = Integration[
         id = Base.PkgId(UUID("4e3cecfd-b093-5904-9786-8bbb286a6a31"), "ImageShow"),
         code = quote
             pluto_showable(::MIME"text/html", ::AbstractMatrix{<:ImageShow.Colorant}) = false
+        end,
+    ),
+    Integration(
+        id = Base.PkgId(UUID("94b1ba4f-4ee9-5380-92f1-94cde586c3c5"), "AxisKeys"),
+        code = quote
+            pluto_showable(::MIME"application/vnd.pluto.tree+object", ::AxisKeys.KeyedArray) = false
+            pluto_showable(::MIME"application/vnd.pluto.table+object", ::AxisKeys.KeyedArray) = false
+        end,
+    ),
+    Integration(
+        id = Base.PkgId(UUID("33c8b6b6-d38a-422a-b730-caa89a2f386c"), "ProgressLogging"),
+        code = quote
+            preprocess_log_msg(ps::ProgressLogging.ProgressString) = ps.progress.name
         end,
     ),
 ]
