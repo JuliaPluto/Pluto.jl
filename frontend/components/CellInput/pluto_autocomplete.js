@@ -320,6 +320,7 @@ const complete_anyword = async (/** @type {autocomplete.CompletionContext} */ ct
 }
 
 const from_notebook_type = "c_from_notebook completion_module c_Any"
+const locally_defined_variable_type = "c_local completion_module c_Any"
 
 /**
  * Are we currently writing a variable name? In that case we don't want autocomplete.
@@ -381,19 +382,7 @@ const global_variables_completion =
             ...Object.values(_.omit(local_globals, cell_id))
         )
 
-        return await make_it_julian(
-            autocomplete.completeFromList(
-                possibles.map((label) => {
-                    return {
-                        label,
-                        apply: label,
-                        type: from_notebook_type,
-                        section: section_regular,
-                        boost: 1,
-                    }
-                })
-            )
-        )(ctx)
+        return await make_it_julian(autocomplete.completeFromList(possibles.map(map_name_to_global_completions)))(ctx)
     }
 
 /** @returns {autocomplete.CompletionSource} */
@@ -507,6 +496,15 @@ const complete_package_name = (/** @type {() => Promise<string[]>} */ request_pa
     }
 }
 
+const map_name_to_global_completions = (name) => ({
+    // See https://github.com/codemirror/codemirror.next/issues/788 about `type: null`
+    label: name,
+    apply: name,
+    type: from_notebook_type,
+    section: section_regular,
+    boost: 1,
+})
+
 const local_variables_completion = async (/** @type {autocomplete.CompletionContext} */ ctx) => {
     let scopestate = ctx.state.field(ScopeStateField)
     let identifier = ctx.tokenBefore(["Identifier"])
@@ -514,17 +512,29 @@ const local_variables_completion = async (/** @type {autocomplete.CompletionCont
 
     let { from, to } = identifier
 
-    const possibles = scopestate.locals
-        .filter(({ validity }) => from > validity.from && to <= validity.to)
+    const possibles_locals = scopestate.locals.filter(({ validity }) => from > validity.from && to <= validity.to)
+
+    const possibles_globals = scopestate.definitions
+        .entries()
+        .filter(([key, value]) => from > value.valid_from)
+        .map(([key, value]) => ({ name: key }))
+
+    const results_globals = possibles_globals.map(({ name }) => map_name_to_global_completions(name))
+
+    const results_locals = possibles_locals
+        // Don't show locals that are also a global
+        .filter(({ name }) => !possibles_globals.some((s) => s.name === name))
         .map(({ name }, i) => ({
-            // See https://github.com/codemirror/codemirror.next/issues/788 about `type: null`
             label: name,
             apply: name,
-            type: undefined,
+            type: locally_defined_variable_type,
+            section: section_regular,
             boost: 99 - i,
         }))
 
-    return await make_it_julian(autocomplete.completeFromList(possibles))(ctx)
+    const results = [...results_locals, ...results_globals]
+
+    return await make_it_julian(autocomplete.completeFromList(results))(ctx)
 }
 const special_latex_examples = ["\\sqrt", "\\pi", "\\approx"]
 const special_emoji_examples = ["🐶", "🐱", "🐭", "🐰", "🐼", "🐨", "🐸", "🐔", "🐧"]
