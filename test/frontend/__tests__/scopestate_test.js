@@ -33,6 +33,22 @@ const cleanup_scopestate_testresult = (/** @type {Partial<ScopestateTestResult>}
         definitions: result.definitions ? [...new Set(result.definitions)].sort() : [],
     })
 
+const resolve_optionals_arr = (/** @type {string[]} */ actual, /** @type {string[]} */ expected) =>
+    expected.flatMap((x) =>
+        x.endsWith("?")
+            ? (() => {
+                  let name = x.substring(0, x.length - 1)
+                  return actual.includes(name) ? [name] : []
+              })()
+            : [x]
+    )
+
+const resolve_optionals = (/** @type {ScopestateTestResult} */ actual, /** @type {ScopestateTestResult} */ expected) => ({
+    locals: resolve_optionals_arr(actual.locals, expected.locals),
+    usages: resolve_optionals_arr(actual.usages, expected.usages),
+    definitions: resolve_optionals_arr(actual.definitions, expected.definitions),
+})
+
 const getDepth = (node, d = 0) => {
     if (!node.parent) return d
     return getDepth(node.parent, d + 1)
@@ -74,7 +90,8 @@ const test_easy = (/** @type{string} */ code, /** @type{Partial<ScopestateTestRe
         const actual = cleanup_scopestate_testresult(analyze_easy(code))
         const expectedClean = cleanup_scopestate_testresult(expected)
         try {
-            expect(actual).toEqual(expectedClean)
+            const resolved_expected = resolve_optionals(actual, expectedClean)
+            expect(actual).toEqual(resolved_expected)
         } catch (e) {
             printTree(code)
             throw e
