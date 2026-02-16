@@ -45,6 +45,11 @@ jobs:
               run: |
                   npm install
 
+            - name: Run i18n + RTL guardrails
+              working-directory: ./test/frontend
+              run: |
+                  npm run guard-i18n-rtl
+
             - name: Run tests
               working-directory: ./test/frontend
               run: |

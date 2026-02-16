@@ -13,7 +13,9 @@
     "puppeteer": "^24.15.0"
   },
   "scripts": {
-    "test": "jest --verbose --runInBand"
+    "test": "jest --verbose --runInBand",
+    "guard-i18n-rtl": "node helpers/i18n_rtl_guard.js",
+    "guard-i18n-rtl:update-baseline": "node helpers/i18n_rtl_guard.js --update-baseline"
   },
   "author": "",
   "license": "MIT",

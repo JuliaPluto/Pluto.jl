@@ -171,7 +171,7 @@ export const Welcome = ({ launch_params }) => {
                 />
             </div>
         </section>
-        <section id="featured" dir="ltr">
+        <section id="featured">
             <div>
                 <${Featured} sources=${featured_sources} direct_html_links=${launch_params.featured_direct_html_links} />
             </div>

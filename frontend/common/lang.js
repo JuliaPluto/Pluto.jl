@@ -47,6 +47,28 @@ const resources = {
     "pl": without_empty_keys(polski),
 }
 
+export const DIRECTION_QUERY_PARAM = "pluto_ui_dir"
+export const DIRECTION_OVERRIDE_STORAGE_KEY = "pluto_ui_direction_override"
+
+const normalized_direction = (value) => (value === "rtl" || value === "ltr" ? value : null)
+
+const getDirectionOverrideFromQuery = () => {
+    try {
+        const query = new URLSearchParams(window.location.search)
+        return normalized_direction(query.get(DIRECTION_QUERY_PARAM))
+    } catch (_error) {
+        return null
+    }
+}
+
+const getDirectionOverrideFromStorage = () => {
+    try {
+        return normalized_direction(localStorage.getItem(DIRECTION_OVERRIDE_STORAGE_KEY))
+    } catch (_error) {
+        return null
+    }
+}
+
 export const t = (/** @type {string} */ key, options = {}) => {
     const { count, interpolation = {}, returnObjects = false, defaultValue = key, fallbackLng = true, lng } = options
     const { escapeValue = false } = interpolation // not implemented
@@ -126,7 +148,7 @@ export const getCurrentLanguage = () => {
 }
 
 export const getWritingDirection = () => {
-    return t("t_language_direction") === "rtl" ? "rtl" : "ltr"
+    return getDirectionOverrideFromQuery() ?? getDirectionOverrideFromStorage() ?? (t("t_language_direction") === "rtl" ? "rtl" : "ltr")
 }
 const getLanguage = _.memoize((to_search) => {
     for (const lang of to_search) {

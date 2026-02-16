@@ -45,10 +45,7 @@ export const WarnForVisisblePasswords = () => {
             })
         )
     ) {
-        alert(
-            // Super rare so no need for translation
-            "Warning: this notebook includes a password input with something typed in it. The contents of this password field will be included in the exported file in an unsafe way. \n\nClear the password field and export again to avoid this problem."
-        )
+        alert(t("t_export_password_warning"))
     }
 }
 

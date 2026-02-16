@@ -22,6 +22,25 @@ PLUTO_PORT=2345; julia -e "import Pluto; Pluto.run(port=$PLUTO_PORT, require_sec
 
 `PLUTO_PORT=2345 npm run test`
 
+## i18n + RTL guardrails
+
+Run static guardrails that prevent new hardcoded UI English and new RTL regressions:
+
+`npm run guard-i18n-rtl`
+
+If you intentionally changed the baseline debt (for example after a cleanup), update the baseline file:
+
+`npm run guard-i18n-rtl:update-baseline`
+
+When this guard fails in CI, track and triage debt here:
+
+https://github.com/JuliaPluto/Pluto.jl/issues/new?title=RTL+%2B+i18n+guardrail+debt+baseline
+
+For RTL verification, Pluto supports a hidden direction override:
+
+- Query parameter: `?pluto_ui_dir=rtl` (or `ltr`)
+- Local storage key: `pluto_ui_direction_override` (`rtl` or `ltr`)
+
 ## View the browser in action
 
 Add `HEADLESS=false` when running the test command.

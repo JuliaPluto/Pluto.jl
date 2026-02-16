@@ -63,11 +63,11 @@ pluto-editor.disable_ui .fix-with-ai {
     }
     body:not(.___) pluto-editor:not(._____) > main {
         padding-bottom: 0;
-        padding-left: 6px;
-        padding-right: 6px;
+        padding-inline-start: 6px;
+        padding-inline-end: 6px;
     }
     pluto-input .cm-editor {
-        border-left: 1px solid var(--normal-cell-color);
+        border-inline-start: 1px solid var(--normal-cell-color);
         border-radius: 4px !important;
     }
 

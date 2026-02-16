@@ -50,8 +50,8 @@ pre {
     /* white-space: pre-wrap; */
     overflow: auto;
 
-    border-left: 8px solid #ff002d42;
-    padding-left: 1rem;
+    border-inline-start: 8px solid #ff002d42;
+    padding-inline-start: 1rem;
 }
 
 pre:first-line {

@@ -93,20 +93,20 @@ pluto-tree.collapsed > pluto-tree-prefix > .short {
 /*  */
 
 pluto-tree p-r {
-    margin-left: 3em;
+    margin-inline-start: 3em;
 }
 pluto-tree.collapsed p-r {
-    margin-left: 0.5em;
+    margin-inline-start: 0.5em;
 }
 
 pluto-tree.collapsed p-r:first-child {
-    margin-left: 0;
+    margin-inline-start: 0;
 }
 
 pluto-tree pluto-tree-items.Array > p-r > p-k,
 pluto-tree pluto-tree-items.Set > p-r > p-k,
 pluto-tree pluto-tree-items.Tuple > p-r > p-k {
-    margin-right: 1em;
+    margin-inline-end: 1em;
     opacity: 0.5;
     user-select: none;
 }
@@ -183,8 +183,8 @@ pluto-tree-more.disabled {
 }
 
 pluto-tree-more::before {
-    margin-left: 0.2em;
-    margin-right: 0.5em;
+    margin-inline-start: 0.2em;
+    margin-inline-end: 0.5em;
     bottom: -0.1em;
     display: inline-block;
     position: relative;
@@ -262,7 +262,7 @@ jlerror {
 
 jlerror > header {
     color: var(--jlerror-header-color);
-    border-left: 3px solid var(--jlerror-header-color);
+    border-inline-start: 3px solid var(--jlerror-header-color);
     padding: 0.7rem;
     background: var(--white);
     border-radius: 3px;
@@ -362,7 +362,7 @@ jlerror > section .frame-source > a {
     border-radius: 4px;
     padding: 1px 7px;
     text-decoration: none;
-    border-left: 3px solid var(--jlerror-a-border-left-color);
+    border-inline-start: 3px solid var(--jlerror-a-border-left-color);
     /* font-family: var(--system-ui-font-stack); */
 }
 jlerror > section .frame-source > a:not([href]) {
@@ -416,7 +416,7 @@ jlerror li:not(.from_this_cell) .frame-line-preview pre::after {
     display: block;
     position: absolute;
     bottom: 0;
-    right: 1ch;
+    inset-inline-end: 1ch;
     font-weight: 900;
     opacity: 0.6;
 }
@@ -433,10 +433,10 @@ jlerror li .frame-line-preview pre > code:not(.frame-line) {
 jlerror li .frame-line-preview pre > code::before {
     content: var(--before-content);
     color: var(--cm-color-line-numbers);
-    margin-right: 0.7em;
+    margin-inline-end: 0.7em;
     width: 2ch;
     display: inline-block;
-    text-align: right;
+    text-align: end;
 }
 
 jlerror li .frame-line-preview pre > code:first-of-type:not(.frame-line) {
@@ -449,7 +449,7 @@ jlerror li .frame-line-preview pre > code:last-of-type:not(.frame-line) {
 jlerror .dont-panic {
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     padding: 0.5em;
     background: var(--pluto-logs-debug-color);
     color: var(--black);
@@ -513,7 +513,7 @@ table.pluto-table .schema-names th {
 table.pluto-table .schema-names th:first-child,
 table.pluto-table .schema-types th:first-child {
     z-index: 2;
-    left: -10px;
+    inset-inline-start: -10px;
 }
 
 table.pluto-table .schema-names th,
@@ -532,19 +532,19 @@ table.pluto-table thead:hover .schema-names th {
 table.pluto-table tbody th:first-child {
     background-color: var(--main-bg-color);
     position: sticky;
-    left: -10px; /* padding-left of pluto-output*/
+    inset-inline-start: -10px; /* padding-inline-start of pluto-output*/
     white-space: nowrap;
 }
 
 table.pluto-table .pluto-tree-more-td {
-    text-align: left;
+    text-align: start;
     overflow: unset;
 }
 
 table.pluto-table .pluto-tree-more-td pluto-tree-more {
     overflow: unset;
     position: sticky;
-    left: 0;
+    inset-inline-start: 0;
     top: 2rem;
     max-width: 650px;
 }

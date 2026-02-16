@@ -39,7 +39,7 @@ export const LanguagePicker = () => {
                 ${availableLanguages.map(
                     (lang) => html`<option value=${lang.code}>${lang.name}${lang.completeness < 98 ? ` (${lang.completeness}%)` : ""}</option>`
                 )}
-                <option value="contribute">💡 Help translate!</option>
+                <option value="contribute">${t("t_language_picker_help_translate")}</option>
             </select>
         </div>
     `

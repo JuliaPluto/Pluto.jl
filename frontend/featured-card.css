@@ -51,7 +51,7 @@ featured-card .author {
 featured-card .author {
     position: absolute;
     top: 0.3em;
-    right: 0.3em;
+    inset-inline-end: 0.3em;
     background: var(--welcome-card-author-backdrop);
     /* background: hsl(var(--card-color-hue) 34% 46% / 59%); */
     backdrop-filter: blur(15px);
@@ -59,11 +59,11 @@ featured-card .author {
     border-radius: 117px;
     /* height: 2.5em; */
     padding: 0.3em;
-    padding-right: 0.8em;
+    padding-inline-end: 0.8em;
     display: flex;
     align-items: center;
     gap: 0.4ch;
-    margin-left: 0.3rem;
+    margin-inline-start: 0.3rem;
 }
 
 featured-card .author img {
@@ -132,8 +132,8 @@ featured-card.special::before {
     position: absolute;
     transform: translateY(calc(-100% - -15px)) rotate(-5deg);
     padding: 2px 19px;
-    left: -9px;
-    /* right: 51px; */
+    inset-inline-start: -9px;
+    /* inset-inline-end: 51px; */
     /* border: 2px solid #ffca62; */
     pointer-events: none;
 }

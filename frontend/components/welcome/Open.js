@@ -41,20 +41,20 @@ export const Open = ({ client, connected, CustomPicker, show_samples, on_start_n
 
     return html`<${PasteHandler} on_start_navigation=${on_start_navigation} />
         <h2>${picker.text}</h2>
-        <div id="new" dir="ltr" class=${is_desktop() ? "desktop_opener" : ""}>
+        <div id="new" class=${is_desktop() ? "desktop_opener" : ""}>
             ${is_desktop()
                 ? html`
                       <div class="desktop_picker_group">
-                          <button onClick=${desktop.open_from_path}>Open File</button>
-                          <div class="option_splitter">— OR —</div>
+                          <button onClick=${desktop.open_from_path}>${t("t_open_file_action")}</button>
+                          <div class="option_splitter">${t("t_open_or_splitter")}</div>
                           <div>
                               <${FilePicker}
                                   key=${picker.placeholder}
                                   client=${client}
                                   value=""
                                   on_submit=${desktop.open_from_url}
-                                  button_label=${"Open from URL"}
-                                  placeholder=${"Enter a URL..."}
+                                  button_label=${t("t_open_from_url_action")}
+                                  placeholder=${t("t_open_url_placeholder")}
                                   client=${dummy_client}
                                   clear_on_blur=${false}
                               />

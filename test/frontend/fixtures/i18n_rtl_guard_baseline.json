@@ -1,0 +1,1105 @@
+{
+  "version": 1,
+  "generated_at_utc": "2026-02-16T16:04:33.548Z",
+  "entries": [
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "da6197928bf3da028866",
+      "file": "frontend/common/Binder.js",
+      "line": 221,
+      "excerpt": "Something went wrong! 😮\\n\\nWe failed to initialize the binder connection. Please try again with a different browser, or come back later."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "6eb5ecba0834339acbef",
+      "file": "frontend/common/Feedback.js",
+      "line": 50,
+      "excerpt": "Would you like us to contact you?\\n\\nEmail: (leave blank to stay anonymous 👀)"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "3afdb0131add88deabad",
+      "file": "frontend/common/NewUpdateMessage.js",
+      "line": 14,
+      "excerpt": "A new version of Pluto.jl is available! 🎉\\n\\n    You have \" +\n                                local +\n                                \", the latest is \" +\n                                latest +\n                                '.\\n\\nYou can update Pluto.jl using the julia package manager:\\n    import Pkg; Pkg.update(\"Pluto"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "4b8890bedbf5432b6ba9",
+      "file": "frontend/common/PlutoConnection.js",
+      "line": 132,
+      "excerpt": "Something went wrong! You might need to refresh the page.\\n\\nPlease open an issue on https://github.com/JuliaPluto/Pluto.jl with this info:\\n\\nFailed to process update\\n${process_err.message}\\n\\n${JSON.stringify(event)}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "4328c72fe858183a14a4",
+      "file": "frontend/common/PlutoConnection.js",
+      "line": 138,
+      "excerpt": "Something went wrong! You might need to refresh the page.\\n\\nPlease open an issue on https://github.com/JuliaPluto/Pluto.jl with this info:\\n\\nFailed to unpack message\\n${unpack_err}\\n\\n${JSON.stringify(event)}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "ad8b54c24de61a1f7db3",
+      "file": "frontend/common/PlutoConnection.js",
+      "line": 399,
+      "excerpt": "Connection out of sync 😥\\n\\nRefresh the page to continue"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "bc92612b72e5cdeb2811",
+      "file": "frontend/common/PlutoConnection.js",
+      "line": 453,
+      "excerpt": "This window has lost authentication to the Pluto server. Please refresh the page to continue."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "0e5ed7ba720ceb2e4c55",
+      "file": "frontend/common/RunLocal.js",
+      "line": 87,
+      "excerpt": "Something went wrong! 😮\\n\\nWe failed to open this notebook. Please try again with a different browser, or come back later."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "ed3da002ede32e290613",
+      "file": "frontend/components/AIContext.js",
+      "line": 75,
+      "excerpt": "text: , err)\n        }\n    }\n\n    const formRef = useRef(null)\n    useEventListener(formRef,"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "53dd1ac16edc9a807b68",
+      "file": "frontend/components/AIContext.js",
+      "line": 87,
+      "excerpt": "(beta)"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "60f2163f7c960c67666a",
+      "file": "frontend/components/BottomRightPanel.js",
+      "line": 54,
+      "excerpt": "This browser window is too small to show docs.\\n\\nMake the window bigger, or try zooming out."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "41bf6ee93290787c55fc",
+      "file": "frontend/components/CellInput.js",
+      "line": 971,
+      "excerpt": "Error copying cell output"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "25e54ba75754d9b1ba36",
+      "file": "frontend/components/DiscreteProgressBar.js",
+      "line": 12,
+      "excerpt": "= 8 && total"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "d63a270a472ba5726c08",
+      "file": "frontend/components/Editor.js",
+      "line": 840,
+      "excerpt": "Oopsie!! please refresh your browser and everything will be alright!"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "9f6fab8ffbeba9477053",
+      "file": "frontend/components/Editor.js",
+      "line": 885,
+      "excerpt": "Something went wrong 🙈\\n Try clearing your browser cache and refreshing the page"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "d79bb646cbca17e6915c",
+      "file": "frontend/components/Editor.js",
+      "line": 946,
+      "excerpt": "A new server was started - this notebook session is no longer running."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "1bba60d36c6ac08cf4b2",
+      "file": "frontend/components/Editor.js",
+      "line": 947,
+      "excerpt": "Would you like to go back to the main menu?"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "5280b132be1a47defaeb",
+      "file": "frontend/components/Editor.js",
+      "line": 949,
+      "excerpt": "Go back"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "2bc19c108633fb3706f8",
+      "file": "frontend/components/Editor.js",
+      "line": 957,
+      "excerpt": "Stay here"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "56492f455b8c3075f80f",
+      "file": "frontend/components/Editor.js",
+      "line": 1224,
+      "excerpt": "Failed to move file:\\n\\n\" + error.message)\n            } finally {\n                this.setState({ moving_file: false })\n            }\n        }\n\n        this.desktop_submit_file_change = async () => {\n            this.setState({ moving_file: true })\n\n            const file_moved_promise = wait_for_file_move()\n            // ask the electron backend to start moving the notebook. The promise above will be resolved once it is done.\n            move_notebook()\n\n            const loc = await file_moved_promise\n            if (!!loc)\n                await this.setStatePromise(\n                    immer((/** @type {EditorState} */ state) => {\n                        state.notebook.in_temp_dir = false\n                        state.notebook.path = loc\n                    })\n                )\n            this.setState({ moving_file: false })\n            // @ts-ignore\n            document.activeElement?.blur()\n        }\n\n        this.delete_selected = () => {\n            if (this.state.selected_cells.length > 0) {\n                this.actions.confirm_delete_multiple(this.state.selected_cells)\n                return true\n            }\n        }\n\n        this.run_selected = () => {\n            return this.actions.set_and_run_multiple(this.state.selected_cells)\n        }\n        this.fold_selected = (new_val) => {\n            if (_.isEmpty(this.state.selected_cells)) return\n            return this.actions.fold_remote_cells(this.state.selected_cells, new_val)\n        }\n        this.move_selected = (/** @type {KeyboardEvent} */ e, /** @type {1|-1} */ delta) => {\n            if (this.state.selected_cells.length > 0) {\n                const current_indices = this.state.selected_cells.map((id) => this.state.notebook.cell_order.indexOf(id))\n                const new_index = (delta > 0 ? Math.max : Math.min)(...current_indices) + (delta === -1 ? -1 : 2)\n\n                e.preventDefault()\n                return this.actions.move_remote_cells(this.state.selected_cells, new_index).then(\n                    // scroll into view\n                    () => {\n                        document.getElementById((delta > 0 ? _.last : _.first)(this.state.selected_cells) ?? \""
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "ca445253cb479cf0906b",
+      "file": "frontend/components/Editor.js",
+      "line": 1350,
+      "excerpt": "⇧${and}Enter:   ${t(\"t_key_run\")}\n${ctrl_or_cmd_name}${and}Enter:   ${t(\"t_key_run_add\")}\n${ctrl_or_cmd_name}${and}S:   ${t(\"t_key_submit_all_changes\")}\nDelete ${or} Backspace:   ${t(\"t_key_delete_or_backspace\")}\n\nPageUp ${or} fn${and}↑:   ${t(\"t_key_page_up\")}\nPageDown ${or} fn${and}↓:   ${t(\"t_key_page_down\")}\n${control_name}${and}click:   ${t(\"t_key_ctrl_click\")}\n${alt_or_options_name}${and}↑:   ${t(\"t_key_alt_up\")}\n${alt_or_options_name}${and}↓:   ${t(\"t_key_alt_down\")}\n\n${control_name}${and}/:   ${t(\"t_key_ctrl_slash\")}\n${control_name}${and}M:   ${t(\"t_key_ctrl_m\")}\n${fold_prefix}${and}[:   ${t(\"t_key_ctrl_m\")}\n${fold_prefix}${and}]:   ${t(\"t_key_ctrl_m\")}\n${control_name}${and}Q:   ${t(\"t_key_ctrl_q\")}\n\n${t(\"t_key_selection_description\")}\n${ctrl_or_cmd_name}${and}C:   ${t(\"t_key_ctrl_c\")}\n${ctrl_or_cmd_name}${and}X:   ${t(\"t_key_ctrl_x\")}\n${ctrl_or_cmd_name}${and}V:   ${t(\"t_key_ctrl_v\")}\n\n${t(\"t_key_autosave_description\")}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "199f780de7aa964c7676",
+      "file": "frontend/components/Editor.js",
+      "line": 1407,
+      "excerpt": "Error copying cells: ${err?.message ?? err}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "86118ef99da2c794529c",
+      "file": "frontend/components/Editor.js",
+      "line": 1425,
+      "excerpt": "Error cutting cells: ${e}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "8ba8100f4242c197b98c",
+      "file": "frontend/components/Editor.js",
+      "line": 1577,
+      "excerpt": "${th(\"t_safe_preview_confirm_before_danger\")} ${t(\"t_safe_preview_confirm_before\")}\\n\\n${source}\\n\\n${t(\"t_safe_preview_confirm_after\")}"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "6e19c9203b9ae7d4c24c",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 162,
+      "excerpt": "anonymous function"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "e168a7901b7e3f07f691",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 264,
+      "excerpt": "Syntax error"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "82bcdd693f7c0d1d52fc",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 385,
+      "excerpt": ", or"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "4729db68f49a3dbc6963",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 403,
+      "excerpt": "call, this is not supported. You might need to restart this notebook from the main menu."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "1a7cef415cdf8a63f51d",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 403,
+      "excerpt": "Tried to reevaluate an"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "1729b17fa5f82770c50b",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 404,
+      "excerpt": "For a workaround, use the alternative version of"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "bb229873e3e126a116c8",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 405,
+      "excerpt": "described here:"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "e489a93f9ffad7ff9a27",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 406,
+      "excerpt": "GH issue 115"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "5175add6565e2887a060",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 408,
+      "excerpt": "In the future,"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "0e444fc3016d89560af1",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 408,
+      "excerpt": "will be deprecated, and this will be the default."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "9cec228d0763f190e69b",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 489,
+      "excerpt": "UndefVarError:"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "1f98bdeb842d73bbe91d",
+      "file": "frontend/components/ErrorMessage.js",
+      "line": 561,
+      "excerpt": "This message was included with the error:"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "51b555fb26d0cfaf3c98",
+      "file": "frontend/components/FrontmatterInput.js",
+      "line": 104,
+      "excerpt": "Field name:"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "7cd9c4cd0f56210a4cbf",
+      "file": "frontend/components/Preamble.js",
+      "line": 82,
+      "excerpt": "⌘ S"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "2aa5ff4e2dff6dd558f8",
+      "file": "frontend/components/RecordingUI.js",
+      "line": 56,
+      "excerpt": "We were unable to activate your microphone. Make sure that it is connected, and that this site (${\n                    window.location.protocol + \"//\" + window.location.host\n                }) has permission to use the microphone."
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "14a821493715f7b4013f",
+      "file": "frontend/components/TreeView.js",
+      "line": 149,
+      "excerpt": "circular reference"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "82efaff7f37b304eac4a",
+      "file": "frontend/editor.js",
+      "line": 132,
+      "excerpt": "Failed to load notebook"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "a4e8038fcb36e6ca8e99",
+      "file": "frontend/editor.js",
+      "line": 133,
+      "excerpt": "The statefile failed to download. Original error message:"
+    },
+    {
+      "rule": "hardcoded_ui_literal",
+      "fingerprint": "94913541dcaf6139106e",
+      "file": "frontend/editor.js",
+      "line": 135,
+      "excerpt": "Launch parameters:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "34103dd8bb7f5a8a12cf",
+      "file": "frontend/binder.css",
+      "line": 17,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "edb748f2f924f19f9d59",
+      "file": "frontend/binder.css",
+      "line": 25,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "3edcb8d7cda46330e292",
+      "file": "frontend/binder.css",
+      "line": 33,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "58f6827499150257df81",
+      "file": "frontend/binder.css",
+      "line": 39,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "17de7f204129501c8d81",
+      "file": "frontend/binder.css",
+      "line": 60,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "43475d7a3694e3f624fd",
+      "file": "frontend/binder.css",
+      "line": 96,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "fb8ae8b41849151cee60",
+      "file": "frontend/binder.css",
+      "line": 184,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "7ddfef3b0944c8d1de1f",
+      "file": "frontend/binder.css",
+      "line": 193,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "046231210c89fcdb53b4",
+      "file": "frontend/binder.css",
+      "line": 266,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "bb4964c2e50c8a42386c",
+      "file": "frontend/binder.css",
+      "line": 284,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "8cb319cb4fffddf54ab4",
+      "file": "frontend/editor.css",
+      "line": 87,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e9c838e138b4c5fe2fd9",
+      "file": "frontend/editor.css",
+      "line": 88,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "59636b469086d65c2e49",
+      "file": "frontend/editor.css",
+      "line": 105,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "1e5449c5d396d1812b61",
+      "file": "frontend/editor.css",
+      "line": 110,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "041e55e654838952ea37",
+      "file": "frontend/editor.css",
+      "line": 246,
+      "excerpt": "border-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "c7f3918908a7ddc04420",
+      "file": "frontend/editor.css",
+      "line": 295,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4715494295ed8d8bfcaf",
+      "file": "frontend/editor.css",
+      "line": 296,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "a600885fca68edfbcc50",
+      "file": "frontend/editor.css",
+      "line": 300,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "9519f04766f0b2851245",
+      "file": "frontend/editor.css",
+      "line": 301,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "ff073272475e80554236",
+      "file": "frontend/editor.css",
+      "line": 330,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f46528f5acbc423b0ba6",
+      "file": "frontend/editor.css",
+      "line": 340,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "3db665e2d92ff742ae2b",
+      "file": "frontend/editor.css",
+      "line": 341,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "203c6060e426afe7ee55",
+      "file": "frontend/editor.css",
+      "line": 348,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "2072a25bb042adb103b9",
+      "file": "frontend/editor.css",
+      "line": 349,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "31bba82a5f8cbe0250b0",
+      "file": "frontend/editor.css",
+      "line": 409,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "d138179ab0ee4f41d3b3",
+      "file": "frontend/editor.css",
+      "line": 410,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "2ca04409302173356c1a",
+      "file": "frontend/editor.css",
+      "line": 411,
+      "excerpt": "border-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "ef3c640af2bcf63eea8f",
+      "file": "frontend/editor.css",
+      "line": 428,
+      "excerpt": "border-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "41f81b05487d03053335",
+      "file": "frontend/editor.css",
+      "line": 429,
+      "excerpt": "border-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "8d730914c7678a484dc2",
+      "file": "frontend/editor.css",
+      "line": 525,
+      "excerpt": "border-bottom-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "b9d1e4e83b435e9727b1",
+      "file": "frontend/editor.css",
+      "line": 526,
+      "excerpt": "border-bottom-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4fca3b81ad2c66f71168",
+      "file": "frontend/editor.css",
+      "line": 577,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "a120a0a28697a64b4c9b",
+      "file": "frontend/editor.css",
+      "line": 578,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "888da5950ce8bd3818e5",
+      "file": "frontend/editor.css",
+      "line": 598,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "896fbfb7e99410b53a3b",
+      "file": "frontend/editor.css",
+      "line": 705,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "7f08a939d8e5066fa2b8",
+      "file": "frontend/editor.css",
+      "line": 862,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "0ddec262e53a762c1639",
+      "file": "frontend/editor.css",
+      "line": 863,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "ba7455802f14601171cc",
+      "file": "frontend/editor.css",
+      "line": 885,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4b5c9010092eb926ea7c",
+      "file": "frontend/editor.css",
+      "line": 914,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f83d1ee32d4186e5ceee",
+      "file": "frontend/editor.css",
+      "line": 1015,
+      "excerpt": "border-top-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "1563c440dbefdf9a5435",
+      "file": "frontend/editor.css",
+      "line": 1016,
+      "excerpt": "border-bottom-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "7d9179ce60ab1c7da80e",
+      "file": "frontend/editor.css",
+      "line": 1070,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "8842531977df057b79ff",
+      "file": "frontend/editor.css",
+      "line": 1169,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "668777fa06fc427139fc",
+      "file": "frontend/editor.css",
+      "line": 1184,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e9833393ce5e1e2acb2e",
+      "file": "frontend/editor.css",
+      "line": 1200,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "577620c59e099e5eb606",
+      "file": "frontend/editor.css",
+      "line": 1238,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f5a7598c603aa3fb5018",
+      "file": "frontend/editor.css",
+      "line": 1371,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "9877a2180cce1cafcc46",
+      "file": "frontend/editor.css",
+      "line": 1394,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "a57cf1110f3de7c2da33",
+      "file": "frontend/editor.css",
+      "line": 1423,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "3568606b893d24253383",
+      "file": "frontend/editor.css",
+      "line": 1460,
+      "excerpt": "padding-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e7d4a78396229fd242f7",
+      "file": "frontend/editor.css",
+      "line": 1461,
+      "excerpt": "padding-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "b73e1d18d29db47e04f7",
+      "file": "frontend/editor.css",
+      "line": 1573,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "da0ee18258ce9fa6afa3",
+      "file": "frontend/editor.css",
+      "line": 1585,
+      "excerpt": "border-bottom-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "eeecd4ce4586dd8f61cc",
+      "file": "frontend/editor.css",
+      "line": 1641,
+      "excerpt": "border-bottom-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "2401cb9eb8144d0c8750",
+      "file": "frontend/editor.css",
+      "line": 1778,
+      "excerpt": "border-top-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "6f9cb0ef8b4905eaa09e",
+      "file": "frontend/editor.css",
+      "line": 1779,
+      "excerpt": "border-bottom-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "732ac235a41271c56147",
+      "file": "frontend/editor.css",
+      "line": 2079,
+      "excerpt": "border-bottom-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4321d899d12a370622f8",
+      "file": "frontend/editor.css",
+      "line": 2080,
+      "excerpt": "border-bottom-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f9422f2c12cd4b4cec60",
+      "file": "frontend/editor.css",
+      "line": 2083,
+      "excerpt": "border-top-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "fd76c610fc865c7ea042",
+      "file": "frontend/editor.css",
+      "line": 2084,
+      "excerpt": "border-top-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "fe0bb24f5b2a63d9cdd9",
+      "file": "frontend/editor.css",
+      "line": 2150,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "d3d8720df56ac8cfe1e7",
+      "file": "frontend/editor.css",
+      "line": 2151,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "0a21c30f60f26e5e9dab",
+      "file": "frontend/editor.css",
+      "line": 2168,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "b289d1bfe4dbbf7349cf",
+      "file": "frontend/editor.css",
+      "line": 2169,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "0ca83242bbc3bd38635f",
+      "file": "frontend/editor.css",
+      "line": 2170,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e9350a02fe975673c943",
+      "file": "frontend/editor.css",
+      "line": 2171,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "2d3f6e722adff835eea7",
+      "file": "frontend/editor.css",
+      "line": 2265,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "315a721de6d0786b81eb",
+      "file": "frontend/editor.css",
+      "line": 2350,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "5db25c809d9afe03bfb4",
+      "file": "frontend/editor.css",
+      "line": 2355,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "0fbc65efcc5f849f9c3e",
+      "file": "frontend/editor.css",
+      "line": 2434,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f59b4f1031a06dc91026",
+      "file": "frontend/editor.css",
+      "line": 2465,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "d804c06152426fae660e",
+      "file": "frontend/editor.css",
+      "line": 2469,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "ff359c5ec80ad56d2787",
+      "file": "frontend/editor.css",
+      "line": 2546,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "6595559bd7d41af313ad",
+      "file": "frontend/editor.css",
+      "line": 2587,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "5dbb295b5e1694c14ef5",
+      "file": "frontend/editor.css",
+      "line": 2591,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "501a27ce958c81fd5175",
+      "file": "frontend/editor.css",
+      "line": 2595,
+      "excerpt": "border-bottom-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "30f884b4285d390d4a71",
+      "file": "frontend/editor.css",
+      "line": 2596,
+      "excerpt": "border-bottom-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "035307137f0d2ee30a3c",
+      "file": "frontend/editor.css",
+      "line": 2607,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "9eb138d7a0aed192d270",
+      "file": "frontend/editor.css",
+      "line": 2619,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4a10152d771f00930fed",
+      "file": "frontend/editor.css",
+      "line": 2677,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "adcd1a0198bf58d4217e",
+      "file": "frontend/editor.css",
+      "line": 2678,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "eb803e9c42296d755c95",
+      "file": "frontend/editor.css",
+      "line": 2703,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "62258838bdd5bc200455",
+      "file": "frontend/editor.css",
+      "line": 2715,
+      "excerpt": "border-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "80b2c8e690d99e6faada",
+      "file": "frontend/editor.css",
+      "line": 2717,
+      "excerpt": "border-top-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "359721967cae45c3c417",
+      "file": "frontend/editor.css",
+      "line": 2718,
+      "excerpt": "border-top-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4f12015020196cd8de86",
+      "file": "frontend/editor.css",
+      "line": 2739,
+      "excerpt": "border-top-left-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "85ed1626abafe484e634",
+      "file": "frontend/editor.css",
+      "line": 2740,
+      "excerpt": "border-top-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "c56c139cd585f5793539",
+      "file": "frontend/editor.css",
+      "line": 2781,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e8cb14a67e76eb7f8a9e",
+      "file": "frontend/editor.css",
+      "line": 2782,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "2eac4e9778d5e35634cc",
+      "file": "frontend/editor.css",
+      "line": 2851,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "82e228638f9871e7c100",
+      "file": "frontend/editor.css",
+      "line": 2852,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "3d2987b42d66f13623ab",
+      "file": "frontend/editor.css",
+      "line": 3100,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "68a0c21ceb41ecd53432",
+      "file": "frontend/editor.css",
+      "line": 3101,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "ba682e156dd4ea19dddd",
+      "file": "frontend/editor.css",
+      "line": 3241,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "8a4ab4ed071961da4129",
+      "file": "frontend/editor.css",
+      "line": 3242,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "4734ed4441b445378870",
+      "file": "frontend/editor.css",
+      "line": 3280,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "21298475368415e30ed5",
+      "file": "frontend/editor.css",
+      "line": 3322,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "6744f7a1c137060d9dca",
+      "file": "frontend/editor.css",
+      "line": 3476,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "708540ef0414926eea39",
+      "file": "frontend/editor.css",
+      "line": 3645,
+      "excerpt": "left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e8bc579ae6a19d4817ab",
+      "file": "frontend/editor.css",
+      "line": 3646,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "f7c6938b2ec05488635b",
+      "file": "frontend/editor.css",
+      "line": 3676,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "937ea9a967d2ebc79921",
+      "file": "frontend/editor.css",
+      "line": 3836,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "8685d0255a9697f2d7eb",
+      "file": "frontend/editor.css",
+      "line": 3858,
+      "excerpt": "margin-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "67a64abc7fe55092f6ce",
+      "file": "frontend/editor.css",
+      "line": 3914,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "da168e5f68efe4ce404b",
+      "file": "frontend/editor.css",
+      "line": 3957,
+      "excerpt": "border-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "d9675eaa3e89f0a0d75f",
+      "file": "frontend/editor.css",
+      "line": 3975,
+      "excerpt": "right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "b12bcbdbaa6a294bf536",
+      "file": "frontend/editor.css",
+      "line": 4100,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "3b6b19ffee8647a940d1",
+      "file": "frontend/editor.css",
+      "line": 4111,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "fbcd2a0d6d8501e96b33",
+      "file": "frontend/editor.css",
+      "line": 4115,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "e024c7f5758a4371b30d",
+      "file": "frontend/editor.css",
+      "line": 4131,
+      "excerpt": "border-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "17efb460b600ab1c9770",
+      "file": "frontend/editor.css",
+      "line": 4145,
+      "excerpt": "border-right:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "18c101e98aada4b53f9b",
+      "file": "frontend/editor.css",
+      "line": 4147,
+      "excerpt": "border-top-right-radius:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "274d9b7fb45a2919b10d",
+      "file": "frontend/editor.css",
+      "line": 4237,
+      "excerpt": "margin-left:"
+    },
+    {
+      "rule": "physical_direction_css",
+      "fingerprint": "a83c5cd361c9bd91da54",
+      "file": "frontend/featured-card.css",
+      "line": 93,
+      "excerpt": "border-top-left-radius:"
+    }
+  ]
+}

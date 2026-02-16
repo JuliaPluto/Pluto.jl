@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "rule": "hardcoded_ltr_direction",
+      "file": "frontend/components/PkgTerminalView.js",
+      "pattern": "dir=\\\"ltr\\\"",
+      "reason": "Package terminal output stays LTR by design."
+    },
+    {
+      "rule": "hardcoded_ltr_direction",
+      "file": "frontend/editor.css",
+      "pattern": "direction: ltr",
+      "reason": "Code editor content remains LTR by design."
+    },
+    {
+      "rule": "hardcoded_ltr_direction",
+      "file": "frontend/treeview.css",
+      "pattern": "direction: ltr",
+      "reason": "Structured code-like tree output remains LTR for now."
+    }
+  ]
+}

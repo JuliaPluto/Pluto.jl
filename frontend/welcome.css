@@ -142,8 +142,8 @@ section#open::after {
     content: "";
     height: 50px;
     top: 0px;
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     position: absolute;
     display: block;
     background: linear-gradient(0deg, transparent, var(--c));
@@ -222,7 +222,7 @@ a#github {
     display: block;
     position: absolute;
     top: 0.5rem;
-    right: 0.5rem;
+    inset-inline-end: 0.5rem;
 }
 
 .show_scrollbar::-webkit-scrollbar {

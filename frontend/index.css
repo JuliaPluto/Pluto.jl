@@ -35,8 +35,8 @@ html {
     height: 1.2em;
     width: 4.9em;
     margin-bottom: -0.27em;
-    /* margin-right: -1.5em; */
-    margin-left: 0.1em;
+    /* margin-inline-end: -1.5em; */
+    margin-inline-start: 0.1em;
     filter: var(--image-filters);
 }
 
@@ -89,7 +89,7 @@ pluto-filepicker {
 .desktop_picker {
     display: flex;
     flex-direction: row;
-    margin-left: 5px;
+    margin-inline-start: 5px;
 }
 
 pluto-filepicker .cm-editor {
@@ -207,13 +207,13 @@ pluto-filepicker button:disabled {
 .cm-completionIcon::before {
     content: "⚫";
     color: transparent;
-    margin-right: 0.5em;
+    margin-inline-end: 0.5em;
     opacity: 1;
 }
 
 .cm-tooltip.cm-tooltip-autocomplete {
     padding: 0;
-    margin-left: -1.5em;
+    margin-inline-start: -1.5em;
     background: var(--autocomplete-menu-bg-color);
 }
 
@@ -302,7 +302,7 @@ span.ionicon::after {
 }
 #recent li .clear-btn {
     position: absolute;
-    right: 0.5em;
+    inset-inline-end: 0.5em;
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.7rem;
@@ -341,14 +341,14 @@ pluto-editor.loading > loading-bar {
 
 @keyframes load {
     0% {
-        right: 100vw;
+        inset-inline-end: 100vw;
     }
     20% {
-        right: 30vw;
+        inset-inline-end: 30vw;
     }
 
     100% {
-        right: 0vw;
+        inset-inline-end: 0vw;
     }
 }
 

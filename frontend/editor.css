@@ -1640,7 +1640,7 @@ pluto-input .cm-editor {
     z-index: 20;
     border-bottom-right-radius: 4px;
     border: 1px solid var(--normal-cell-color);
-    border-left: none;
+    border-inline-start: none;
 
     /* Make sure that scrolling an editor into view gives some breathing room */
     scroll-margin-block: 20vh;
@@ -1671,7 +1671,7 @@ pluto-cell.code_folded.show_input > pluto-input:not(:focus-within) {
 
 pluto-cell.code_differs > pluto-input > .cm-editor {
     border: 1px solid var(--code-differs-cell-color);
-    border-left: none;
+    border-inline-start: none;
 }
 
 /* UI */
@@ -1711,7 +1711,7 @@ pluto-shoulder {
     --invisible-border: calc(0.5 * var(--pluto-cell-spacing));
     --shoulder-width: calc(28px + var(--invisible-border));
     --border-radius: calc(5px + var(--invisible-border));
-    left: calc(0px - var(--shoulder-width));
+    inset-inline-start: calc(0px - var(--shoulder-width));
     width: var(--shoulder-width);
     border-radius: var(--border-radius) 0px 0px var(--border-radius);
     cursor: move;
@@ -1723,7 +1723,7 @@ pluto-shoulder {
     top: calc(0px - var(--invisible-border));
     bottom: calc(0px - var(--invisible-border));
     border: var(--invisible-border) solid rgba(0, 0, 0, 0);
-    border-right: none;
+    border-inline-end: none;
     direction: ltr;
 }
 pluto-editor.fullscreen pluto-shoulder {
@@ -1745,7 +1745,7 @@ pluto-shoulder > button {
 
 pluto-cell:focus-within > pluto-shoulder > button {
     /* we use padding instead of 4px extra margin to move the eye to the left so that the hitbox becomes grows - you want to be able to double click the button */
-    padding-right: 9px;
+    padding-inline-end: 9px;
 }
 
 /* pluto-cell.code_folded.inline-output > pluto-shoulder > button {
@@ -1768,16 +1768,16 @@ pluto-trafficlight {
     /* --patternHeight is derived from the pattern length (16px) div sin(45deg) = 16px * sqrt(2)  */
     --patternHeight: 22.62741699797px;
     box-sizing: content-box;
-    margin-right: -1px; /* fix a visual glitch of imperfect alignment */
+    margin-inline-end: -1px; /* fix a visual glitch of imperfect alignment */
     width: 4px;
     position: absolute;
-    left: -4px;
+    inset-inline-start: -4px;
     top: 0px;
     bottom: 0px;
     pointer-events: none;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
-    border-left-color: var(--normal-cell-color);
+    border-inline-start-color: var(--normal-cell-color);
     background: var(--normal-cell-color);
     overflow: hidden;
 }
@@ -1786,7 +1786,7 @@ pluto-trafficlight::after {
     content: "";
     /* Calc needs units everywhere to work */
     top: calc(0px - 10 * var(--patternHeight));
-    left: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: calc(100% + 10 * var(--patternHeight));
     position: absolute;
@@ -1815,28 +1815,28 @@ pluto-editor:not(.___) pluto-cell.code_folded > pluto-trafficlight {
 }
 
 pluto-editor:not(.___) pluto-cell:focus-within > pluto-trafficlight {
-    border-left-width: 4px;
-    border-left-style: solid;
-    margin-left: -4px;
+    border-inline-start-width: 4px;
+    border-inline-start-style: solid;
+    margin-inline-start: -4px;
     background-clip: padding-box;
     background-color: var(--normal-cell-color);
 }
 
 pluto-editor:not(.___) pluto-cell.selected > pluto-trafficlight {
     background: var(--selected-cell-color);
-    border-left-color: var(--selected-cell-color);
+    border-inline-start-color: var(--selected-cell-color);
     background-clip: padding-box;
 }
 
 pluto-editor:not(.___) pluto-cell.code_differs > pluto-trafficlight {
     background: var(--code-differs-cell-color);
-    border-left-color: var(--code-differs-cell-color);
+    border-inline-start-color: var(--code-differs-cell-color);
     background-clip: padding-box;
 }
 
 pluto-editor:not(.___) pluto-cell.errored > pluto-trafficlight {
     background: var(--error-cell-color);
-    border-left-color: var(--error-cell-color);
+    border-inline-start-color: var(--error-cell-color);
     background-clip: padding-box;
 }
 
@@ -1996,12 +1996,12 @@ pluto-shoulder > button > span::after {
 }
 
 pluto-cell > button.add_cell {
-    left: -12px;
+    inset-inline-start: -12px;
     --hit-box-extend: 20px;
-    margin-left: calc(-1 * var(--hit-box-extend));
-    margin-right: calc(-1 * var(--hit-box-extend));
-    padding-left: var(--hit-box-extend);
-    padding-right: var(--hit-box-extend);
+    margin-inline-start: calc(-1 * var(--hit-box-extend));
+    margin-inline-end: calc(-1 * var(--hit-box-extend));
+    padding-inline-start: var(--hit-box-extend);
+    padding-inline-end: var(--hit-box-extend);
 }
 
 pluto-cell > button.add_cell.before {
@@ -2034,20 +2034,20 @@ pluto-input {
     display: block;
 }
 pluto-input > div.input_context_menu {
-    left: 100%;
+    inset-inline-start: 100%;
     top: -8px;
     position: absolute;
     z-index: 1400;
 }
 @media screen and (min-width: 921px) {
     pluto-input > div.input_context_menu {
-        left: calc(100% - 3px);
+        inset-inline-start: calc(100% - 3px);
     }
 }
 @media screen and (max-width: 920px) {
     pluto-input > div.input_context_menu {
-        right: 0px;
-        left: unset;
+        inset-inline-end: 0px;
+        inset-inline-start: auto;
         z-index: 1401;
     }
 }
@@ -3086,8 +3086,8 @@ pl-status {
     flex-direction: column;
     border-radius: 0.2em;
     --indent: 0.7rem;
-    margin-left: var(--indent);
-    border-left: 3px solid transparent;
+    margin-inline-start: var(--indent);
+    border-inline-start: 3px solid transparent;
     margin-top: 0.4em;
     overflow: hidden;
     flex: 0 0 auto;
@@ -3121,8 +3121,8 @@ pl-status.can_open {
     border-color: #98989854;
 }
 pl-status.can_open > div {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
     cursor: pointer;
 }
 pl-status.can_open.is_open {
@@ -3131,7 +3131,7 @@ pl-status.can_open.is_open {
 
 pl-status[data-depth="0"],
 pl-status[data-depth="1"] {
-    margin-left: 0;
+    margin-inline-start: 0;
 }
 
 pl-status > div {
@@ -3181,10 +3181,10 @@ pl-status.busy > div > .status-icon {
 }
 
 pl-status .status-time {
-    margin-left: auto;
+    margin-inline-start: auto;
     /* align-self: end; */
-    padding-right: 0.5em;
-    padding-left: 0.5em;
+    padding-inline-end: 0.5em;
+    padding-inline-start: 0.5em;
     opacity: 0.6;
     font-size: 0.7rem;
     font-variant-numeric: tabular-nums;
@@ -3228,7 +3228,7 @@ pl-status .status-time {
 }
 
 pl-status pkg-terminal {
-    margin-left: var(--indent);
+    margin-inline-start: var(--indent);
 }
 
 pluto-helpbox.helpbox-process > section {
@@ -3370,7 +3370,7 @@ footer #info {
     max-width: 9400px;
     margin: 0 auto;
     padding: 1rem;
-    text-align: right;
+    text-align: end;
     /* height: 1.5rem; */
     display: flex;
     flex-direction: row;
@@ -3421,7 +3421,7 @@ nav#undo_delete {
     display: block;
     position: fixed;
     bottom: 0px;
-    left: 0px;
+    inset-inline-start: 0px;
     margin: 0.75rem;
     padding: 0.5rem;
     font-family: var(--system-ui-font-stack);
@@ -3722,13 +3722,13 @@ pluto-log-dot-kwarg > * {
 }
 pluto-log-dot-kwarg > pluto-key {
     color: var(--pluto-logs-key-color);
-    margin-right: calc(1em - 30px);
+    margin-inline-end: calc(1em - 30px);
 }
 pluto-log-dot-kwarg > pluto-key::after {
     content: ": ";
 }
 pluto-log-dot-kwarg > pluto-value {
-    margin-left: 30px;
+    margin-inline-start: 30px;
     overflow-x: auto;
 }
 /* PRESENTATION MODE */
@@ -3752,7 +3752,7 @@ body.presentation nav#slide_controls {
     display: flex;
     position: fixed;
     bottom: 0px;
-    right: 0px;
+    inset-inline-end: 0px;
     z-index: 100;
 }
 
@@ -3783,7 +3783,7 @@ button.floating_back_button {
     display: flex;
     position: fixed;
     z-index: 1000;
-    left: 1em;
+    inset-inline-start: 1em;
     top: 1em;
 }
 

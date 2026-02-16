@@ -2,6 +2,7 @@ import { base64url_to_base64 } from "../../common/PlutoHash.js"
 import { with_query_params } from "../../common/URLTools.js"
 import _ from "../../imports/lodash.js"
 import { html, useEffect, useState, useMemo } from "../../imports/Preact.js"
+import { t } from "../../common/lang.js"
 
 const transparent_svg = "data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"
 
@@ -45,7 +46,7 @@ export const FeaturedCard = ({ entry, source_manifest, direct_html_links, disabl
                 notebookfile: u(entry.notebookfile_path),
                 notebookfile_integrity: entry.hash == null ? null : `sha256-${base64url_to_base64(entry.hash)}`,
                 disable_ui: `true`,
-                name: title == null ? null : `sample ${title}`,
+                name: title == null ? null : t("t_featured_sample_name", { title }),
                 pluto_server_url: `.`,
                 // Little monkey patch because we don't want to use the slider server when for the CDN source, only for the featured.plutojl.org source. But both sources have the same pluto_export.json so this is easiest.
                 slider_server_url: source_url?.includes("cdn.jsdelivr.net/gh/JuliaPluto/featured") ? null : u(source_manifest?.slider_server_url),
@@ -63,7 +64,7 @@ export const FeaturedCard = ({ entry, source_manifest, direct_html_links, disabl
                           <img src=${author.image ?? transparent_svg} loading=${image_loading} />
                           <span>
                               <a href=${author.url}>${author.name}</a>
-                              ${author.has_coauthors ? html` and others` : null}
+                              ${author.has_coauthors ? html` ${t("t_featured_and_others")}` : null}
                           </span>
                       </div>
                   `}
