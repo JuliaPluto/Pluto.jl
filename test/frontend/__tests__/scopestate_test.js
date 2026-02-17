@@ -396,8 +396,7 @@ describe("scopestate functions", () => {
 
     // Basic function definitions
     test_easy("function g()\n r = 2\n r\n end", { definitions: ["g"], locals: ["r"], usages: ["r"] })
-    // ⚠️ `function g end` abstract declaration not supported by lezer the same way
-    // test_easy("function g end", { definitions: ["g"] })
+    test_easy("function g end", { definitions: ["g"] })
     test_easy("function f()\n g(x) = x\n end", { definitions: ["f"], locals: ["g", "x"], usages: ["x"] })
     test_easy("function f(z)\n g(x) = x\n g(z)\n end", { definitions: ["f"], locals: ["g", "x", "z"], usages: ["g", "x", "z"] })
     test_easy("function f(x, y=1; r, s=3 + 3)\n r + s + x * y * z\n end", {
@@ -420,20 +419,18 @@ describe("scopestate functions", () => {
     test_easy("f(x, y=a + 1) = x * y * z", { definitions: ["f"], locals: ["x", "y"], usages: ["a", "x", "y", "z"] })
     test_easy("f(x, y) = x * y * z", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y", "z"] })
     test_easy("f(x, y...) = y", { definitions: ["f"], locals: ["x", "y"], usages: ["y"] })
-    // test_easy("f((x, y...), z) = y", { definitions: ["f"], locals: ["x", "y", "z"], usages: ["y"] })
+    test_easy("f((x, y...), z) = y", { definitions: ["f"], locals: ["x", "y", "z"], usages: ["y"] })
     test_easy("begin\n f() = 1\n f\nend", { definitions: ["f"], usages: ["f"] })
     test_easy("begin\n f() = 1\n f()\nend", { definitions: ["f"], usages: ["f"] })
 
     // Anonymous functions - Note: arrow function parameters are not tracked as locals yet
     // This is a known limitation - arrow functions need special handling
-    // test_easy("(x;p) -> f(x+p)", { locals: ["p", "x"], usages: ["f", "p", "x"] })
+    test_easy("(x;p) -> f(x+p)", { locals: ["p", "x"], usages: ["f", "p", "x"] })
     test_easy("() -> Date", { usages: ["Date"] })
     test_easy("minimum(x) do (a, b)\n a + b\n end", { locals: ["a", "b"], usages: ["a", "b", "minimum", "x"] })
-    // Arrow function tests - currently parameters not tracked as locals
-    // test_easy("f = x -> x * y", { definitions: ["f"], locals: ["x"], usages: ["x", "y"] })
-    // test_easy("f = (x, y) -> x * y", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y"] })
-    // Note: `f = function (a, b) ... end` doesn't track params as locals yet (different from named function def)
-    // test_easy("f = function (a, b)\n a + b * n\n end", { definitions: ["f"], locals: ["a", "b"], usages: ["a", "b", "n"] })
+    test_easy("f = x -> x * y", { definitions: ["f"], locals: ["x"], usages: ["x", "y"] })
+    test_easy("f = (x, y) -> x * y", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y"] })
+    test_easy("f = function (a, b)\n a + b * n\n end", { definitions: ["f"], locals: ["a", "b"], usages: ["a", "b", "n"] })
     test_easy("f = function ()\n a + b\n end", { definitions: ["f"], usages: ["a", "b"] })
 
     test_easy("g(; b=b) = b", { definitions: ["g"], locals: ["b"], usages: ["b"] })

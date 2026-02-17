@@ -52,6 +52,7 @@ const HardScopeNames = new Set([
     "MacroDefinition",
     "DoClause",
     "Generator",
+    "ArrowFunctionExpression",
 ])
 
 const does_this_create_scope = (/** @type {TreeCursor} */ cursor) => {
@@ -329,6 +330,14 @@ const explore_funcdef_arguments = (cursor, { enter, leave }) => {
             let went_in = cursor.firstChild()
             explore_argument() // recursively explore the splatted expression
             if (went_in) cursor.parent()
+        } else if (cursor.name === "TupleExpression") {
+            // Destructured parameter: f((x, y...), z) = y
+            if (cursor.firstChild()) {
+                do {
+                    explore_argument()
+                } while (cursor.nextSibling())
+                cursor.parent()
+            }
         } else if (cursor.name === "Type") {
             // Just a type annotation itself - track usages inside
             cursor.iterate(enter, leave)
@@ -499,7 +508,53 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             local_scope_stack.push(r(cursor))
         }
 
+        // Handle arrow functions: x -> body, (x, y) -> body, (x;p) -> body
+        if (cursor.name === "ArrowFunctionExpression") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            if (cursor.firstChild()) {
+                // First child is parameter(s): Identifier or TupleExpression
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    register_variable(r(cursor))
+                    // @ts-ignore
+                } else if (cursor.name === "TupleExpression") {
+                    explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+                }
+
+                // Skip to body (past -> operator)
+                while (cursor.nextSibling()) {
+                    // @ts-ignore
+                    if (cursor.name !== "->") {
+                        cursor.iterate(enter, leave)
+                    }
+                }
+            }
+
+            pos_resetter()
+            leave(cursor)
+            return false
+        }
+
+        // Handle anonymous function parameters: function (a, b) ... end
+        // The Signature contains a TupleExpression directly (no function name)
+        if (cursor.name === "TupleExpression" && cursor.matchContext(["FunctionDefinition", "Signature"])) {
+            explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+            if (verbose) console.groupEnd()
+            return false
+        }
+
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
+            // Handle abstract function declaration: function g end
+            // Identifier directly inside Signature of FunctionDefinition (no CallExpression wrapper)
+            if (cursor.name === "Identifier" && cursor.matchContext(["FunctionDefinition", "Signature"])) {
+                const last_scoper = local_scope_stack.pop()
+                register_variable(r(cursor))
+                if (last_scoper) local_scope_stack.push(last_scoper)
+                if (verbose) console.groupEnd()
+                return false
+            }
+
             if (cursor.matchContext(["KwArg"])) {
                 const { parent_name, index } = parent_name_and_child_index(cursor)
                 if (parent_name === "KwArg" && index === 0) {
