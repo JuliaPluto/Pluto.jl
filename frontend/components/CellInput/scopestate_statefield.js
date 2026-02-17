@@ -671,6 +671,55 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             }
         }
 
+        // Handle @bind/@bindname: first arg is a definition, rest explored normally.
+        // If the first arg is not a simple Identifier, ignore @bind semantics and fall through.
+        if (cursor.name === "MacrocallExpression") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+            let handled = false
+
+            if (cursor.firstChild()) {
+                // Detect @bind or @bindname (also handles PlutoRunner.@bind via FieldExpression)
+                let is_bind = false
+                // @ts-ignore
+                if (cursor.name === "MacroIdentifier") {
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    is_bind = name === "@bind" || name === "@bindname"
+                    // @ts-ignore
+                } else if (cursor.name === "FieldExpression") {
+                    const last = cursor.node.lastChild
+                    if (last?.name === "MacroIdentifier") {
+                        const name = doc.sliceString(last.from, last.to)
+                        is_bind = name === "@bind" || name === "@bindname"
+                    }
+                }
+
+                // @ts-ignore
+                if (is_bind && cursor.nextSibling() && cursor.name === "MacroArguments") {
+                    if (cursor.firstChild()) {
+                        // @ts-ignore
+                        if (cursor.name === "Identifier") {
+                            // First arg is a simple symbol → register as definition
+                            register_variable(r(cursor))
+                            // Explore remaining args normally for usages
+                            while (cursor.nextSibling()) {
+                                cursor.iterate(enter, leave)
+                            }
+                            handled = true
+                        }
+                        cursor.parent() // back to MacroArguments
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (handled) {
+                if (verbose) console.groupEnd()
+                return false
+            }
+            // Non-@bind macros or @bind with non-symbol first arg: fall through to normal traversal.
+            // MacroIdentifier is skipped by the early return above, MacroArguments children are explored.
+        }
+
         if (does_this_create_scope(cursor)) {
             local_scope_stack.push(r(cursor))
         }

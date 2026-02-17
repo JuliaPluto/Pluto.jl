@@ -570,3 +570,47 @@ describe("scopestate functions & types", () => {
     // ⚠️ parse error: (::Get(MyType))(x, y::OtherType) is very complex
     // test_easy("(::Get(MyType))(x, y::OtherType) = y * x + z", { ... })
 })
+
+describe("scopestate @bind macro", () => {
+    // @bind: first arg is definition, rest explored for usages
+    test_easy("@bind a b", { definitions: ["a"], usages: ["b"] })
+    test_easy("@bind a f(x)", { definitions: ["a"], usages: ["f", "x"] })
+    test_easy("@bind a slider(1:10)", { definitions: ["a"], usages: ["slider"] })
+
+    // @bindname is identical to @bind
+    test_easy("@bindname a b", { definitions: ["a"], usages: ["b"] })
+
+    // Qualified: PlutoRunner.@bind
+    test_easy("PlutoRunner.@bind a b", { definitions: ["a"], usages: ["b"] })
+
+    // If first arg is not a simple Identifier, ignore @bind semantics
+    test_easy("@bind a[1] b", { usages: ["a", "b"] })
+
+    // Other macros: normal traversal (macro name skipped, args explored)
+    test_easy("@time a = 2", { definitions: ["a"] })
+    test_easy("@time f(x)", { usages: ["f", "x"] })
+    test_easy("@show a + b", { usages: ["a", "b"] })
+})
+
+describe("scopestate string interpolation", () => {
+    // Simple interpolation: $var inside string
+    test_easy('"a $b"', { usages: ["b"] })
+    test_easy('"$a $b"', { usages: ["a", "b"] })
+
+    // Expression interpolation: $(expr) inside string
+    test_easy('"a $(b + c)"', { usages: ["b", "c"] })
+    test_easy('"$(f(x))"', { usages: ["f", "x"] })
+
+    // No interpolation
+    test_easy('"no interpolation"', {})
+
+    // Command literal interpolation
+    test_easy('`hey $(a) $(b)`', { usages: ["a", "b"] })
+    // ⚠️ parse error: assignment inside regular string interpolation doesn't parse in lezer
+    // test_easy('"a $(b = c)"', { definitions: ["b"], usages: ["c"] })
+    // But it works in command literals:
+    test_easy('`hey $(a = 1) $(b)`', { definitions: ["a"], usages: ["b"] })
+
+    // String with interpolation + assignment at top level
+    test_easy('x = "hello $y"', { definitions: ["x"], usages: ["y"] })
+})
