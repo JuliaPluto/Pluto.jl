@@ -314,13 +314,12 @@ describe("scopestate tuples", () => {
 
     // Note: These are different from Julia - lezer parses them as Assignment, not as tuple expressions
     // In Julia, `a = b, c` is a tuple `(b, c)` assigned to nothing, but in lezer it's an assignment
-    // test_easy("a = b, c", { usages: ["b", "c"] })  // lezer: defines a
+    // test_easy("a = b, c", { usages: ["b", "c"] }) // lezer: defines a
     // test_easy("a, b = c", { usages: ["a", "c"] })  // lezer: defines a and b
 
     // Invalid named tuples but still parses
-    test_easy("(a, b = 1, 2)", { usages: ["a"] })
-    // ⚠️ Different from Julia: "(a, b) = 1, 2" in lezer parses as assignment
-    // test_easy("(a, b) = 1, 2", {})
+    test_easy("(a, b = 1, 2)", { usages: ["a?", "b?"] })
+    test_easy("(a, b) = 1, 2", { definitions: ["a", "b"] })
 })
 
 describe("scopestate broadcasting", () => {
@@ -408,16 +407,19 @@ describe("scopestate functions", () => {
     })
     test_easy("function f(x)\n x * y * z\n end", { definitions: ["f"], locals: ["x"], usages: ["x", "y", "z"] })
     test_easy("function f(x)\n x = x / 3\n x\n end", { definitions: ["f"], locals: ["x"], usages: ["x"] })
-    // Note: args... and kwargs... in function parameters are not being tracked as locals yet
-    // test_easy("function f(x, args...; kwargs...)\n return [x, y, args..., kwargs...]\n end", { definitions: ["f"], locals: ["args", "kwargs", "x"], usages: ["args", "kwargs", "x", "y"] })
+    test_easy("function f(x, args...; kwargs...)\n return [x, y, args..., kwargs...]\n end", {
+        definitions: ["f"],
+        locals: ["args", "kwargs", "x"],
+        usages: ["args", "kwargs", "x", "y"],
+    })
     test_easy("function f(x; y=x)\n y + x\n end", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y"] })
+    test_easy("function f(x; y...)\n y + x\n end", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y"] })
+    test_easy("function f(x; y=x...)\n y + x\n end", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y"] })
 
     // Short function definition
-    // Note: default argument values in short functions don't track the RHS of defaults as usages yet
-    // test_easy("f(x, y=a + 1) = x * y * z", { definitions: ["f"], locals: ["x", "y"], usages: ["a", "x", "y", "z"] })
+    test_easy("f(x, y=a + 1) = x * y * z", { definitions: ["f"], locals: ["x", "y"], usages: ["a", "x", "y", "z"] })
     test_easy("f(x, y) = x * y * z", { definitions: ["f"], locals: ["x", "y"], usages: ["x", "y", "z"] })
-    // Note: splat parameters not tracked as locals yet
-    // test_easy("f(x, y...) = y", { definitions: ["f"], locals: ["x", "y"], usages: ["y"] })
+    test_easy("f(x, y...) = y", { definitions: ["f"], locals: ["x", "y"], usages: ["y"] })
     // test_easy("f((x, y...), z) = y", { definitions: ["f"], locals: ["x", "y", "z"], usages: ["y"] })
     test_easy("begin\n f() = 1\n f\nend", { definitions: ["f"], usages: ["f"] })
     test_easy("begin\n f() = 1\n f()\nend", { definitions: ["f"], usages: ["f"] })
@@ -434,17 +436,16 @@ describe("scopestate functions", () => {
     // test_easy("f = function (a, b)\n a + b * n\n end", { definitions: ["f"], locals: ["a", "b"], usages: ["a", "b", "n"] })
     test_easy("f = function ()\n a + b\n end", { definitions: ["f"], usages: ["a", "b"] })
 
-    // Default argument referencing other parameters - behavior differs
-    // test_easy("g(; b=b) = b", { definitions: ["g"], locals: ["b"], usages: ["b"] })
-    // test_easy("g(b=b) = b", { definitions: ["g"], locals: ["b"], usages: ["b"] })
-    // test_easy("f(x = y) = x", { definitions: ["f"], locals: ["x"], usages: ["x", "y"] })
+    test_easy("g(; b=b) = b", { definitions: ["g"], locals: ["b"], usages: ["b"] })
+    test_easy("g(b=b) = b", { definitions: ["g"], locals: ["b"], usages: ["b"] })
+    test_easy("f(x = y) = x", { definitions: ["f"], locals: ["x"], usages: ["x", "y"] })
 
     // Function calls
     test_easy("func(a)", { usages: ["a", "func"] })
     test_easy("func(a; b=c)", { usages: ["a", "c", "func"] })
     test_easy("func(a, b=c)", { usages: ["a", "c", "func"] })
     // ⚠️ Unicode operators like √ not tracked as usages - lezer treats as operator
-    // test_easy("√ b", { usages: ["b", "√"] })
+    test_easy("√ b", { usages: ["b", "√?"] })
     test_easy("funcs[i](b)", { usages: ["b", "funcs", "i"] })
     test_easy("f(a)(b)", { usages: ["a", "b", "f"] })
     test_easy("f(a).b()", { usages: ["a", "f"] })
@@ -466,4 +467,78 @@ describe("scopestate functions", () => {
     test_easy("function f()\n function hello()\n end\n hello()\nend", { definitions: ["f"], locals: ["hello"], usages: ["hello"] })
     test_easy("function a()\n b() = Test()\n b()\nend", { definitions: ["a"], locals: ["b"], usages: ["Test", "b"] })
     test_easy("begin\n function f()\n  g() = z\n  g()\n end\n g()\nend", { definitions: ["f"], locals: ["g"], usages: ["g", "z"] })
+})
+
+describe("scopestate functions & types", () => {
+    // Ported from ExpressionExplorer.jl test suite
+    // This section tests functions with type annotations and where clauses
+
+    // Function with typed default argument and return type annotation
+    test_easy("function f(y::Int64=a)::String\n string(y)\nend", { definitions: ["f"], locals: ["y"], usages: ["Int64", "String", "a", "string", "y"] })
+
+    // Short function with typed arg and return type
+    test_easy("f(a::A)::C = a.aaa", { definitions: ["f"], locals: ["a"], usages: ["A", "C", "a"] })
+
+    // Function with where clause
+    test_easy("function f(x::T; k=1) where T\n return x + 1\nend", { definitions: ["f"], locals: ["T", "k", "x"], usages: ["x", "T"] })
+
+    // Function with multiple where type parameters
+    test_easy("function f(x::T; k=1) where {T,S <: R}\n return x + 1\nend", { definitions: ["f"], locals: ["S", "T", "k", "x"], usages: ["R?", "T", "x"] })
+
+    // Short function with return type annotation
+    test_easy("f(x)::String = x", { definitions: ["f"], locals: ["x"], usages: ["String?", "x"] })
+
+    // MIME string macro (macro calls tracked as macro usages in Julia, but we just skip them here)
+    test_easy('MIME"text/html"', { usages: ["MIME"] })
+
+    // Function with MIME type parameter
+    test_easy('function f(::MIME"text/html")\n 1\nend', { definitions: ["f"], usages: ["MIME?"] })
+
+    // Short function with where clause
+    test_easy("a(a::AbstractArray{T}) where T = 5", { definitions: ["a"], locals: ["T", "a"], usages: ["AbstractArray", "T?"] })
+
+    // Short function with multiple where params, references external variable
+    test_easy("a(a::AbstractArray{T,R}) where {T,S} = a + b", { definitions: ["a"], locals: ["S", "T", "a"], usages: ["AbstractArray", "T?", "R", "a", "b"] })
+
+    // Typed anonymous function parameter (no variable name, just type)
+    test_easy("f(::A) = 1", { definitions: ["f"], usages: ["A"] })
+    test_easy("f(::A, ::B) = 1", { definitions: ["f"], usages: ["A", "B"] })
+
+    // Mixed typed and untyped params with splat
+    test_easy("f(a::A, ::B, c::C...) = a + c", { definitions: ["f"], locals: ["a", "c"], usages: ["A", "B", "C", "a", "c"] })
+    test_easy("f(a::A, ::B; c...::C) = a + c", { definitions: ["f"], locals: ["a", "c"], usages: ["A", "B", "C", "a", "c"] })
+    test_easy("f(a::A, ::B; c...) = a + c", { definitions: ["f"], locals: ["a", "c"], usages: ["A", "B", "a", "c"] })
+
+    // Callable struct instances (functor pattern)
+    // Note: In Julia, (obj::MyType)(x,y) = x + z defines a callable for MyType
+    // In JS scopestate, we track MyType as a definition and track the params/body
+    // ⚠️ These have complex parsing - (obj::MyType) as function name
+    // test_easy("(obj::MyType)(x,y) = x + z", { definitions: ["MyType"], locals: ["obj", "x", "y"], usages: ["x", "z"] })
+    // test_easy("(obj::MyType)() = 1", { definitions: ["MyType"], locals: ["obj"] })
+    // test_easy("(obj::MyType)(x, args...; kwargs...) = [x, y, args..., kwargs...]", { definitions: ["MyType"], locals: ["args", "kwargs", "obj", "x"], usages: ["args", "kwargs", "x", "y"] })
+    test_easy("function (obj::MyType)(x, y)\n x + z\nend", { definitions: [], locals: ["obj", "x?", "y?"], usages: ["x", "z", "MyType"] })
+
+    // Struct definition followed by callable definition
+    // ⚠️ Complex case: struct + callable in same block
+    // test_easy(
+    //     `begin
+    //     struct MyType
+    //         x::String
+    //     end
+
+    //     (obj::MyType)(y) = obj.x + y
+    // end`,
+    //     { definitions: ["MyType"], locals: ["obj", "y"], usages: ["String", "MyType", "obj", "y"] }
+    // )
+
+    // Anonymous callable (no name, just type annotation)
+    // test_easy("(::MyType)(x,y) = x + y", { definitions: ["MyType"], locals: ["x", "y"], usages: ["x", "y"] })
+
+    // Complex callable with typeof expression
+    // ⚠️ parse error: (obj::typeof(Int64[]))(x, y::Float64) is very complex
+    // test_easy("(obj::typeof(Int64[]))(x, y::Float64) = obj + x + y", {  })
+
+    // Complex callable with function call in type position
+    // ⚠️ parse error: (::Get(MyType))(x, y::OtherType) is very complex
+    // test_easy("(::Get(MyType))(x, y::OtherType) = y * x + z", { ... })
 })
