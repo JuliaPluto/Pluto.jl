@@ -335,11 +335,8 @@ describe("scopestate broadcasting", () => {
 describe("scopestate for & while", () => {
     // Ported from ExpressionExplorer.jl test suite
     test_easy("for k in 1:n; k + s; end", { locals: ["k"], usages: ["k", "n", "s"] })
-    // Note: `global` inside for loop creates a local in JS scopestate, not a global definition
-    // This differs from Julia's ExpressionExplorer
-    test_easy("for k in 1:2, r in 3:4\n global z = k + r\nend", { locals: ["k", "r", "z"], usages: ["k", "r"] })
-    // Note: In while loops, assignments create locals, and `global` creates a local too
-    test_easy("while k < 2\n r = w\n global z = k + r\nend", { locals: ["r", "z"], usages: ["k", "r", "w"] })
+    test_easy("for k in 1:2, r in 3:4\n global z = k + r\nend", { definitions: ["z"], locals: ["k", "r"], usages: ["k", "r"] })
+    test_easy("while k < 2\n r = w\n global z = k + r\nend", { definitions: ["z"], locals: ["r"], usages: ["k", "r", "w"] })
 })
 
 describe("scopestate try & catch", () => {
@@ -356,6 +353,40 @@ describe("scopestate try & catch", () => {
     test_easy("try\n 1\nfinally\n a\nend", { usages: ["a"] })
     // Note: `else` in try-catch is not well supported by lezer
     // test_easy("try; 1; catch; else; x = 1; x; finally; a; end", { usages: ["a"] })
+})
+
+describe("scopestate scope modifiers", () => {
+    // Ported from ExpressionExplorer.jl test suite
+
+    // `global` inside local scope → forces definitions to global
+    test_easy("let\n global k = 3\nend", { definitions: ["k"] })
+    test_easy("let\n global a, b = 1, 2\nend", { definitions: ["a", "b"] })
+    test_easy("let\n global k += 3\nend", { definitions: ["k"], usages: ["k"] })
+    test_easy("let\n global k = r\nend", { definitions: ["k"], usages: ["r"] })
+    test_easy("let\n global k = 3\n k\nend", { definitions: ["k"], usages: ["k"] })
+    test_easy("function f(x)\n global k = x\nend", { definitions: ["f", "k"], locals: ["x"], usages: ["x"] })
+    test_easy("x = let\n global a += 1\nend", { definitions: ["a", "x"], usages: ["a"] })
+    test_easy("global x = 1", { definitions: ["x"] })
+
+    // `global` bare declarations + later assignment
+    test_easy("let\n global k\n k = 4\nend", { definitions: ["k"] })
+    test_easy("let\n global k\n b = 5\nend", { locals: ["b"] })
+    test_easy("let\n global x, y, z\n b = 5\n x = 1\n (y,z) = 3\nend", { definitions: ["x", "y", "z"], locals: ["b"] })
+    test_easy("let\n global x, z\n b = 5\n x = 1\nend", { definitions: ["x"], locals: ["b"] })
+
+    // `local` at top level → prevents definitions from being global
+    test_easy("begin\n local k = 3\nend", { locals: ["k"] })
+    test_easy("begin\n local a, b = 1, 2\nend", { locals: ["a", "b"] })
+    test_easy("begin\n local k += 3\nend", { locals: ["k"] })
+    test_easy("begin\n local k = r\nend", { locals: ["k"], usages: ["r"] })
+    test_easy("begin\n local r[1] = 5\nend", { usages: ["r"] })
+    test_easy("local x = 1", { locals: ["x"] })
+
+    // `local` bare declarations + later assignment
+    test_easy("begin\n local k\n k = 4\nend", { locals: ["k"] })
+    test_easy("begin\n local k\n b = 5\nend", { definitions: ["b"] })
+    test_easy("begin\n local a, b\n a = 1\n b = 2\nend", { locals: ["a", "b"] })
+    test_easy("begin\n a\n local a, b\n a = 1\n b = 2\nend", { locals: ["a", "b"], usages: ["a"] })
 })
 
 describe("scopestate comprehensions", () => {

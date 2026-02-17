@@ -383,6 +383,10 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
     const locals = /** @type {Array<{ definition: Range, validity: Range, name: string }>} */ ([])
     const usages = /** @type {Array<{ usage: Range, definition: Range | null, name: string }>} */ ([])
 
+    // Track bare `global k` and `local k` declarations for later assignment lookup
+    const global_declared = /** @type {Array<{ name: string, scope: Range }>} */ ([])
+    const local_declared = /** @type {Array<{ name: string, scope: Range }>} */ ([])
+
     const return_false_immediately = new NodeWeakMap()
 
     let enter, leave
@@ -493,15 +497,178 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             return false
         }
 
+        // Handle `global` modifier: forces definitions to global scope
+        if (cursor.name === "GlobalStatement") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'global' keyword
+
+                // @ts-ignore
+                if (cursor.name === "Assignment") {
+                    // global k = 3 / global a, b = 1, 2 / global k += 3
+                    cursor.firstChild() // go to LHS
+                    const { definitions: lhs_defs, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    cursor.nextSibling() // operator
+                    // @ts-ignore
+                    const is_update_op = cursor.name === "UpdateOp"
+                    cursor.nextSibling() // RHS
+
+                    // Register usages from LHS (e.g., index expressions)
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            usages.push({ name, usage: range, definition: find_local_definition(locals, name, range) ?? null })
+                        }
+                    })
+
+                    // For UpdateOp (global k += 3), the variable is also a usage (read before write)
+                    if (is_update_op) {
+                        lhs_defs.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                usages.push({ name, usage: range, definition: null })
+                            }
+                        })
+                    }
+
+                    // Register LHS definitions as GLOBAL definitions (bypass scope stack)
+                    lhs_defs.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            definitions.set(name, { ...range, valid_from: range.from })
+                        }
+                    })
+
+                    // Explore RHS for usages
+                    cursor.iterate(enter, leave)
+
+                    cursor.parent() // back to Assignment
+                    // @ts-ignore
+                } else if (cursor.name === "Identifier") {
+                    // Bare declaration: global k
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    const scope =
+                        local_scope_stack.length > 0
+                            ? _.last(local_scope_stack)
+                            : cursor.node.parent?.parent
+                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                              : { from: 0, to: doc.length }
+                    global_declared.push({ name, scope })
+                    // @ts-ignore
+                } else if (cursor.name === "OpenTuple") {
+                    // Bare declarations: global x, y, z
+                    const scope =
+                        local_scope_stack.length > 0
+                            ? _.last(local_scope_stack)
+                            : cursor.node.parent?.parent
+                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                              : { from: 0, to: doc.length }
+                    if (cursor.firstChild()) {
+                        do {
+                            // @ts-ignore
+                            if (cursor.name === "Identifier") {
+                                global_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope })
+                            }
+                        } while (cursor.nextSibling())
+                        cursor.parent()
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle `local` modifier: forces definitions to local scope
+        if (cursor.name === "LocalStatement") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            // Compute validity for locals created by this statement
+            const local_validity =
+                local_scope_stack.length > 0
+                    ? _.last(local_scope_stack)
+                    : cursor.node.parent
+                      ? { from: cursor.node.parent.from, to: cursor.node.parent.to }
+                      : { from: 0, to: doc.length }
+
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'local' keyword
+
+                // @ts-ignore
+                if (cursor.name === "Assignment") {
+                    // local k = 3 / local a, b = 1, 2 / local k += 3
+                    cursor.firstChild() // go to LHS
+                    const { definitions: lhs_defs, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    cursor.nextSibling() // operator
+                    cursor.nextSibling() // RHS
+
+                    // Register usages from LHS (e.g., index expressions like local r[1] = 5)
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            usages.push({ name, usage: range, definition: find_local_definition(locals, name, range) ?? null })
+                        }
+                    })
+
+                    // For local += , do NOT add the variable as a usage (no global reference)
+
+                    // Register LHS definitions as locals (force into locals array)
+                    lhs_defs.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            locals.push({ name, validity: local_validity, definition: range })
+                        }
+                    })
+
+                    // Explore RHS for usages
+                    cursor.iterate(enter, leave)
+
+                    cursor.parent() // back to Assignment
+                    // @ts-ignore
+                } else if (cursor.name === "Identifier") {
+                    // Bare declaration: local k
+                    local_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope: local_validity })
+                    // @ts-ignore
+                } else if (cursor.name === "OpenTuple") {
+                    // Bare declarations: local a, b
+                    if (cursor.firstChild()) {
+                        do {
+                            // @ts-ignore
+                            if (cursor.name === "Identifier") {
+                                local_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope: local_validity })
+                            }
+                        } while (cursor.nextSibling())
+                        cursor.parent()
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
         const register_variable = (range) => {
             const name = doc.sliceString(range.from, range.to)
 
-            if (local_scope_stack.length === 0)
-                definitions.set(name, {
-                    ...range,
-                    valid_from: range.from,
-                })
-            else locals.push({ name, validity: /** @type{Range} */ (_.last(local_scope_stack)), definition: range })
+            // Check if this name was declared `global` in the current scope
+            const global_decl = global_declared.find((d) => d.name === name && range.from >= d.scope.from && range.to <= d.scope.to)
+            // Check if this name was declared `local` in the current scope
+            const local_decl = local_declared.find((d) => d.name === name && range.from >= d.scope.from && range.to <= d.scope.to)
+
+            if (global_decl) {
+                definitions.set(name, { ...range, valid_from: range.from })
+            } else if (local_decl) {
+                locals.push({ name, validity: local_decl.scope, definition: range })
+            } else if (local_scope_stack.length === 0) {
+                definitions.set(name, { ...range, valid_from: range.from })
+            } else {
+                locals.push({ name, validity: /** @type{Range} */ (_.last(local_scope_stack)), definition: range })
+            }
         }
 
         if (does_this_create_scope(cursor)) {
