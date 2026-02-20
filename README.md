@@ -21,7 +21,7 @@
 
 _Writing a notebook is not just about writing the final document — Pluto empowers the experiments and discoveries that are essential to getting there._
 
-**Explore models and share results** in a notebook that is
+**Explore models and share results** in a notebook that is:
 
 - **_reactive_** - when changing a function or variable, Pluto automatically updates all affected cells.
 - **_lightweight_** - Pluto is written in pure Julia and is easy to install.
@@ -38,7 +38,7 @@ _Writing a notebook is not just about writing the final document — Pluto empow
 
 ### Input
 
-A Pluto notebook is made up of small blocks of Julia code (_cells_) and together they form a [**_reactive_** notebook](https://medium.com/@mbostock/a-better-way-to-code-2b1d2876a3a0).
+A Pluto notebook is made up of small blocks of Julia code (_cells_) and together they form a [**_reactive_** notebook](https://medium.com/@mbostock/a-better-way-to-code-2b1d2876a3a0) (using other languages, e.g. Python is indirectly possible).
 When you change a variable, Pluto automatically re-runs the cells that refer to it. Cells can even be placed in arbitrary order - intelligent syntax analysis figures out the dependencies between them and takes care of execution.
 
 Cells can contain _arbitrary_ Julia code, and you can use external libraries. There are no code rewrites or wrappers, Pluto just looks at your code once before evaluation.
@@ -136,6 +136,8 @@ Questions? Have a look at the [FAQ](https://github.com/JuliaPluto/Pluto.jl/wiki)
 <br></p>
 </blockquote>
 <br>
+
+Since Pluto notebooks are Julia source code, that's the only language directly supported, but others can be used, e.g. Python with PythonCall.jl, and ClojureScript with [Cljuto.jl](https://github.com/kiranshila/Cljuto.jl).
 
 ## Contribute to Pluto
 
