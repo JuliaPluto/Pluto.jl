@@ -8211,6 +8211,11 @@ interface DiffConfig {
     to the imprecise algorithm.
     */
     timeout?: number;
+    /**
+    Provide your own diff algorithm, replacing this package's `diff`
+    function.
+    */
+    override?: (a: string, b: string) => readonly Change[];
 }
 /**
 Compute the difference between two strings.
