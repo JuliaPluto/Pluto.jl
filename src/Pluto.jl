@@ -86,6 +86,10 @@ include("./webserver/Dynamic.jl")
 include("./webserver/REPLTools.jl")
 include("./webserver/WebServer.jl")
 
+@static if VERSION >= v"1.11"
+    include("PlutoApp.jl")
+end
+
 const reset_notebook_environment = PkgUtils.reset_notebook_environment
 const update_notebook_environment = PkgUtils.update_notebook_environment
 const activate_notebook_environment = PkgUtils.activate_notebook_environment
