@@ -987,7 +987,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
         this.connect = (/** @type {string | undefined} */ ws_address = undefined) => {
             const psu = this.props.launch_params.pluto_server_url
             return create_pluto_connection({
-                ws_address: ws_address ?? (psu ? ws_address_from_base(psu) : undefined),
+                ws_address: ws_address ?? (psu ? ws_address_from_base(new URL(psu, window.location.href)) : undefined),
                 on_unrequested_update: on_update,
                 on_connection_status: on_connection_status,
                 on_reconnect: on_reconnect,
