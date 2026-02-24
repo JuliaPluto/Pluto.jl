@@ -40,9 +40,11 @@ function cdnified_html(filename::AbstractString;
 
                 replace_with_cdn(original) do url
                     contains(string(url), "escape_txt_for_html") && return url
+                    is_pluto_cdn_root = string(url) == "./" 
+                    
                     # Because parcel creates filenames with a hash in them, we can check if the file exists locally to make sure that everything is in order.
-                    @assert isfile(project_relative_path(distdir, url)) "Could not find the file $(project_relative_path(distdir, url)) locally, that's a bad sign."
-                    if offline_bundle
+                    is_pluto_cdn_root || @assert isfile(project_relative_path(distdir, url)) "Could not find the file $(project_relative_path(distdir, url)) locally, that's a bad sign."
+                    if offline_bundle && !is_pluto_cdn_root
                         localpath = project_relative_path(distdir, url)
                         contents_to_inline = if !endswith(localpath, ".css")
                             read(localpath)
@@ -58,7 +60,7 @@ function cdnified_html(filename::AbstractString;
                     end
                 end
             catch e
-                get(ENV, "JULIA_PLUTO_IGNORE_CDN_BUNDLE_WARNING", "false") == "true" || @warn "Could not use bundled CDN version of $(filename). You should only see this message if you are using a fork or development branch of Pluto." exception=(e,catch_backtrace()) maxlog=1
+                get(ENV, "JULIA_PLUTO_IGNORE_CDN_BUNDLE_WARNING", "false") == "true" || @warn "Could not use bundled CDN version of $(filename). You should only see this message if you are using a fork or development branch of Pluto." exception=(e,catch_backtrace()) maxlog=3
                 nothing
             end
         end,
