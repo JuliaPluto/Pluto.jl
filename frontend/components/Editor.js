@@ -52,6 +52,7 @@ import { getCurrentLanguage, getWritingDirection, t, th } from "../common/lang.j
 import { PlutoLandUpload } from "./PlutoLandUpload.js"
 import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
+import { with_query_params } from "../common/URLTools.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -976,10 +977,13 @@ all patches: ${JSON.stringify(patches, null, 1)}
             return true
         }
 
-        this.export_url = (/** @type {string} */ u) =>
-            this.state.binder_session_url == null
-                ? `./${u}?id=${this.state.notebook.notebook_id}`
-                : `${this.state.binder_session_url}${u}?id=${this.state.notebook.notebook_id}&token=${this.state.binder_session_token}`
+        this.export_url = (/** @type {string} */ u, /** @type {Record<string, string | null | undefined>=} */ params = {}) =>
+            with_query_params(
+                this.state.binder_session_url == null
+                    ? `./${u}?id=${this.state.notebook.notebook_id}`
+                    : `${this.state.binder_session_url}${u}?id=${this.state.notebook.notebook_id}&token=${this.state.binder_session_token}`,
+                params
+            )
 
         /** @type {import('../common/PlutoConnection').PlutoConnection} */
         this.client = /** @type {import('../common/PlutoConnection').PlutoConnection} */ ({})
@@ -1623,7 +1627,7 @@ ${t("t_key_autosave_description")}`
                                 this.state.notebook.shortpath
                             }
                             notebookfile_url=${this.export_url("notebookfile")}
-                            notebookexport_url=${this.export_url("notebookexport")}
+                            notebookexport_url=${this.export_url("notebookexport", { offline_bundle: "true" })}
                             process_waiting_for_permission=${status.process_waiting_for_permission}
                             open=${export_menu_open}
                             onClose=${() => this.setState({ export_menu_open: false })}
