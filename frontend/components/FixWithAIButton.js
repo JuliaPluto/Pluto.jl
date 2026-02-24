@@ -5,7 +5,7 @@ import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { start_ai_suggestion } from "./CellInput/ai_suggestion.js"
 import { t } from "../common/lang.js"
 
-const ai_server_url = "https://pluto-simple-llm-features.deno.dev/"
+const ai_server_url = "https://pluto-simple-llm-features.plutojl.deno.net/"
 const endpoint_url = `${ai_server_url}fix-syntax-error-v1`
 
 const pluto_premium_llm_key = localStorage.getItem("pluto_premium_llm_key")
