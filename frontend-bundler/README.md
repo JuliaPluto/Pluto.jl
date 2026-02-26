@@ -11,3 +11,18 @@ For that we have `parcel-resolver-like-a-browser`. It's a parcel resolver (name 
 > "Ohhh let me try to find it, and if I can't find it the next resolver can have a try
 
 But I don't want to accidentally make something work with the bundler that doesn't work normally, so `parcel-resolver-like-a-browser` is very restrictive. It's our way or the highway.
+
+
+# To run the bundlers:
+
+```bash
+cd frontend-bundler
+
+npm install
+
+rm -rf ../frontend/.parcel-cache
+rm -rf ../frontend-dist
+rm -rf ../frontend-dist-offline
+npm run build
+npm run build-offline
+```

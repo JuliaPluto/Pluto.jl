@@ -32,6 +32,9 @@ const VERBOSE = false
 
 const r = (cursor) => ({ from: cursor.from, to: cursor.to })
 
+/** Check if a name consists only of underscores (like `_`, `__`, etc.) - these are not real variables */
+const is_anonymous_underscore = (name) => /^_+$/.test(name)
+
 const find_local_definition = (locals, name, cursor) => {
     for (let lo of locals) {
         if (lo.name === name && cursor.from >= lo.validity.from && cursor.to <= lo.validity.to) {
@@ -49,6 +52,7 @@ const HardScopeNames = new Set([
     "MacroDefinition",
     "DoClause",
     "Generator",
+    "ArrowFunctionExpression",
 ])
 
 const does_this_create_scope = (/** @type {TreeCursor} */ cursor) => {
@@ -60,6 +64,24 @@ const does_this_create_scope = (/** @type {TreeCursor} */ cursor) => {
             // f(x) = x
             // @ts-ignore
             if (cursor.name === "CallExpression") return true
+            // f(x)::T = x or f(x) where T = x
+            // @ts-ignore
+            if (cursor.name === "BinaryExpression") {
+                cursor.firstChild()
+                // @ts-ignore
+                const is_func =
+                    cursor.name === "CallExpression" ||
+                    (cursor.name === "BinaryExpression" &&
+                        (() => {
+                            cursor.firstChild()
+                            // @ts-ignore
+                            const inner = cursor.name === "CallExpression"
+                            cursor.parent()
+                            return inner
+                        })())
+                cursor.parent()
+                if (is_func) return true
+            }
         } finally {
             if (reset) cursor.parent()
         }
@@ -69,25 +91,81 @@ const does_this_create_scope = (/** @type {TreeCursor} */ cursor) => {
 }
 
 /**
+ * Check if the cursor is currently on the LHS of an assignment (the part being assigned to).
+ * Written by 🤖
+ * @param {TreeCursor} cursor
+ * @returns {boolean}
+ */
+const is_assignment_lhs = (cursor) => {
+    const { parent_name, index } = parent_name_and_child_index(cursor)
+    if ((parent_name === "Assignment" || parent_name === "ForBinding") && index === 0) {
+        return true
+    }
+    // Also check for nested destructuring: (a, b) = ...
+    // The parent would be TupleExpression, and we need to check if that tuple is the LHS
+    if (parent_name === "TupleExpression" || parent_name === "BracketExpression") {
+        // Check if the tuple itself is the first child of an assignment
+        const map = new NodeWeakMap()
+        map.cursorSet(cursor, "here")
+        cursor.parent() // go to the tuple
+        const result = is_assignment_lhs(cursor)
+        // go back
+        if (!cursor.firstChild()) return result
+        while (map.cursorGet(cursor) !== "here") {
+            if (!cursor.nextSibling()) break
+        }
+        return result
+    }
+    return false
+}
+
+/**
  * Look into the left-hand side of an Assigment expression and find all ranges where variables are defined.
  * E.g. `a, (b,c) = something` will return ranges for a, b, c.
  * @param {TreeCursor} root_cursor
- * @returns {Range[]}
+ * @returns {{ definitions: Range[], usages: Range[] }}
  */
 const explore_assignment_lhs = (root_cursor) => {
     const a = cursor_not_moved_checker(root_cursor)
-    let found = []
+    let definitions = []
+    let usages = []
     root_cursor.iterate((cursor) => {
+        // Skip Type nodes - identifiers inside are type annotations, not variable definitions
+        // They should be tracked as usages
+        if (cursor.name === "Type") {
+            cursor.node.cursor().iterate((inner) => {
+                if (inner.name === "Identifier") {
+                    usages.push(r(inner))
+                }
+            })
+            return false
+        }
+        // Skip BraceExpression - identifiers inside are type parameters, not variable definitions
+        // For type alias like A{B} = B, the B in {B} is a type parameter
+        if (cursor.name === "BraceExpression") {
+            return false
+        }
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
-            found.push(r(cursor))
+            definitions.push(r(cursor))
         }
         if (cursor.name === "IndexExpression" || cursor.name === "FieldExpression") {
             // not defining a variable but modifying an object
+            // However, we need to track usages inside the index/field expression
+            // e.g., a[b,c] = d uses a, b, c
+            cursor.node.cursor().iterate((inner) => {
+                if (inner.name === "Identifier") {
+                    usages.push(r(inner))
+                }
+                // Stop at Field nodes - we don't want to add field names as usages
+                if (inner.name === "Field") {
+                    return false
+                }
+            })
             return false
         }
     })
     a()
-    return found
+    return { definitions, usages }
 }
 
 /**
@@ -221,20 +299,48 @@ const explore_funcdef_arguments = (cursor, { enter, leave }) => {
         } else if (cursor.name === "KwArg") {
             let went_in = cursor.firstChild()
             explore_argument()
-            cursor.nextSibling()
-            // find stuff used here
+            cursor.nextSibling() // skip =
+            cursor.nextSibling() // now at RHS (the default value)
+            // find stuff used here (the default value expression)
             cursor.iterate(enter, leave)
 
             if (went_in) cursor.parent()
         } else if (cursor.name === "BinaryExpression") {
+            // Handle `a::T` or `a::T...` (with splat)
             let went_in = cursor.firstChild()
-            explore_argument()
-            cursor.nextSibling()
-            cursor.nextSibling()
-            // find stuff used here
+            explore_argument() // recursively explore the first child (the variable name)
+            cursor.nextSibling() // skip ::
+            cursor.nextSibling() // now at Type
+            // Type annotations are explored by enter/leave to track usages
             cursor.iterate(enter, leave)
 
             if (went_in) cursor.parent()
+        } else if (cursor.name === "UnaryExpression") {
+            // Handle `::T` (anonymous typed parameter without a name)
+            // The first child is `::`, the second is the Type
+            let went_in = cursor.firstChild()
+            if (went_in) {
+                cursor.nextSibling() // move to the Type
+                // Iterate to capture the type as a usage
+                cursor.iterate(enter, leave)
+                cursor.parent()
+            }
+        } else if (cursor.name === "SplatExpression") {
+            // Handle `c...` or `c::T...` - explore the inner expression
+            let went_in = cursor.firstChild()
+            explore_argument() // recursively explore the splatted expression
+            if (went_in) cursor.parent()
+        } else if (cursor.name === "TupleExpression") {
+            // Destructured parameter: f((x, y...), z) = y
+            if (cursor.firstChild()) {
+                do {
+                    explore_argument()
+                } while (cursor.nextSibling())
+                cursor.parent()
+            }
+        } else if (cursor.name === "Type") {
+            // Just a type annotation itself - track usages inside
+            cursor.iterate(enter, leave)
         }
     }
 
@@ -277,6 +383,10 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
     const locals = /** @type {Array<{ definition: Range, validity: Range, name: string }>} */ ([])
     const usages = /** @type {Array<{ usage: Range, definition: Range | null, name: string }>} */ ([])
 
+    // Track bare `global k` and `local k` declarations for later assignment lookup
+    const global_declared = /** @type {Array<{ name: string, scope: Range }>} */ ([])
+    const local_declared = /** @type {Array<{ name: string, scope: Range }>} */ ([])
+
     const return_false_immediately = new NodeWeakMap()
 
     let enter, leave
@@ -297,12 +407,82 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
 
         if (
             return_false_immediately.cursorGet(cursor) ||
-            cursor.name === "ModuleDefinition" ||
             cursor.name === "QuoteStatement" ||
             cursor.name === "QuoteExpression" ||
             cursor.name === "MacroIdentifier" ||
             cursor.name === "Symbol"
         ) {
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle module definitions - register module name as definition, skip contents
+        if (cursor.name === "ModuleDefinition") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'module' keyword
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    definitions.set(name, { from: cursor.from, to: cursor.to, valid_from: cursor.from })
+                }
+            }
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle struct/abstract/primitive type definitions - register type name as definition, skip body
+        if (cursor.name === "StructDefinition" || cursor.name === "AbstractDefinition" || cursor.name === "PrimitiveDefinition") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            // Helper to extract the type name from various node types
+            const extract_type_name = () => {
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    return { from: cursor.from, to: cursor.to }
+                    // @ts-ignore
+                } else if (cursor.name === "ParametrizedExpression") {
+                    // a{T} - get the first child which is the name
+                    if (cursor.firstChild()) {
+                        // @ts-ignore
+                        if (cursor.name === "Identifier") {
+                            const result = { from: cursor.from, to: cursor.to }
+                            cursor.parent()
+                            return result
+                        }
+                        cursor.parent()
+                    }
+                    // @ts-ignore
+                } else if (cursor.name === "BinaryExpression") {
+                    // a <: b or a{T} <: b - get the first child
+                    if (cursor.firstChild()) {
+                        const result = extract_type_name()
+                        cursor.parent()
+                        return result
+                    }
+                }
+                return null
+            }
+
+            if (cursor.firstChild()) {
+                // Find the TypeHead which contains the type name
+                while (cursor.nextSibling()) {
+                    // @ts-ignore
+                    if (cursor.name === "TypeHead") {
+                        if (cursor.firstChild()) {
+                            const nameRange = extract_type_name()
+                            if (nameRange) {
+                                const name = doc.sliceString(nameRange.from, nameRange.to)
+                                definitions.set(name, { ...nameRange, valid_from: nameRange.from })
+                            }
+                            cursor.parent()
+                        }
+                        break
+                    }
+                }
+            }
+            pos_resetter()
             if (verbose) console.groupEnd()
             return false
         }
@@ -317,22 +497,280 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
             return false
         }
 
+        // Handle `global` modifier: forces definitions to global scope
+        if (cursor.name === "GlobalStatement") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'global' keyword
+
+                // @ts-ignore
+                if (cursor.name === "Assignment") {
+                    // global k = 3 / global a, b = 1, 2 / global k += 3
+                    cursor.firstChild() // go to LHS
+                    const { definitions: lhs_defs, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    cursor.nextSibling() // operator
+                    // @ts-ignore
+                    const is_update_op = cursor.name === "UpdateOp"
+                    cursor.nextSibling() // RHS
+
+                    // Register usages from LHS (e.g., index expressions)
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            usages.push({ name, usage: range, definition: find_local_definition(locals, name, range) ?? null })
+                        }
+                    })
+
+                    // For UpdateOp (global k += 3), the variable is also a usage (read before write)
+                    if (is_update_op) {
+                        lhs_defs.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                usages.push({ name, usage: range, definition: null })
+                            }
+                        })
+                    }
+
+                    // Register LHS definitions as GLOBAL definitions (bypass scope stack)
+                    lhs_defs.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            definitions.set(name, { ...range, valid_from: range.from })
+                        }
+                    })
+
+                    // Explore RHS for usages
+                    cursor.iterate(enter, leave)
+
+                    cursor.parent() // back to Assignment
+                    // @ts-ignore
+                } else if (cursor.name === "Identifier") {
+                    // Bare declaration: global k
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    const scope =
+                        local_scope_stack.length > 0
+                            ? _.last(local_scope_stack)
+                            : cursor.node.parent?.parent
+                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                              : { from: 0, to: doc.length }
+                    global_declared.push({ name, scope })
+                    // @ts-ignore
+                } else if (cursor.name === "OpenTuple") {
+                    // Bare declarations: global x, y, z
+                    const scope =
+                        local_scope_stack.length > 0
+                            ? _.last(local_scope_stack)
+                            : cursor.node.parent?.parent
+                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                              : { from: 0, to: doc.length }
+                    if (cursor.firstChild()) {
+                        do {
+                            // @ts-ignore
+                            if (cursor.name === "Identifier") {
+                                global_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope })
+                            }
+                        } while (cursor.nextSibling())
+                        cursor.parent()
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
+        // Handle `local` modifier: forces definitions to local scope
+        if (cursor.name === "LocalStatement") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            // Compute validity for locals created by this statement
+            const local_validity =
+                local_scope_stack.length > 0
+                    ? _.last(local_scope_stack)
+                    : cursor.node.parent
+                      ? { from: cursor.node.parent.from, to: cursor.node.parent.to }
+                      : { from: 0, to: doc.length }
+
+            if (cursor.firstChild()) {
+                cursor.nextSibling() // skip 'local' keyword
+
+                // @ts-ignore
+                if (cursor.name === "Assignment") {
+                    // local k = 3 / local a, b = 1, 2 / local k += 3
+                    cursor.firstChild() // go to LHS
+                    const { definitions: lhs_defs, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    cursor.nextSibling() // operator
+                    cursor.nextSibling() // RHS
+
+                    // Register usages from LHS (e.g., index expressions like local r[1] = 5)
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            usages.push({ name, usage: range, definition: find_local_definition(locals, name, range) ?? null })
+                        }
+                    })
+
+                    // For local += , do NOT add the variable as a usage (no global reference)
+
+                    // Register LHS definitions as locals (force into locals array)
+                    lhs_defs.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            locals.push({ name, validity: local_validity, definition: range })
+                        }
+                    })
+
+                    // Explore RHS for usages
+                    cursor.iterate(enter, leave)
+
+                    cursor.parent() // back to Assignment
+                    // @ts-ignore
+                } else if (cursor.name === "Identifier") {
+                    // Bare declaration: local k
+                    local_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope: local_validity })
+                    // @ts-ignore
+                } else if (cursor.name === "OpenTuple") {
+                    // Bare declarations: local a, b
+                    if (cursor.firstChild()) {
+                        do {
+                            // @ts-ignore
+                            if (cursor.name === "Identifier") {
+                                local_declared.push({ name: doc.sliceString(cursor.from, cursor.to), scope: local_validity })
+                            }
+                        } while (cursor.nextSibling())
+                        cursor.parent()
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (verbose) console.groupEnd()
+            return false
+        }
+
         const register_variable = (range) => {
             const name = doc.sliceString(range.from, range.to)
 
-            if (local_scope_stack.length === 0)
-                definitions.set(name, {
-                    ...range,
-                    valid_from: range.from,
-                })
-            else locals.push({ name, validity: /** @type{Range} */ (_.last(local_scope_stack)), definition: range })
+            // Check if this name was declared `global` in the current scope
+            const global_decl = global_declared.find((d) => d.name === name && range.from >= d.scope.from && range.to <= d.scope.to)
+            // Check if this name was declared `local` in the current scope
+            const local_decl = local_declared.find((d) => d.name === name && range.from >= d.scope.from && range.to <= d.scope.to)
+
+            if (global_decl) {
+                definitions.set(name, { ...range, valid_from: range.from })
+            } else if (local_decl) {
+                locals.push({ name, validity: local_decl.scope, definition: range })
+            } else if (local_scope_stack.length === 0) {
+                definitions.set(name, { ...range, valid_from: range.from })
+            } else {
+                locals.push({ name, validity: /** @type{Range} */ (_.last(local_scope_stack)), definition: range })
+            }
+        }
+
+        // Handle @bind/@bindname: first arg is a definition, rest explored normally.
+        // If the first arg is not a simple Identifier, ignore @bind semantics and fall through.
+        if (cursor.name === "MacrocallExpression") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+            let handled = false
+
+            if (cursor.firstChild()) {
+                // Detect @bind or @bindname (also handles PlutoRunner.@bind via FieldExpression)
+                let is_bind = false
+                // @ts-ignore
+                if (cursor.name === "MacroIdentifier") {
+                    const name = doc.sliceString(cursor.from, cursor.to)
+                    is_bind = name === "@bind" || name === "@bindname"
+                    // @ts-ignore
+                } else if (cursor.name === "FieldExpression") {
+                    const last = cursor.node.lastChild
+                    if (last?.name === "MacroIdentifier") {
+                        const name = doc.sliceString(last.from, last.to)
+                        is_bind = name === "@bind" || name === "@bindname"
+                    }
+                }
+
+                // @ts-ignore
+                if (is_bind && cursor.nextSibling() && cursor.name === "MacroArguments") {
+                    if (cursor.firstChild()) {
+                        // @ts-ignore
+                        if (cursor.name === "Identifier") {
+                            // First arg is a simple symbol → register as definition
+                            register_variable(r(cursor))
+                            // Explore remaining args normally for usages
+                            while (cursor.nextSibling()) {
+                                cursor.iterate(enter, leave)
+                            }
+                            handled = true
+                        }
+                        cursor.parent() // back to MacroArguments
+                    }
+                }
+            }
+
+            pos_resetter()
+            if (handled) {
+                if (verbose) console.groupEnd()
+                return false
+            }
+            // Non-@bind macros or @bind with non-symbol first arg: fall through to normal traversal.
+            // MacroIdentifier is skipped by the early return above, MacroArguments children are explored.
         }
 
         if (does_this_create_scope(cursor)) {
             local_scope_stack.push(r(cursor))
         }
 
+        // Handle arrow functions: x -> body, (x, y) -> body, (x;p) -> body
+        if (cursor.name === "ArrowFunctionExpression") {
+            const pos_resetter = back_to_parent_resetter(cursor)
+
+            if (cursor.firstChild()) {
+                // First child is parameter(s): Identifier or TupleExpression
+                // @ts-ignore
+                if (cursor.name === "Identifier") {
+                    register_variable(r(cursor))
+                    // @ts-ignore
+                } else if (cursor.name === "TupleExpression") {
+                    explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+                }
+
+                // Skip to body (past -> operator)
+                while (cursor.nextSibling()) {
+                    // @ts-ignore
+                    if (cursor.name !== "->") {
+                        cursor.iterate(enter, leave)
+                    }
+                }
+            }
+
+            pos_resetter()
+            leave(cursor)
+            return false
+        }
+
+        // Handle anonymous function parameters: function (a, b) ... end
+        // The Signature contains a TupleExpression directly (no function name)
+        if (cursor.name === "TupleExpression" && cursor.matchContext(["FunctionDefinition", "Signature"])) {
+            explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+            if (verbose) console.groupEnd()
+            return false
+        }
+
         if (cursor.name === "Identifier" || cursor.name === "MacroIdentifier" || cursor.name === "Operator") {
+            // Handle abstract function declaration: function g end
+            // Identifier directly inside Signature of FunctionDefinition (no CallExpression wrapper)
+            if (cursor.name === "Identifier" && cursor.matchContext(["FunctionDefinition", "Signature"])) {
+                const last_scoper = local_scope_stack.pop()
+                register_variable(r(cursor))
+                if (last_scoper) local_scope_stack.push(last_scoper)
+                if (verbose) console.groupEnd()
+                return false
+            }
+
             if (cursor.matchContext(["KwArg"])) {
                 const { parent_name, index } = parent_name_and_child_index(cursor)
                 if (parent_name === "KwArg" && index === 0) {
@@ -341,34 +779,486 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                 }
             }
             const name = doc.sliceString(cursor.from, cursor.to)
+            // Skip underscore _ as it's not a real variable
+            if (name === "_") {
+                if (verbose) console.groupEnd()
+                return false
+            }
+
+            // Check if this identifier is a local (e.g., a type parameter from a where clause)
+            // If it's inside a type parameter position (BraceExpression), skip it if it's a local
+            const local_def = find_local_definition(locals, name, cursor)
+            // Type parameters in BraceExpression that are locals should be skipped
+            if (local_def && cursor.matchContext(["BraceExpression"])) {
+                // This is a type parameter reference to a local type parameter - skip it
+                if (verbose) console.groupEnd()
+                return false
+            }
+
             usages.push({
                 name: name,
                 usage: {
                     from: cursor.from,
                     to: cursor.to,
                 },
-                definition: find_local_definition(locals, name, cursor) ?? null,
+                definition: local_def ?? null,
             })
         } else if (cursor.name === "Assignment" || cursor.name === "ForBinding" || cursor.name === "CatchClause") {
+            const pos_resetter = back_to_parent_resetter(cursor)
             if (cursor.firstChild()) {
                 // @ts-ignore
                 if (cursor.name === "catch") cursor.nextSibling()
-                // CallExpression means function definition `f(x) = x`, this is handled elsewhere
-                // @ts-ignore
-                if (cursor.name !== "CallExpression") {
-                    explore_assignment_lhs(cursor).forEach(register_variable)
-                    // mark this one as finished
-                    return_false_immediately.cursorSet(cursor, true)
+
+                // Check if this is a function definition pattern:
+                // - CallExpression: f(x) = x
+                // - BinaryExpression containing CallExpression: f(x)::T = x or f(x) where T = x
+                const is_funcdef_pattern = () => {
+                    // @ts-ignore
+                    if (cursor.name === "CallExpression") return true
+                    // @ts-ignore
+                    if (cursor.name === "BinaryExpression") {
+                        // Check if first child is CallExpression (or nested BinaryExpression containing one)
+                        const check_resetter = back_to_parent_resetter(cursor)
+                        cursor.firstChild()
+                        // @ts-ignore
+                        const result =
+                            // @ts-ignore
+                            cursor.name === "CallExpression" ||
+                            (cursor.name === "BinaryExpression" &&
+                                (() => {
+                                    cursor.firstChild()
+                                    // @ts-ignore
+                                    const inner = cursor.name === "CallExpression"
+                                    cursor.parent()
+                                    return inner
+                                })())
+                        check_resetter()
+                        if (verbose) console.log("is_funcdef_pattern: BinaryExpression first child is", cursor.name, "result:", result)
+                        return result
+                    }
+                    return false
                 }
-                cursor.parent()
+
+                const is_funcdef = is_funcdef_pattern()
+
+                if (is_funcdef) {
+                    // Let the BinaryExpression or CallExpression handler deal with this
+                    pos_resetter()
+                    // Don't return false here - we want to traverse children normally
+                } else {
+                    const { definitions: lhs_definitions, usages: lhs_usages } = explore_assignment_lhs(cursor)
+
+                    // Check if this is an update operator (+=, -=, etc.) or broadcast assignment (.=) by looking at the operator
+                    cursor.nextSibling()
+                    // @ts-ignore
+                    const is_update_op = cursor.name === "UpdateOp"
+                    // @ts-ignore
+                    const op_text = doc.sliceString(cursor.from, cursor.to)
+                    // Broadcast assignment (.=) modifies elements, doesn't define the variable
+                    const is_broadcast_assign = op_text === ".="
+                    // Broadcast update (.+=, etc.) also doesn't define the variable
+                    const is_broadcast_update = op_text.startsWith(".")
+
+                    // For Index/Field expressions, we track usages inside them
+                    lhs_usages.forEach((range) => {
+                        const name = doc.sliceString(range.from, range.to)
+                        if (!is_anonymous_underscore(name)) {
+                            usages.push({
+                                name,
+                                usage: range,
+                                definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                            })
+                        }
+                    })
+
+                    if (is_broadcast_assign || is_broadcast_update) {
+                        // Broadcast assignment (.=) or broadcast update (.+=, etc.) modifies elements, doesn't define the variable
+                        // The LHS is used (read before write for update, or just used for .=)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                usages.push({
+                                    name,
+                                    usage: range,
+                                    definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                                })
+                            }
+                        })
+                    } else if (is_update_op) {
+                        // For update operators, the LHS is also used (read before write)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                usages.push({
+                                    name,
+                                    usage: range,
+                                    definition: find_local_definition(locals, name, { from: range.from, to: range.to }) ?? null,
+                                })
+                            }
+                        })
+                        // Update operators do NOT create new definitions at global scope
+                        // but they DO create definitions at global scope (like a = a + 1)
+                        // Only register as definition if we're at global scope
+                        if (local_scope_stack.length === 0) {
+                            lhs_definitions.forEach((range) => {
+                                const name = doc.sliceString(range.from, range.to)
+                                if (!is_anonymous_underscore(name)) {
+                                    register_variable(range)
+                                }
+                            })
+                        }
+                    } else {
+                        // Regular assignment: register definitions (filter out underscore)
+                        lhs_definitions.forEach((range) => {
+                            const name = doc.sliceString(range.from, range.to)
+                            if (!is_anonymous_underscore(name)) {
+                                register_variable(range)
+                            }
+                        })
+                    }
+
+                    // Now move to RHS and iterate it
+                    cursor.nextSibling() // skip operator, now at RHS
+                    cursor.iterate(enter, leave)
+
+                    // Go back and return false to prevent double processing
+                    pos_resetter()
+                    if (verbose) console.groupEnd()
+                    return false
+                }
             }
         } else if (cursor.name === "Parameters") {
-            explore_assignment_lhs(cursor).forEach(register_variable)
+            const { definitions: param_definitions } = explore_assignment_lhs(cursor)
+            param_definitions.forEach((range) => {
+                const name = doc.sliceString(range.from, range.to)
+                if (name !== "_") {
+                    register_variable(range)
+                }
+            })
             if (verbose) console.groupEnd()
             return false
         } else if (cursor.name === "Field") {
             if (verbose) console.groupEnd()
             return false
+        } else if (cursor.name === "BinaryExpression") {
+            // Check if this is a function definition with return type annotation: f(x)::Type = body
+            // Or with where clause: f(x) where T = body
+            // Structure: BinaryExpression[CallExpression, ::, Type] or BinaryExpression[CallExpression, where, Type]
+            if (cursor.matchContext(["Assignment"]) && parent_name_and_child_index(cursor).index === 0) {
+                // This could be `f(x)::String = x` or `f(x) where T = body`
+                const pos_resetter = back_to_parent_resetter(cursor)
+
+                cursor.firstChild() // go into BinaryExpression
+                // Look for CallExpression - might be nested in another BinaryExpression for f(x)::T where S
+                const findCallExpression = () => {
+                    // @ts-ignore
+                    if (cursor.name === "CallExpression") {
+                        return true
+                        // @ts-ignore
+                    } else if (cursor.name === "BinaryExpression") {
+                        cursor.firstChild()
+                        const found = findCallExpression()
+                        if (!found) cursor.parent()
+                        return found
+                    }
+                    return false
+                }
+
+                if (findCallExpression()) {
+                    // Found the CallExpression
+                    // Save the CallExpression position manually (from/to)
+                    const callExprFrom = cursor.from
+                    const callExprTo = cursor.to
+
+                    // FIRST: Check for where clause and register type parameters as locals
+                    // Navigate from CallExpression to find any where clause in sibling nodes
+                    // For `a(a::AbstractArray{T}) where T = 5`, the structure is:
+                    // BinaryExpression[CallExpression, where, Type]
+
+                    // Go to parent BinaryExpression and look for 'where' sibling
+                    if (cursor.parent()) {
+                        // @ts-ignore
+                        if (cursor.name === "BinaryExpression") {
+                            cursor.firstChild()
+                            do {
+                                // @ts-ignore
+                                if (cursor.name === "where") {
+                                    cursor.nextSibling() // move to Type
+                                    // @ts-ignore
+                                    if (cursor.name === "Type") {
+                                        cursor.firstChild()
+                                        // @ts-ignore
+                                        if (cursor.name === "Identifier") {
+                                            // Single type parameter: where T
+                                            register_variable(r(cursor))
+                                            // @ts-ignore
+                                        } else if (cursor.name === "BraceExpression") {
+                                            // Multiple type parameters: where {T, S <: R}
+                                            cursor.firstChild()
+                                            do {
+                                                // @ts-ignore
+                                                if (cursor.name === "Identifier") {
+                                                    register_variable(r(cursor))
+                                                    // @ts-ignore
+                                                } else if (cursor.name === "BinaryExpression") {
+                                                    // S <: R - register S as local
+                                                    cursor.firstChild()
+                                                    // @ts-ignore
+                                                    if (cursor.name === "Identifier") {
+                                                        register_variable(r(cursor))
+                                                    }
+                                                    cursor.parent()
+                                                }
+                                            } while (cursor.nextSibling())
+                                            cursor.parent() // back to BraceExpression
+                                        }
+                                        cursor.parent() // back to Type
+                                    }
+                                    break
+                                }
+                            } while (cursor.nextSibling())
+                        }
+                    }
+
+                    // Go back to the original BinaryExpression and find the CallExpression again
+                    pos_resetter()
+                    cursor.firstChild() // go into BinaryExpression
+                    // Navigate to find the CallExpression
+                    const findCallAgain = () => {
+                        // @ts-ignore
+                        if (cursor.name === "CallExpression" && cursor.from === callExprFrom) {
+                            return true
+                            // @ts-ignore
+                        } else if (cursor.name === "BinaryExpression") {
+                            cursor.firstChild()
+                            return findCallAgain()
+                        }
+                        return false
+                    }
+                    findCallAgain()
+
+                    const call_pos_resetter = back_to_parent_resetter(cursor)
+
+                    // NOW process function name and arguments
+                    cursor.firstChild() // go into CallExpression
+                    // @ts-ignore
+                    if (cursor.name === "Identifier" || cursor.name === "Operator" || cursor.name === "FieldExpression") {
+                        const last_scoper = local_scope_stack.pop()
+                        register_variable(r(cursor))
+                        if (last_scoper) local_scope_stack.push(last_scoper)
+
+                        cursor.nextSibling() // move to Arguments
+                    }
+
+                    // @ts-ignore
+                    if (cursor.name === "Arguments") {
+                        explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+                    }
+
+                    call_pos_resetter()
+
+                    // Now explore return type annotations (as usages) and where clause constraint types (like R in S <: R)
+                    cursor.parent() // back to outermost BinaryExpression we started from
+
+                    // Explore the return type (::Type) and where clause usages, but NOT the CallExpression we already handled
+                    const call_explored = new NodeWeakMap()
+                    cursor.firstChild() // go to first child of BinaryExpression
+                    // @ts-ignore
+                    while (cursor.name !== "CallExpression") {
+                        if (!cursor.nextSibling()) break
+                    }
+                    call_explored.cursorSet(cursor, true)
+
+                    // Go back to parent (BinaryExpression) and iterate through all children
+                    cursor.parent()
+                    cursor.firstChild()
+                    do {
+                        if (!call_explored.cursorGet(cursor)) {
+                            // Skip operators like :: and where keyword
+                            // @ts-ignore
+                            if (cursor.name !== "::" && cursor.name !== "where") {
+                                // For where clause Types, we need special handling
+                                // The type parameter identifiers are already registered as locals
+                                // We only need to capture constraint usages (like R in S <: R)
+                                // @ts-ignore
+                                if (cursor.name === "Type") {
+                                    // Check if this is a where clause type (follows 'where' keyword)
+                                    const prev_saved = back_to_parent_resetter(cursor)
+                                    let isWhereType = false
+                                    const curr_from = cursor.from
+                                    cursor.parent()
+                                    cursor.firstChild()
+                                    do {
+                                        // @ts-ignore
+                                        if (cursor.name === "where") {
+                                            cursor.nextSibling()
+                                            if (cursor.from === curr_from) {
+                                                isWhereType = true
+                                            }
+                                            break
+                                        }
+                                    } while (cursor.nextSibling())
+                                    prev_saved()
+
+                                    if (isWhereType) {
+                                        // Only iterate over constraint usages (R in S <: R)
+                                        cursor.firstChild()
+                                        // @ts-ignore
+                                        if (cursor.name === "BraceExpression") {
+                                            cursor.firstChild()
+                                            do {
+                                                // @ts-ignore
+                                                if (cursor.name === "BinaryExpression") {
+                                                    // S <: R - iterate over R
+                                                    cursor.firstChild()
+                                                    cursor.nextSibling() // skip S
+                                                    cursor.nextSibling() // skip <:
+                                                    cursor.nextSibling() // now at R
+                                                    cursor.iterate(enter, leave)
+                                                    cursor.parent()
+                                                }
+                                            } while (cursor.nextSibling())
+                                            cursor.parent()
+                                        }
+                                        cursor.parent()
+                                    } else {
+                                        // Return type annotation - iterate normally
+                                        cursor.iterate(enter, leave)
+                                    }
+                                } else {
+                                    cursor.iterate(enter, leave)
+                                }
+                            }
+                        }
+                    } while (cursor.nextSibling())
+
+                    pos_resetter()
+                    if (verbose) console.groupEnd()
+                    return false
+                }
+
+                pos_resetter()
+                // Fall through to normal processing if no CallExpression found
+            }
+            // Check if this is a Signature with a where clause in a FunctionDefinition
+            else if (cursor.matchContext(["FunctionDefinition", "Signature"])) {
+                // function f(x::T; k=1) where T => BinaryExpression[CallExpression where Type]
+                const pos_resetter = back_to_parent_resetter(cursor)
+
+                cursor.firstChild() // go into BinaryExpression, now at first child
+                // @ts-ignore
+                if (cursor.name === "CallExpression") {
+                    // First, we need to handle the where clause type parameters BEFORE processing arguments
+                    // This is because type parameters are scoped to the whole signature
+
+                    // Save CallExpression position info
+                    const callExpressionFrom = cursor.from
+                    const callExpressionTo = cursor.to
+
+                    // Navigate to the where clause
+                    cursor.nextSibling() // skip 'where' keyword
+                    cursor.nextSibling() // now at the Type (could be Identifier or BraceExpression)
+
+                    // Register type parameters as locals FIRST
+                    // @ts-ignore
+                    if (cursor.name === "Type") {
+                        cursor.firstChild() // go into Type
+                        // @ts-ignore
+                        if (cursor.name === "Identifier") {
+                            // Single type parameter: where T
+                            register_variable(r(cursor))
+                            // @ts-ignore
+                        } else if (cursor.name === "BraceExpression") {
+                            // Multiple type parameters: where {T, S <: R}
+                            cursor.firstChild()
+                            do {
+                                // @ts-ignore
+                                if (cursor.name === "Identifier") {
+                                    register_variable(r(cursor))
+                                    // @ts-ignore
+                                } else if (cursor.name === "BinaryExpression") {
+                                    // S <: R - register S as local, R is a usage (will be explored later)
+                                    cursor.firstChild()
+                                    // @ts-ignore
+                                    if (cursor.name === "Identifier") {
+                                        register_variable(r(cursor))
+                                    }
+                                    cursor.parent()
+                                }
+                            } while (cursor.nextSibling())
+                            cursor.parent() // back to BraceExpression
+                        }
+                        cursor.parent() // back to Type
+                    }
+
+                    // Now go back to BinaryExpression (parent of both CallExpression and Type)
+                    cursor.parent() // back to BinaryExpression
+
+                    // Navigate to CallExpression using position info
+                    cursor.firstChild() // first child of BinaryExpression should be CallExpression
+                    // @ts-ignore
+                    if (cursor.name !== "CallExpression" || cursor.from !== callExpressionFrom) {
+                        // Something unexpected, reset and fall through
+                        pos_resetter()
+                        return // Fall through to normal processing
+                    }
+
+                    // Extract function name
+                    cursor.firstChild() // go into CallExpression
+                    // @ts-ignore
+                    if (cursor.name === "Identifier" || cursor.name === "Operator" || cursor.name === "FieldExpression") {
+                        if (verbose) console.log("found function name (from where clause)", doc.sliceString(cursor.from, cursor.to))
+
+                        const last_scoper = local_scope_stack.pop()
+                        register_variable(r(cursor))
+                        if (last_scoper) local_scope_stack.push(last_scoper)
+
+                        cursor.nextSibling() // move to Arguments
+                    }
+
+                    // @ts-ignore
+                    if (cursor.name === "Arguments") {
+                        explore_funcdef_arguments(cursor, { enter, leave }).forEach(register_variable)
+                    }
+
+                    cursor.parent() // back to CallExpression
+
+                    // Now explore the where clause for usages (like R in S <: R)
+                    cursor.nextSibling() // skip 'where' keyword
+                    cursor.nextSibling() // now at the Type
+
+                    // @ts-ignore
+                    if (cursor.name === "Type") {
+                        cursor.firstChild() // go into Type
+                        // @ts-ignore
+                        if (cursor.name === "BraceExpression") {
+                            // Multiple type parameters: where {T, S <: R}
+                            cursor.firstChild()
+                            do {
+                                // @ts-ignore
+                                if (cursor.name === "BinaryExpression") {
+                                    // S <: R - R is a usage
+                                    cursor.firstChild()
+                                    cursor.nextSibling() // skip S
+                                    cursor.nextSibling() // skip <:
+                                    cursor.nextSibling() // now at R
+                                    cursor.iterate(enter, leave)
+                                    cursor.parent()
+                                }
+                            } while (cursor.nextSibling())
+                            cursor.parent()
+                        }
+                        cursor.parent()
+                    }
+
+                    pos_resetter()
+                    if (verbose) console.groupEnd()
+                    return false
+                }
+
+                pos_resetter()
+                // Fall through to normal processing
+            }
         } else if (cursor.name === "CallExpression") {
             if (
                 cursor.matchContext(["FunctionDefinition", "Signature"]) ||

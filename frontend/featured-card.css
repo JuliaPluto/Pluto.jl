@@ -80,7 +80,7 @@ featured-card .author img {
     flex: 0 0 auto;
 }
 
-featured-card h3 a {
+featured-card:not(.asdfadsdfs) h3 a {
     padding: 0.6em;
     padding-bottom: 0;
     -webkit-line-clamp: 2;
@@ -90,6 +90,7 @@ featured-card h3 a {
     overflow: hidden;
     background: var(--index-card-bg);
     border-radius: 0.6em;
+    color: var(--black);
     /* border-top-left-radius: 0; */
 }
 

@@ -112,7 +112,7 @@ body.wiggle_binder .edit_or_run > button:first-child {
     border: 3px solid hsl(236deg 28% 50% / 46%);
     font-size: 16px;
     /* font-style: italic; */
-    font-family: var(--lato-ui-font-stack);
+    font-family: var(--system-ui-font-stack);
     letter-spacing: 0.1px;
     color: var(--black);
     white-space: nowrap;

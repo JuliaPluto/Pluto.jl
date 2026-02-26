@@ -126,14 +126,34 @@ end
     @test occursin(string(Pluto.PLUTO_VERSION), export_contents)
     @test occursin("</html>", export_contents)
     @test occursin("insertion-spot", export_contents)
+    # pluto.land needs to find this pattern:
+    plutoland_regex = r"href=\"(https://cdn\.jsdelivr\.net/gh/(?:fonsp|JuliaPluto)/Pluto\.jl@([\d.]+)/)[\w/.\\d\-]*\""
+    @test occursin(plutoland_regex, export_contents)
     
-    export_offline_contents = read(download(local_url("notebookexport?offline_bundle&id=$(notebook.notebook_id)")), String)
     
-    # We can't test for this if the offline_bundle is working (and that it is different from the regular bundle), because the tests are probably running on an unbundled Pluto (the directories frontend-dist and frontend-dist-offline are not generated). In that case, Pluto falls back to using the unbundled editor.html with CDN pointing to /frontnend/, for example:
+    export_offline_contents = read(download(local_url("notebookexport?offline_bundle=true&id=$(notebook.notebook_id)")), String)
+    # We can't test if the offline_bundle is working (and that it is different from the regular bundle), because the tests are probably running on an unbundled Pluto (the directories frontend-dist and frontend-dist-offline are not generated). In that case, Pluto falls back to using the unbundled editor.html with CDN pointing to /frontend/, for example:
     ### https://cdn.jsdelivr.net/gh/JuliaPluto/Pluto.jl@0.20.21/frontend/img/favicon_unsaturated.svg
     @test occursin(string(Pluto.PLUTO_VERSION), export_offline_contents)
     @test occursin("</html>", export_offline_contents)
     @test occursin("insertion-spot", export_offline_contents)
+    @test occursin(plutoland_regex, export_offline_contents)
+    
+    t = tempname(; cleanup=false, suffix=".html")
+    write(@show(t), export_offline_contents)
+    
+    
+    if isdir(joinpath(pkgdir(Pluto), "frontend-dist")) && isdir(joinpath(pkgdir(Pluto), "frontend-dist-offline"))
+        @test hash(export_offline_contents) != hash(export_contents)
+        @test length(export_offline_contents) > 4 * length(export_contents) # the offline bundle is much larger than the regular export
+        
+        https_count = count("https://", export_contents)
+        https_count_offline = count("https://", export_offline_contents)
+        @test https_count > https_count_offline + 5
+    else
+        @info "Skipping offline bundle tests because there are no bundle files. That's fine, but if you want to run these tests then you should run the frontend bundlers before, and run with the JULIA_PLUTO_FORCE_BUNDLED=ja env variable."
+    end
+    
     
     # wait for Pkg to finish
     for _ in 1:10

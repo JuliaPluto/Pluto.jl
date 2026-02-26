@@ -16,7 +16,6 @@
 <br>
 
 
-
 <h1><img alt="Pluto.jl" src="https://raw.githubusercontent.com/JuliaPluto/Pluto.jl/dd0ead4caa2d29a3a2cfa1196d31e3114782d363/frontend/img/logo_white_contour.svg" width=300 height=74 ></h1>
 
 _Writing a notebook is not just about writing the final document — Pluto empowers the experiments and discoveries that are essential to getting there._
