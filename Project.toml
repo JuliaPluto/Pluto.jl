@@ -6,6 +6,7 @@ authors = ["Fons van der Plas <fons@plutojl.org>"]
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 Configurations = "5218b696-f38b-4ac9-8b61-a12ec717816d"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
@@ -40,6 +41,7 @@ UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [compat]
 Base64 = "1"
+Comonicon = "1"
 Configurations = "0.15, 0.16, 0.17"
 Dates = "0, 1"
 Downloads = "1"
@@ -71,6 +73,9 @@ Tables = "1"
 URIs = "1.3"
 UUIDs = "1"
 julia = "^1.10"
+
+[apps.pluto]
+submodule = "PlutoApp"
 
 [extras]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
