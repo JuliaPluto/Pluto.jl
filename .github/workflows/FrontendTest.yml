@@ -65,7 +65,7 @@ jobs:
                   PLUTO_PORT: 1235
                   PLUTO_TEST_OFFLINE: ${{ github.ref_name == 'release' }}
 
-            - uses: actions/upload-artifact@v5
+            - uses: actions/upload-artifact@v7
               if: failure()
               with:
                   name: test-screenshot-artifacts
