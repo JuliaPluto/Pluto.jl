@@ -10,7 +10,7 @@ jobs:
     continue-on-error: true
     steps:
       
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
           deno-version: "1.16.1"
       - uses: actions/github-script@v5
