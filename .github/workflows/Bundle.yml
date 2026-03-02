@@ -29,7 +29,7 @@ jobs:
                 token: ${{ secrets.PAT_TOKEN }}
               if: github.event_name != 'pull_request'
               
-            - uses: fregante/setup-git-user@v1
+            - uses: fregante/setup-git-user@v2
               if: github.event_name != 'pull_request'
               
             # Ignore the build changes from previous run.
