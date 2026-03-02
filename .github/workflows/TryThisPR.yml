@@ -38,7 +38,7 @@ jobs:
           await Deno.writeTextFile("comment.txt", body);
           '
           
-      - uses: nefrob/pr-description@v1.1.2
+      - uses: nefrob/pr-description@v1.2.0
         with:
             content: "comment.txt"
             contentIsFilePath: "true"
