@@ -31,7 +31,7 @@
         "@parcel/optimizer-data-url": "^2.11.0",
         "@parcel/transformer-inline": "^2.11.0",
         "@plutojl/posthtml-crossorigin": "^1.0.0",
-        "@types/node": "^22",
+        "@types/node": "^25",
         "posthtml": "^0.16.6",
         "posthtml-sri": "^2.0.0"
     }
