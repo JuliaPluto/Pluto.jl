@@ -16,7 +16,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@parcel/config-default": "^2.11.0",
+        "@parcel/config-default": "^2.16.4",
         "mkdirp": "^3.0.1",
         "parcel": "^2.15.4",
         "parcel-reporter-bundle-manifest": "^1.0.0",
