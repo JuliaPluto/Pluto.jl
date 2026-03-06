@@ -36,7 +36,7 @@ const resources = {
     "da": without_empty_keys(dansk),
     "de": without_empty_keys(deutsch),
     "el": without_empty_keys(ellinika),
-    "en": english,
+    "en-US": english,
     "en-US-x-corp": without_empty_keys(corporate_english),
     "es-419": without_empty_keys(español),
     "fi": without_empty_keys(suomi),
