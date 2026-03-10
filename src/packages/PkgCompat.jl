@@ -435,6 +435,14 @@ function project(ctx::PkgContext)
 	end
 end
 
+function sysimage_module_names()
+	@static if isdefined(Base, Symbol("_sysimage_modules"))
+		getproperty.(Base._sysimage_modules, :name)
+	else
+		String[]
+	end
+end
+
 # 🐸 "Public API", but using PkgContext
 "Find a package in the manifest. Return `nothing` if not found."
 _get_manifest_entry(ctx::PkgContext, package_name::AbstractString) = 
