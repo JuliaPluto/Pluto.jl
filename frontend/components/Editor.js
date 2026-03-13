@@ -53,6 +53,7 @@ import { PlutoLandUpload } from "./PlutoLandUpload.js"
 import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
 import { with_query_params } from "../common/URLTools.js"
+import semver from "../imports/semver-es.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -1573,14 +1574,31 @@ ${t("t_key_autosave_description")}`
         const warn_about_untrusted_code = this.client.session_options?.security?.warn_about_untrusted_code ?? true
 
         const restart = async (maybe_confirm = false) => {
+            let jv_before = notebook.nbpkg?.installed_versions?.__internal_julia_manifest_version
+            let jv_after = notebook.nbpkg?.installed_versions?.__internal_julia_version
+            const to_minor = (v) => (v ? `${semver.major(v)}.${semver.minor(v)}` : "unknown")
+
+            let warn_about_changed_julia_version = to_minor(jv_after) !== to_minor(jv_before)
+
+            const version_i18n = {
+                version_old: to_minor(jv_before),
+                version_new: to_minor(jv_after),
+                version_install: to_minor(jv_before),
+            }
+
             let source = notebook.metadata?.risky_file_source
             if (
-                !warn_about_untrusted_code ||
-                !maybe_confirm ||
-                source == null ||
-                confirm(
-                    `${th("t_safe_preview_confirm_before_danger")} ${t("t_safe_preview_confirm_before")}\n\n${source}\n\n${t("t_safe_preview_confirm_after")}`
-                )
+                (!warn_about_untrusted_code ||
+                    !maybe_confirm ||
+                    source == null ||
+                    confirm(
+                        `${th("t_safe_preview_confirm_before_danger")}\n${t("t_safe_preview_confirm_before")}\n\n${source}\n\n${t("t_safe_preview_confirm_after")}`
+                    )) &&
+                (!warn_about_changed_julia_version ||
+                    !maybe_confirm ||
+                    confirm(
+                        `${th("t_safe_preview_julia_version_change_before_danger", version_i18n)}\n${t("t_safe_preview_julia_version_change_before", version_i18n)}\n\n${t("t_safe_preview_julia_version_change_after", version_i18n)}`
+                    ))
             ) {
                 await this.actions.update_notebook((notebook) => {
                     delete notebook.metadata.risky_file_source

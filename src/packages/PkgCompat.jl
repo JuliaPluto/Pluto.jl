@@ -2,15 +2,15 @@ module PkgCompat
 
 export package_versions, registered_package_names
 
+import ..Pluto
+import ..TempDirInScratch
 import REPL
 import Pkg
 import Pkg.Types: VersionRange
 import RegistryInstances
-import ..Pluto
 import Scratch
 import UUIDs
 import GracefulPkg
-import ..TempDirInScratch
 import TOML
 
 
@@ -147,6 +147,28 @@ function read_manifest_file(x)::String
 	path = manifest_file(x)
 	isfile(path) ? read(path, String) : ""
 end
+
+
+# ⚠️ Internal API with fallback
+function manifest_julia_version(ctx::PkgContext)
+	try
+		ctx.env.manifest.julia_version::Union{VersionNumber,Nothing}
+	catch e
+		# TODO remove this warning
+		@warn "Could not get manifest julia_version" exception=(e,catch_backtrace())
+		
+		# Fallback
+		s = read_manifest_file(ctx)
+		try
+			VersionNumber(TOML.parse(s)["julia_version"])
+		catch e
+			# TODO remove this warning
+			@warn "Could not parse manifest for julia_version" exception = (e, catch_backtrace())
+			nothing
+		end
+	end
+end
+
 
 
 # ⚠️ Internal API with fallback
