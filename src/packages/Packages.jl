@@ -478,7 +478,7 @@ const StrategyThatRequiresReinstantiation = Union{
 
 
 """
-Run `f` (e.g. `Pkg.instantiate`) on the notebook's package environment. Keep trying more and more invasive strategies to fix problems until the operation succeeds.
+Run `f` (e.g. `Pkg.instantiate`) on the notebook's package environment. Keep trying more and more invasive strategies to fix problems until the operation succeeds using GracefulPkg.jl. Returns the `GracefulPkg.GraceReport`.
 """
 function with_auto_fixes(f::Function, notebook::Notebook, iolistener::IOListener; strategies=gracefulpkg_strats)
     env_dir = PkgCompat.env_dir(notebook.nbpkg_ctx)
@@ -798,7 +798,9 @@ function update_nbpkg(session, notebook::Notebook; level::Pkg.UpgradeLevel=Pkg.U
 end
 
 nbpkg_cache(ctx::Union{Nothing,PkgContext}) = ctx === nothing ? Dict{String,String}() : Dict{String,String}(
-    x => string(PkgCompat.get_manifest_version(ctx, x)) for x in keys(PkgCompat.project(ctx).dependencies)
+    (x => string(PkgCompat.get_manifest_version(ctx, x)) for x in keys(PkgCompat.project(ctx).dependencies))...,
+    "__internal_julia_manifest_version" => string(PkgCompat.manifest_julia_version(ctx)),
+    "__internal_julia_version" => string(VERSION),
 )
 
 function update_nbpkg_cache!(notebook::Notebook)
