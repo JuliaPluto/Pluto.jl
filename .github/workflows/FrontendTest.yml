@@ -30,7 +30,7 @@ jobs:
               with:
                   version: "1.10" # our lowest supported version
 
-            - uses: julia-actions/cache@v2
+            - uses: julia-actions/cache@v3
 
             - name: Install Pluto.jl packages
               run: |

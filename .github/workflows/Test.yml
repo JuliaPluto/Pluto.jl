@@ -49,7 +49,7 @@ jobs:
                   version: ${{ matrix.julia-version }}
                   arch: ${{ runner.arch }}
 
-            - uses: julia-actions/cache@v2
+            - uses: julia-actions/cache@v3
 
             # 🚗
             - uses: julia-actions/julia-runtest@v1
