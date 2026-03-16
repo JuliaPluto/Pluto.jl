@@ -799,7 +799,7 @@ end
 
 nbpkg_cache(ctx::Union{Nothing,PkgContext}) = ctx === nothing ? Dict{String,String}() : Dict{String,String}(
     (x => string(PkgCompat.get_manifest_version(ctx, x)) for x in keys(PkgCompat.project(ctx).dependencies))...,
-    "__internal_julia_manifest_version" => string(PkgCompat.manifest_julia_version(ctx)),
+    "__internal_julia_manifest_version" => string(something(PkgCompat.manifest_julia_version(ctx), "")),
     "__internal_julia_version" => string(VERSION),
 )
 
