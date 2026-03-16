@@ -136,14 +136,28 @@ export const getCellIds = (page) => page.evaluate(() => Array.from(document.quer
 /**
  * @param {Page} page
  */
+export const dismissJuliaVersionCompatMessage = (page) => {
+    const handler = async (dialog) => {
+        if (dialog.message().includes("Package compatibility")) {
+            await dialog.accept()
+        } else {
+            console.warn(`dismissJuliaVersionCompatMessage: unexpected dialog message: "${dialog.message()}"`)
+        }
+    }
+    page.once("dialog", handler)
+    return () => page.off("dialog", handler)
+}
+
 export const restartProcess = async (page) => {
     await page.waitForSelector(`a#restart-process-button`)
-    await page.click(`a#restart-process-button`)
-    // page.once("dialog", async (dialog) => {
-    //     await dialog.accept()
-    // })
-    await page.waitForFunction(() => document?.querySelector(`a#restart-process-button`) == null)
-    await page.waitForSelector(`#process-status-tab-button.something_is_happening`)
+    const stopDismissingJuliaVersionCompatMessage = dismissJuliaVersionCompatMessage(page)
+    try {
+        await page.click(`a#restart-process-button`)
+        await page.waitForFunction(() => document?.querySelector(`a#restart-process-button`) == null)
+        await page.waitForSelector(`#process-status-tab-button.something_is_happening`)
+    } finally {
+        stopDismissingJuliaVersionCompatMessage()
+    }
 }
 
 /**

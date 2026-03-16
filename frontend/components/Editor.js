@@ -1578,7 +1578,7 @@ ${t("t_key_autosave_description")}`
             let jv_after = notebook.nbpkg?.installed_versions?.__internal_julia_version
             const to_minor = (v) => (v ? `${semver.major(v)}.${semver.minor(v)}` : "unknown")
 
-            let warn_about_changed_julia_version = to_minor(jv_after) !== to_minor(jv_before)
+            let warn_about_changed_julia_version = jv_before != null && jv_after != null && to_minor(jv_after) !== to_minor(jv_before)
 
             const version_i18n = {
                 version_old: to_minor(jv_before),
