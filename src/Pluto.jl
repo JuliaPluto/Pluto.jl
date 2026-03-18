@@ -6,7 +6,7 @@ julia> Pluto.run()
 ```
 
 Have a look at the FAQ:
-https://github.com/fonsp/Pluto.jl/wiki
+https://github.com/JuliaPluto/Pluto.jl/wiki
 """
 module Pluto
 
