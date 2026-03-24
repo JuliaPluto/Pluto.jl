@@ -54,6 +54,7 @@ import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
 import { with_query_params } from "../common/URLTools.js"
 import semver from "../imports/semver-es.js"
+import { ClaudePanel } from "./ClaudePanel.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -368,6 +369,7 @@ export class Editor extends Component {
                 down: false,
             },
             export_menu_open: false,
+            claude_panel_open: false,
 
             last_created_cell: null,
             selected_cells: [],
@@ -1543,7 +1545,7 @@ ${t("t_key_autosave_description")}`
 
     render() {
         const { launch_params } = this.props
-        let { export_menu_open, notebook } = this.state
+        let { export_menu_open, claude_panel_open, notebook } = this.state
 
         const status = this.cached_status ?? statusmap(this.state, launch_params)
         const statusval = first_true_key(status)
@@ -1714,10 +1716,22 @@ ${t("t_key_autosave_description")}`
                                                   ? restart_button(t("t_process_give_permission_to_run_code"), true)
                                                   : null
                             }</div>
+                            <button
+                                id="claude-nav-btn"
+                                class=${claude_panel_open ? "active" : ""}
+                                title="Ask Claude to write cells"
+                                onClick=${() => this.setState({ claude_panel_open: !claude_panel_open })}
+                            >✦ Claude</button>
                             <button class="toggle_export" title=${t("t_export_action_ellipsis")} onClick=${() =>
                                 this.setState({ export_menu_open: !export_menu_open })}><span></span></button>
                         </nav>
                     </header>
+                    <${ClaudePanel}
+                        open=${claude_panel_open}
+                        onClose=${() => this.setState({ claude_panel_open: false })}
+                        notebook_id=${notebook.notebook_id}
+                        notebook_cell_order=${notebook.cell_order}
+                    />
                     
                     <${SafePreviewUI}
                         process_waiting_for_permission=${status.process_waiting_for_permission}

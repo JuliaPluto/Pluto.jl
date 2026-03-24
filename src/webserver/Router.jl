@@ -12,6 +12,53 @@ function http_router_for(session::ServerSession)
 
     HTTP.register!(router, "GET", "/ping", r -> HTTP.Response(200, "OK!"))
     HTTP.register!(router, "GET", "/auth-check", r -> HTTP.Response(200, "OK!"))
+
+    # ── Claude Code CLI integration ───────────────────────────────────────────
+    # Minimal JSON helpers — avoids adding a JSON dep to Pluto's Project.toml
+    json_str(s::AbstractString) = "\"" * replace(s, "\\" => "\\\\", "\"" => "\\\"",
+                                                  "\n" => "\\n", "\r" => "\\r",
+                                                  "\t" => "\\t") * "\""
+    json_ok(text)  = "{\"success\":true,\"response\":$(json_str(text))}"
+    json_err(msg)  = "{\"success\":false,\"error\":$(json_str(msg))}"
+
+    function json_response(body, status=200)
+        r = HTTP.Response(status, body)
+        HTTP.setheader(r, "Content-Type" => "application/json")
+        r
+    end
+
+    # Simple key extractor from flat JSON body — no library needed
+    function json_get(body::String, key::String, default="")
+        m = match(Regex("\"$(key)\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\""), body)
+        m === nothing ? default : replace(m.captures[1],
+            "\\n" => "\n", "\\t" => "\t", "\\\"" => "\"", "\\\\" => "\\")
+    end
+
+    function serve_claude(request::HTTP.Request)
+        try
+            body          = String(request.body)
+            prompt        = json_get(body, "prompt")
+            model         = json_get(body, "model", "claude-sonnet-4-6")
+            system_prompt = json_get(body, "system_prompt")
+
+            isempty(strip(prompt)) && return json_response(json_err("prompt is empty"), 400)
+
+            args = String["claude", "-p", prompt,
+                          "--model", model,
+                          "--output-format", "text",
+                          "--tools", ""]
+            if !isempty(strip(system_prompt))
+                push!(args, "--system-prompt", system_prompt)
+            end
+
+            response_text = read(Cmd(args), String)
+            return json_response(json_ok(strip(response_text)))
+        catch e
+            return json_response(json_err(sprint(showerror, e)), 500)
+        end
+    end
+    HTTP.register!(router, "POST", "/api/claude", serve_claude)
+    # ─────────────────────────────────────────────────────────────────────────
     HTTP.register!(router, "GET", "/possible_binder_token_please", r -> session.binder_token === nothing ? HTTP.Response(200,"") : HTTP.Response(200, session.binder_token))
     
     function try_launch_notebook_response(
