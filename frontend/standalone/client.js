@@ -830,6 +830,31 @@ end`,
     }
 
     /**
+     * Move the notebook to a new file path. The backend will save the notebook to the new path,
+     * delete the old file, move any associated `.assets` directory, and update the Julia process's
+     * working directory.
+     *
+     * @param {string} new_path - Absolute path for the notebook file
+     * @returns {Promise<void>}
+     * @throws {Error} If the new path already exists on the server
+     *
+     * @example
+     * await worker.moveTo("/home/user/notebooks/analysis.jl")
+     */
+    async moveTo(new_path) {
+        if (!this.client || !this.notebook_state) {
+            throw new Error("Not connected to notebook")
+        }
+
+        await this._update_notebook_state((notebook) => {
+            notebook.in_temp_dir = false
+            notebook.path = new_path
+        })
+
+        this._notify_update("notebook_moved", { path: new_path })
+    }
+
+    /**
      * Interrupt notebook execution
      * @returns {Promise<void>}
      */

@@ -1,6 +1,6 @@
 {
   "name": "@plutojl/rainbow",
-  "version": "0.6.20",
+  "version": "0.6.21",
   "description": "TypeScript/JavaScript API for programmatically interacting with Pluto notebooks",
   "type": "module",
   "main": "dist/standalone/index.js",
