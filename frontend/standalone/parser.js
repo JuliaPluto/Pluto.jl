@@ -5,7 +5,7 @@
  * compatible with the frontend Editor component.
  */
 
-import TOML from "@iarna/toml";
+import { parse as TOMLparse, stringify as TOMLstringify } from "@iarna/toml";
 
 const NOTEBOOK_HEADER = "### A Pluto.jl notebook ###";
 const CELL_ID_DELIMITER = "# ╔═╡ ";
@@ -195,7 +195,7 @@ function parseCellMetadata(lines, startIndex) {
   if (metadataLines.length > 0) {
     try {
       const tomlString = metadataLines.join("\n");
-      const parsed = TOML.parse(tomlString);
+      const parsed = TOMLparse(tomlString);
 
       // Apply parsed values to metadata
       if (parsed.disabled !== undefined) {
@@ -456,7 +456,7 @@ function serializeCellMetadata(metadata) {
 
   // Serialize to TOML and convert to lines
   if (Object.keys(tomlData).length > 0) {
-    const tomlString = TOML.stringify(tomlData);
+    const tomlString = TOMLstringify(tomlData);
     return tomlString
       .split("\n")
       .filter((line) => line.trim() !== "")

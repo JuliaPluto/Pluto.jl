@@ -1,7 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import alias from "@rollup/plugin-alias";
-
+import commonjs from "@rollup/plugin-commonjs"
 import json from "@rollup/plugin-json";
 import nodePolyfills from "rollup-plugin-node-polyfills";
 import { copy } from "@web/rollup-plugin-copy";
@@ -66,7 +66,7 @@ const plugins = [
     preferBuiltins: false,
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
   }),
-  // commonjs(),
+  commonjs(),
   json(),
   copy({ patterns: "standalone/integrations/node-polyfill.js" }),
   copy({ patterns: "standalone/index.d.ts" }),
