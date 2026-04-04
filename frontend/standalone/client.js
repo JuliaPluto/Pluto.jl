@@ -773,6 +773,35 @@ end`,
     }
 
     /**
+     * Move cells to a new position in the notebook. The order of `cell_ids` is preserved in the result.
+     *
+     * @param {Array<string>} cell_ids - Cell UUIDs to move, in desired order
+     * @param {number} index - Target position in the current cell order (before removing the moved cells)
+     * @returns {Promise<void>}
+     *
+     * @example
+     * // Given cell_order [A, B, C, D, E], move C and A to position 1 (in that order):
+     * await worker.moveSnippets(["C", "A"], 1)
+     * // Result: [B, C, A, D, E]
+     */
+    async moveSnippets(cell_ids, index) {
+        if (!this.client || !this.notebook_state) {
+            throw new Error("Not connected to notebook")
+        }
+
+        index = Math.max(0, index)
+        const cell_ids_set = new Set(cell_ids)
+
+        await this._update_notebook_state((notebook) => {
+            let before = notebook.cell_order.slice(0, index).filter((x) => !cell_ids_set.has(x))
+            let after = notebook.cell_order.slice(index, Infinity).filter((x) => !cell_ids_set.has(x))
+            notebook.cell_order = [...before, ...cell_ids, ...after]
+        })
+
+        this._notify_update("cells_moved", { cell_ids, index })
+    }
+
+    /**
      * Delete cells from the notebook
      * @param {Array<string>} cell_ids - Array of cell UUIDs to delete
      * @returns {Promise<void>}
