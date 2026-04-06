@@ -330,6 +330,27 @@ import Pluto.Configuration: Options, EvaluationOptions
         WorkspaceManager.unmake_workspace((🍭, notebook); verbose=false)
     end
 
+    @testset "Soft definitions re-run errored cells" begin
+        # When a cell that references a soft-exported symbol (e.g. `January` from Dates) also
+        # defines a variable used by the `using` cell, the dependency forces it to run BEFORE
+        # the using cell. It errors with UndefVarError because the soft symbol isn't available yet.
+        # After the using cell runs and soft_definitions become available, the errored upstream
+        # cell should be removed from `already_run` and re-executed.
+        notebook = Notebook([
+            Cell("x = January"),
+            Cell("""begin
+                using Dates
+                y = x
+            end"""),
+        ])
+
+        update_run!(🍭, notebook, notebook.cells)
+
+        @test notebook.cells[1] |> noerror  # January should resolve after Dates provides soft_definitions
+
+        WorkspaceManager.unmake_workspace((🍭, notebook); verbose=false)
+    end
+
     @testset "More challenging reactivity of extended function" begin
         notebook = Notebook(Cell.([
             "Base.inv(s::String) = s",
