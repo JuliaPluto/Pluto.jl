@@ -1,22 +1,20 @@
 {
     "t_language_name": "Polski",
-
+    "t_language_direction": "ltr",
     "t_my_work": "Moje prace",
     "t_newnotebook": "Stwórz <strong>nowy notatnik</strong>",
     "t_welcome_to_pluto": "Witaj w {{pluto}}",
     "t_FORGET": "ZAPOMNIJ",
-
     "t_live_docs_search_placeholder": "Szukaj w dokumentacji...",
     "t_live_docs_body": "<p>Witaj w <b>interaktywnej dokumentacji</b>! Pozostaw to nieduże okienko otwarte podczas pracy z notatnikiem, aby otrzymywać dokumentację wszystkiego, co wpisujesz!</p><p>Możesz również wpisać zapytanie w powyższym polu tekstowym.</p><hr><p><em>Nadal nie możesz sobie poradzić? Oto <a target=\"_blank\" href=\"https://julialang.org/about/help/\">kilka wskazówek</a>.</em></p>",
     "t_panel_status": "Stan procesu",
     "t_panel_status_short": "Stan",
     "t_panel_docs": "Dokumentacja",
+    "t_panel_docs_description": "Dokumentacja: Przeszukuj interaktywnie dokumentację języka Julia i otrzymuj na bieżąco dokumentację wszystkiego, co wpisujesz.",
     "t_panel_status_progress": "Stan {{progress}}",
     "t_panel_status_progress_inner": "({{done}}/{{total}})",
     "t_panel_close": "Zamknij panel",
     "t_panel_popout": "Otwórz panel",
-
-
     "t_stop_notebook_session": "Zakończ sesje",
     "t_shut_down_notebook": "Wyłącz notatnik",
     "t_start_notebook_in_background": "Uruchom notatnik w tle",
@@ -42,13 +40,12 @@
     "t_cell_disabled_in_file_explanation": "Ta komórka jest obecnie przechowywana w pliku notatnika jako <em>komentarz</em> języka Julia, zamiast jako <em>kod</em>.<br />W rezultacie ta komórką nie będzie uruchomiona, gdy notatnik będzie uruchomiany jako skrypt poza Pluto.<br />Użyj menu kontekstowego, aby ponownie ją włączyć.",
     "t_cell_indirectly_disabled_in_file_explanation": "Ta komórka jest obecnie przechowywana w pliku notatnika jako <em>komentarz</em> języka Julia, zamiast jako <em>kod</em>.<br />W rezultacie ta komórka nie będzie uruchomiana, gdy notatnik będzie uruchomiany jako skrypt poza Pluto.<br /> Stan ten jest spowodowany <b>pośrednio</b> przez oznaczenie którejś z komórek od której ta komóra zależy, jako <em>niekatywną w pliku</em>, przez co ta komóra także jest nieaktywna w pliku. Aby zaaktywować tę komórkę w pliku, aktywuj {{upstreamLink}} komórkę.",
     "t_cell_upstreamLink": "nadrzędną",
-
     "t_language_picker_description": "Wybierz język interfejsu",
     "t_refresh_to_see_language_change_confirm": "Język zmieniony! Czy chciałbyś odświeżyć stronę, aby zobaczyć zmiany?",
 
-
     "t_anonymous_function_abbr": "To taka (mini-)funkcja, która jest zdefiniowana z wykorzystaniem '->' lub 'do', zamiast słowa kluczowego 'function'.",
     "t_display_complete_type_information_of_this_function_call": "Wyświetl pełne informacje o typach tego wywołania funkcji.",
+    "t_show_types": "...pokaż typy...",
     "t_multiple_expressions_in_one_cell": "Wiele wyrażeń w jednej komórce",
     "t_how_would_you_like_to_fix_it": "Jak chcesz to naprawić?",
     "t_split_this_cell_into_cells": "Rozdziel zawartości tej komórki w {{count}} niezależne komórki",
@@ -60,6 +57,7 @@
     "t_another_cell_defining_xs_contains_errors": "Kolejna komórka definiujące {{symbols}} zawiera błędy.",
     "t_error_message": "Komunikat błędu",
     "t_stack_trace": "Zrzut stosu",
+    "t_header_list_of_syntax_errors": "Błędy składni",
     "t_here_is_what_happened_the_most_recent_locations_are_first": "Oto, co tu się wydarzyło, najnowsze zdarzenia znajdują się na początku:",
     "t_show_stack_trace": "Pokaż zrzut stosu...",
     "t_stack_frame_location": "z",
@@ -139,17 +137,20 @@
     "t_process_restart_action_short": "restart",
     "t_process_give_permission_to_run_code": "Wykonaj kod notatnika",
     "t_process_running_cells": "Wykonuje komórki... ({{done}}/{{total}} wykonano)",
-
     "t_safe_preview": "Bezpieczny podgląd",
     "t_safe_preview_not_executed": "Kod nie będzie wykonany w trybie <em>Bezpiecznego podglądu</em>",
     "t_safe_preview_not_rendered": "Skrypty i style nie są renderowane w trybie <em>Bezpiecznego podglądu</em>",
     "t_safe_preview_confirm_before": "Czy aby na pewno ufasz temu plikowi? 🤔",
+    "t_safe_preview_confirm_warning": "Przestroga",
     "t_safe_preview_confirm_before_danger": "⚠️ Uwaga, niebezpieczeństwo!",
     "t_safe_preview_confirm_after": "Złośliwy notatnik może wykonać wszelakie nieporządane działania na komputerze, w tym wykraść dane i hasła.",
+    "t_safe_preview_julia_version_change_before_danger": "ℹ️ Zgodność pakietów",
+    "t_safe_preview_julia_version_change_before": "Czy chcesz przekonwertować ten notatnik z wersjia Julia {{version_old}} na {{version_new}}?",
+    "t_safe_preview_julia_version_change_after": "Pluto spróbuje automatycznie przekonwertować środowisko notatnika, ale nie zawsze to zadziała. Możesz także uruchomić Pluto w wersji Julia {{version_install}}, aby bezpośrednio uruchomić notatnik.",
     "t_safe_preview_body": "Aktualnie możesz przeglądać i modyfikować ten notatnik bez żadnych obaw, ponieważ kod nie jest wykonany w trybie bezpiecznego podglądu.",
     "t_safe_preview_run_this_notebook": "Jeżeli jest się gotowym, to można {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "uruchomić ten notatnik",
-
+    "t_export_safe_preview_warning": "Ten notatnik jest nadal w trybie bezpiecznego podglądu i komórki nie są wykonywane. Może lepiej najpierw uruchomć ten notatnik. Czy na pewno chcesz go wyeksportować?",
     "t_instant_feedback_ellipsis": "Twoja propozycja...",
     "t_instant_feedback_send": "Wyślij",
     "t_how_can_we_improve": "🙋 Jak możemy ulepszyć {{pluto}}?",
@@ -165,7 +166,7 @@
     "t_show_logs_action": "Pokaż dziennik",
     "t_hide_logs_action": "Ukryj dziennik",
     "t_show_logs_action_description": "Pokaż dziennik komórki",
-    "t_hide_logs_action_description": "Ukruj dziennik komórki",
+    "t_hide_logs_action_description": "Ukryj dziennik komórki",
     "t_copy_output_action": "Kopiuj wyjście",
     "t_copy_output_action_description": "Kopiuj wyjście tej komórki to schowka.",
     "t_enable_in_file_action": "Włącz w pliku",
@@ -176,29 +177,26 @@
     "t_save_cell": "Zapisz kod bez uruchamiania",
     "t_jump_cell": "Ta komórka jest zależna od wyłączonej komórki.",
     "t_run_cell": "Wykonaj komórkę (Shift + Enter)",
+    "t_help_about_tab_navigation_inside_cell": "Naciśnij <kbd>Esc</kbd>, a następnie <kbd>Tab</kbd>, aby kontynuować nawigację.",
 
     "t_cell_is_disabled": "This cell is disabled. {{link}} to run the code.",
     "t_cell_is_disabled_link": "Enable this cell",
-
-
-
     "t_ask_ai_action": "Zapytaj SI",
     "t_ask_ai_action_description": "Zapytaj SI o tę komórkę",
     "t_ai_prompt_generator_title": "Generator zapytań SI",
     "t_ai_prompt_generator_intro": "Możesz skopiować poniższy tekst jako zapytanie do SI, aby stworzyć kontekst z tego notatnika.",
     "t_ai_prompt_generator_question_input_placeholder": "Zadaj tutaj swoje pytanie...",
+    "t_ai_prompt_generator_default_question_errored": "Dlaczego ta komórka powoduje błąd?",
     "t_copy_action": "Kopiuj",
     "t_copy_action_description": "Kopiuj do schowka",
     "t_copy_action_complete": "Skopiowane!",
     "t_copy_header_id_action_description": "Kliknij aby skopiować URL do tego nagłówka",
-    
     "t_ai_permission_prompt_title": "Użyć SI do poprawienia błędów składni?",
     "t_ai_permission_prompt_body": "Pluto wyśle kod z tej komórki do komercyjnego serwisu świadczącego usługi SI, aby poprawić błędy składni. Zaktualizowany kod nie zostanie uruchomiony bez potwierdzenia.",
     "t_ai_permission_prompt_body_2": "Przesłany kod może zostać użyty (anonimowo) przez zespół tworzący Pluto, aby ulepszyć usługi SI.",
     "t_dont_ask_again": "Nie pytaj ponownie",
     "t_no": "Nie",
     "t_yes": "Tak",
-    
     "t_ai_accept_and_close": "Zakceptuj poprawki SI i zamknij",
     "t_ai_decline_and_close": "Odrzuć poprawki SI i zamknij",
     "t_ai_accept_and_run": "Zakceptuj i uruchom",
@@ -209,15 +207,10 @@
     "t_ai_syntax_fix_failed": "Nie udało się naprawić błedu składni: {{error}}",
     "t_ai_fix_syntax_with_ai": "Napraw składnie z wykorzystaniem SI",
     "t_ai_fix_syntax_with_ai_description": "Spróbuj naprawić ten błąd składni z wykorzystaniem usługi SI",
-
     "t_confirm_delete_multiple_cells": "Usunąć zaznaczone komórki? ({{count}})",
     "t_confirm_delete_multiple_interrupt_notebook": "Ta komórka jest wciąż wykonywana - czy chciałbyś przerwać wykonywanie notatnika?",
     "t_confirm_move_file": "Czy jesteś pewien? Notatnik zostanie przeniesiony z\n\n{{old_path}}\n\ndo\n\n{{new_path}}?",
-
-
     "t_oopsie_pls_refresh": "Upsss! Proszę odświeżyć stronę i wszystko powinno być dobrze!",
-
-
     "t_key_run": "uruchom komórkę",
     "t_key_run_add": "uruchom komórkę i dodaj komórkę poniżej",
     "t_key_submit_all_changes": "prześlij wszystkie zmiany",
@@ -233,17 +226,12 @@
     "t_key_ctrl_c": "skopiuj wybrane komórki",
     "t_key_ctrl_x": "wytnij wybrane komórki",
     "t_key_ctrl_v": "wklej wybrane komórki",
-
     "t_key_autosave_description": "Za każdym razem kiedy wykonasz jakąś komórkę, notatnik samoistnie się zapisze.",
     "t_key_selection_description": "Zaznacz wiele komórek, przeciągając pole zaznaczenia przez te komórki.",
-
     "t_key_or": "lub",
-
     "t_navigate_to_previous_page": "Wróc",
-
     "t_bonds_static_warning": "Oglądasz statyczny dokument. {{run_notebook_action}}, aby załączyć interaktywność.",
     "t_bonds_static_warning_inner": "Uruchom ten notatnik",
-
     "t_edit_or_run_this_notebook": "<strong>Edytuj</strong> lub <strong>uruchom</strong> ten notatnik",
     "t_edit_or_run_view_code": "Wyświetl kod",
     "t_edit_or_run_view_code_cancel": "Odwołaj",
@@ -261,7 +249,6 @@
     "t_edit_or_run_open_the_notebook_file": "Otwórz plik notatnika",
     "t_edit_or_run_open_the_notebook_file_description": "Wpisz nazwę zapisanego pliku w polu <em>otwórz</em>.",
     "t_edit_or_run_paste_url_in_the_open_box": "Wklej URL w pole <em>Otwórz</em>",
-
     "t_time_minutes_one": "{{count}} minuta",
     "t_time_minutes_two": "{{count}} minuty",
     "t_time_minutes_three": "{{count}} minuty",
@@ -272,7 +259,6 @@
     "t_time_seconds_three": "{{count}} sekundy",
     "t_time_seconds_four": "{{count}} sekundy",
     "t_time_seconds_other": "{{count}} sekund",
-
     "t_frontmatter_title": "Strona wstępna",
     "t_frontmatter_description": "Konfiguracja strony wstępnej (ang. front matter) jest wskazana jeżeli masz zamiar opublikować notatnik w internecie. Możesz ustawić poniższe parametry, aby dostarczyć metadane HTML. Jest to przydatne między innymi dla wyszukiwarek i mediów społecznościowych.",
     "t_frontmatter_synchronized": "Strona wstępna notatnika została zsynchronizowana ✔\n\nTe parametry będą używane w kolejnych wyeksportowanych wersjach tego notatnika.",
@@ -282,48 +268,49 @@
     "t_frontmatter_cancel": "Odrzuć",
     "t_frontmatter_save": "Zapisz",
     "t_frontmatter_preview": "Podgląd",
-
-
+    "t_frontmatter_language_placeholder": "pl-PL (wprowadź tag języka BCP 47)",
+    "t_plutoland_upload_description": "Prześlij ten notatnik do {{plutoland}}, darmowej usługi udostępniania notatników Pluto:",
+    "t_plutoland_upload_description_recording": "Prześlij to nagranie do {{plutoland}}, darmowej usługi udostępniania nagrań Pluto:",
+    "t_plutoland_upload_upload": "Prześlij do {{plutoland}}",
+    "t_plutoland_upload_uploading": "Przesyłanie...",
+    "t_plutoland_download": "Pobierz <strong>plik HTML</strong>",
+    "t_plutoland_download_description": "Zapisz wyeksportowany plik HTML na dysku:",
+    "t_plutoland_download_description_recording": "Zapisz nagranie jako plik HTML na dysku:",
+    "t_plutoland_choose_up_or_down": "wybierz ↑ lub ↓",
+    "t_plutoland_upload_success": "Przesłano! Możesz udostępnić ten adres URL:",
+    "t_plutoland_upload_success_recording": "Przesłano! Obejrzyj swoje nagranie pod adresem:",
+    "t_plutoland_upload_delete": "Usuń trwale z pluto.land",
     "t_logs_truncated": "Nie pokazano {{count}} wpisów...",
     "t_logs_stdout": "Ten tekst został wypisane na <a href=\"https://pl.wikipedia.org/wiki/Standardowe_strumienie\" target=\"_blank\">standardowy strumień</a> podczas wykonywania tej komórki. To nie jest <em>zwrócona wartość</em> tej komórki.",
     "t_logs_click_for_more_info": "Kliknij, aby uzyskać więcej informacji",
-
     "t_ready_notif_title": "Pluto: notatnik gotowy",
     "t_ready_notif_body": "✓ Wszystkie ({{count}}) kroki zostały wykonane",
     "t_ready_notif": "Powiadom kiedy zadanie się zakończy",
     "t_ready_notif_permission": "Pluto wymaga pozwolenia, aby wyświetlanie powiadomień. <strong>Zezwól na wyświetlanie powiadomień</strong> przez Pluto w ustawieniach przeglądarki.",
-
     "t_pkg_disables_str": "{{function}} wyłączy wbudowany w Pluto menadżer paczek.",
     "t_pkg_stdlib": "{{package}} jest częścią już zainstalowanej biblioteki standardowej języka Julia.",
     "t_pkg_will_be_installed": "{{package}} będzie zainstalowana, kiedy uruchomisz ten notatnik.",
     "t_pkg_is_installing": "{{package}} jest instalowana...",
     "t_pkg_is_installed": "{{package}} jest zainstalowana w notatniku.",
-
     "t_pkg_not_found": "Paczka {{package}} nie została znaleziona w publicznym rejestrze paczek Julia. Nie zrobiłeś czasem literówki?",
     "t_pkg_will_be_installed_in_notebook": "{{package}} będzie zainstalowana w notatniku, kiedy wykonasz tę komórkę.",
-
     "t_pkg_installation_can_take": "Instalacja może potrwać {{time_install}}.<br/>Następnie, załaduje się w przeciągu {{time_load}}.",
     "t_pkg_update_packages": "Aktualizuj paczki",
     "t_pkg_update_packages_description": "Czy chcesz sprawdzić dostępność aktualizacji i je zainstalować? Zostanie utworzona kopia zapasowa pliku notatnika.",
     "t_pkg_currently_busy": "Menadżer pakietów Pkg jest obecnie zajęty innymi pakietami... wróć później!",
     "t_pkg_toggle_terminal": "Pokaż/ukryj standardowe wyjście z menadżera pakietów Pkg",
-
     "t_pkg_go_to_help": "Dowiedz się więcej o pakietach w Pluto",
-
+    "t_pkg_click_to_open_pkg_popup": "Kliknij, aby otworzyć okno ze szczegółami pakietu",
     "t_save_all_changes": "Zapisz wszystkie zmiany",
     "t_save_all_changes_description": "Zapisz i wykonaj wszystkie zmienione komórki",
     "t_file_change_detected": "Wykryto zmiane w pliku, <b>notatnik został zaktualizowany</b>",
     "t_file_saved": "Zapisano",
-
     "t_recording_ui_start_recording": "<strong>Rozpocznij nagrywanie</strong>",
     "t_recording_ui_start_recording_muted": "<strong>Rozpocznij nagrywanie</strong> (bez dźwięku)",
     "t_recording_ui_stop_recording": "<strong>Zatrzymaj nagrywanie</strong>",
     "t_recording_ui_back_to_recording": "Wznów odtwarzanie <strong>nagrania</strong> {{icon}}",
-
     "t_presentation_previous_slide": "Poprzedni slajd",
     "t_presentation_next_slide": "Następny slajd",
-
-
     "t_status_names": {
         "workspace": "Przygotowanie środowiska roboczego",
         "create_process": "Uruchamianie Julia",
@@ -342,15 +329,32 @@
         "backend_responded": "Otwieranie pliku notatnika",
         "backend_notebook_running": "Przejście do edycji na żywo"
     },
-
     "t_tree_show_more_items": "więcej",
     "t_table_no_columns": "Ta tabela nie ma żadnych kolumn",
     "t_table_no_rows": "Ta tabela nie ma żadnych wierszy",
-
     "t_undo_delete_one": "Usunięto jedną komórkę",
     "t_undo_delete_two": "Usunięto dwie komórki",
+    "t_undo_delete_three": "Usunięto trzy komórki",
+    "t_undo_delete_four": "Usunięto cztery komórki",
     "t_undo_delete_other": "Usunięto {{count}} komórek",
     "t_undo_delete_link": "Cofnij",
     "t_auto_disabled": "{{another_cell}} została wyłączone, ponieważ zmiena {{variable}} została ponownie zdefiniowana.",
-    "t_auto_disabled_link": "Kolejna komórka"
+    "t_auto_disabled_link": "Kolejna komórka",
+    "t_project_toml_editor_title": "Project.toml <em>(wstępna funkcjonalność)</em>",
+    "t_project_toml_editor_description": "Ten notatnik ma własne środowisko pakietów. Możesz edytować plik Project.toml, aby określić pakiety używane w tym notatniku.",
+    "t_project_toml_editor_what_is_project_toml": "Czym jest Project.toml?",
+    "t_project_toml_editor_compat_description": "Możesz zmieniać wpisy w sekcji <code>[compat]</code>, aby określić <strong>wersje pakietów</strong> używane w tym notatniku. Dodając <code>[sources]</code>, możesz używać <em>niezarejestrowyanych</em> lub <em>lokalnych</em> pakietów.",
+    "t_project_toml_editor_feature_preview_note": "<strong>Uwaga:</strong> To jest wstępna funkcjonalność. Może nie zawsze działać zgodnie z oczekiwaniami. Daj nam znać, co o tym myślisz!",
+    "t_project_toml_editor_status_tab_note": "Po wysłaniu zmian użyj karty <strong>Stan</strong>, aby zobaczyć wpisy w dzienniku.",
+    "t_project_toml_editor_backup_checkbox": "Utworzyć kopię zapasową notatnika przed zapisaniem?",
+    "t_project_toml_editor_cancel": "Anuluj",
+    "t_project_toml_editor_save": "Zapisz i rozwiąż",
+    "t_project_toml_editor_placeholder": "To jest plik TOML. Możesz tutaj ustawić metadane swojego projektu.",
+    "t_project_toml_editor_wait_cells": "Poczekaj, aż wszystkie komórki zakończą wykonywanie.",
+    "t_project_toml_editor_wait_packages": "Poczekaj, aż wszystkie operacje pakietów się zakończą (także w innych notatnikach).",
+    "t_project_toml_editor_synchronized": "Project TOML zsynchronizowany ✔\n\nZobacz kartę Stan, aby sprawdzić dziennik.",
+    "t_project_toml_editor_sync_failed": "Synchronizacja pliku TOML nie powiodła się: {{error}}",
+    "t_project_toml_editor_start_notebook_first": "Musisz uruchomić notatnik, zanim będzie można edytować Project.toml. W przyszłości może to być obsługiwane.",
+    "t_project_toml_editor_version_latest": "Najnowsza",
+    "t_project_toml_editor_version_latest_compatible": "Najnowsza zgodność"
 }
