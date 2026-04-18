@@ -21,7 +21,7 @@ jobs:
             - uses: actions/checkout@v6
 
             # Makes thes `julia` command available
-            - uses: julia-actions/setup-julia@v2
+            - uses: julia-actions/setup-julia@v3
               with:
                   version: ${{ matrix.julia-version }}
 
