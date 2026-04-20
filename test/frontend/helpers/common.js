@@ -151,15 +151,16 @@ export const waitForContentToBecome = async (
 }
 
 export const clickAndWaitForNavigation = async (/** @type {import("puppeteer").Page} */ page, /** @type {string} */ selector) => {
-    // Use a shorter timeout for networkidle0 since it can be unreliable with persistent connections
-    // Fall back to domcontentloaded if networkidle0 times out
-    let t = with_connections_debug(page, () => page.waitForNavigation({ waitUntil: "networkidle0", timeout: 10000 })).catch((e) => {
-        console.warn("Network idle never happened after navigation... weird!", e)
-        // Fallback to domcontentloaded which is more reliable
-        return page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
-    })
+    // Both watchers must be registered BEFORE clicking, otherwise the fallback
+    // waitForNavigation call may be set up after domcontentloaded has already fired,
+    // causing it to wait indefinitely for the next navigation.
+    let domContentPromise = page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 30000 })
+    let networkIdlePromise = with_connections_debug(page, () => page.waitForNavigation({ waitUntil: "networkidle0", timeout: 10000 }))
     await page.click(selector)
-    await t
+    await networkIdlePromise.catch((e) => {
+        console.warn("Network idle never happened after navigation... weird!", e)
+        return domContentPromise
+    })
 }
 
 const dismissBeforeUnloadDialogs = (page) => {
