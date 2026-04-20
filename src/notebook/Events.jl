@@ -67,19 +67,6 @@ FileSaveEvent(notebook::Notebook) = begin
     FileSaveEvent(notebook, file_contents, notebook.path)
 end
 
-# Triggered when the local code has changed (user typed something),
-# but the code hasn't run yet. 
-# TODO: Remove me after 0.20 @deprecate 
-struct FileEditEvent <: PlutoEvent
-    notebook::Notebook
-    file_contents::String
-    path::String
-end
-
-FileEditEvent(notebook::Notebook) = begin
-    FileEditEvent(notebook, "BROKEN", notebook.path)
-end
-
 """
 Triggered when the notebook state changes (e.g. code changes, output changes, a log message appears, etc)
 """
