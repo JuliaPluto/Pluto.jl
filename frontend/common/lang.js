@@ -177,7 +177,7 @@ export const th = (key, insertions) => {
     // Objects to fill the slots with.
     const to_interpolate = slots.map((slot) => insertions?.[slot.name])
 
-    const cache_key = [key, ...Object.keys(insertions ?? {})]
+    const cache_key = [key, ...Object.keys(insertions ?? {}), ...Object.values(insertions ?? {}).map((v) => can_interpolate_directly(v))]
     return html(to_template_strings_array_cached(string_parts, cache_key), ...to_interpolate)
 }
 
