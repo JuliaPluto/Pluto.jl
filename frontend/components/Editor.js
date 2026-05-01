@@ -20,7 +20,7 @@ import { Scroller } from "./Scroller.js"
 import { ExportBanner } from "./ExportBanner.js"
 import { Popup } from "./Popup.js"
 
-import { slice_utf8, length_utf8 } from "../common/UnicodeTools.js"
+import { slice_utf8 } from "../common/UnicodeTools.js"
 import {
     has_ctrl_or_cmd_pressed,
     ctrl_or_cmd_name,
@@ -54,6 +54,7 @@ import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
 import { with_query_params } from "../common/URLTools.js"
 import semver from "../imports/semver-es.js"
+import { ConfirmBeforeLongRuntime, maybe_abort_long_runtime } from "./ConfirmBeforeLongRuntime.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -636,18 +637,22 @@ export class Editor extends Component {
                     }
                 })
             },
-            set_and_run_all_changed_remote_cells: () => {
+            set_and_run_all_changed_remote_cells: async () => {
                 const changed = this.state.notebook.cell_order.filter(
                     (cell_id) =>
                         this.state.cell_inputs_local[cell_id] != null &&
                         this.state.notebook.cell_inputs[cell_id]?.code !== this.state.cell_inputs_local[cell_id]?.code
                 )
-                this.actions.set_and_run_multiple(changed)
+                await this.actions.set_and_run_multiple(changed)
                 return changed.length > 0
             },
             set_and_run_multiple: async (cell_ids) => {
                 // This function is called with an empty list when you press Shift+Enter without any selected cells.
                 if (cell_ids.length > 0) {
+                    if (await maybe_abort_long_runtime(this.state.notebook, cell_ids)) {
+                        return false
+                    }
+
                     window.dispatchEvent(
                         new CustomEvent("set_waiting_to_run_smart", {
                             detail: {
@@ -686,7 +691,9 @@ export class Editor extends Component {
                             recently_auto_disabled_cells: disabled_cells,
                         })
                     }
+                    return true
                 }
+                return false
             },
             /**
              *
@@ -1763,6 +1770,7 @@ ${t("t_key_autosave_description")}`
                         notebook=${notebook}
                         process_waiting_for_permission=${status.process_waiting_for_permission}
                     />
+                    <${ConfirmBeforeLongRuntime} />
                     <${PlutoLandUpload}
                         notebook_id=${notebook.notebook_id}
                         notebookexport_url=${this.export_url("notebookexport")}
