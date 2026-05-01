@@ -851,6 +851,32 @@ dialog.export-html-dialog > div.final button {
     cursor: pointer;
 }
 
+dialog.confirm-before-long-runtime {
+    color: var(--pluto-output-color);
+    background: var(--main-bg-color);
+    border-radius: 10px;
+    max-width: 37ch;
+    background: linear-gradient(180deg, #ffffff, #fdf8e9);
+}
+
+.confirm-before-long-runtime .final button {
+    padding: 0.5em 0.9em;
+    border: 2px solid #c1c1c1;
+    background: #f4f4f4;
+    font-weight: bold;
+}
+
+.confirm-before-long-runtime .final button.final-yes {
+    background: black;
+    color: #eaeaea;
+    border-color: #9b9b9b;
+}
+
+.confirm-before-long-runtime .final button kbd {
+    opacity: 0.8;
+    font-size: 0.8em;
+}
+
 nav#at_the_top h1 {
     color: var(--nav-h1-text-color);
     letter-spacing: 2px;
@@ -4166,6 +4192,7 @@ pluto-cell.hooked_up > pluto-output {
     padding: 1.3em 1.9em;
     border: none;
     box-shadow: 0 0 55px #00000052;
+    position: fixed;
 }
 .pluto-modal h1 {
     color: white;

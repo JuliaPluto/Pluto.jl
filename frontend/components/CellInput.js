@@ -355,13 +355,33 @@ export const CellInput = ({
         const keyMapRun = (/** @type {EditorView} */ cm) => {
             autocomplete.closeCompletion(cm)
             run(async () => {
-                // we await to prevent an out-of-sync issue
-                await on_add_after()
-
                 const new_value = cm.state.doc.toString()
                 if (new_value !== remote_code_ref.current) {
-                    on_submit()
+                    const success_promise = on_submit()
+
+                    // Wait for the dialog to maybe open.
+                    await new Promise((r) => requestAnimationFrame(r))
+
+                    // Check if there is currently the confirmation dialog open.
+                    const waiting_for_confirmation = (() => {
+                        const c = dom_node_ref.current
+                        if (!c) return false
+                        return !!c.closest("pluto-editor")?.querySelector("dialog[open].confirm-before-long-runtime")
+                    })()
+
+                    // If so...
+                    if (waiting_for_confirmation) {
+                        // ...wait for the result of the dialog. If canceled, then also cancel this.
+                        const success = await success_promise
+                        if (!success) return
+                    }
+
+                    // Why not just await success_promise?
+                    // We want to create the new cell quickly so the next keystrokes after Ctrl+Enter start writing text in the new cell, instead of the current one.
                 }
+
+                // we await to prevent an out-of-sync issue
+                await on_add_after()
             })
             return true
         }
