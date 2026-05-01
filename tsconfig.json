@@ -11,7 +11,8 @@
         "alwaysStrict": true,
         "esModuleInterop": true,
         "strictNullChecks": true,
-        "skipDefaultLibCheck": true
+        "skipDefaultLibCheck": true,
+        "noUncheckedIndexedAccess": true,
     },
     "include": ["frontend/**/*.js", "node_modules/**/*.js", "frontend/Desktop.d.ts"],
     "exclude": ["frontend/components/CellInput/tests/"]

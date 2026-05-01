@@ -116,7 +116,7 @@ const statusmap = (/** @type {EditorState} */ state, /** @type {LaunchParameters
     offer_local: state.backend_launch_phase === BackendLaunchPhase.wait_for_user && launch_params.pluto_server_url != null,
     binder: launch_params.binder_url != null && state.backend_launch_phase != null,
     code_differs: state.notebook.cell_order.some(
-        (cell_id) => state.cell_inputs_local[cell_id] != null && state.notebook.cell_inputs[cell_id].code !== state.cell_inputs_local[cell_id].code
+        (cell_id) => state.cell_inputs_local[cell_id] != null && state.notebook.cell_inputs[cell_id]?.code !== state.cell_inputs_local[cell_id].code
     ),
     recording_waiting_to_start: state.recording_waiting_to_start,
     is_recording: state.is_recording,
@@ -320,7 +320,7 @@ export const url_logo_small = get_included_external_source("pluto-logo-small")?.
  * down: boolean,
  * },
  * export_menu_open: boolean,
- * last_created_cell: ?string,
+ * last_created_cell: string | undefined,
  * selected_cells: Array<string>,
  * extended_components: any,
  * is_recording: boolean,
@@ -369,7 +369,7 @@ export class Editor extends Component {
             },
             export_menu_open: false,
 
-            last_created_cell: null,
+            last_created_cell: undefined,
             selected_cells: [],
 
             extended_components: {
@@ -499,6 +499,7 @@ export class Editor extends Component {
             },
             wrap_remote_cell: async (cell_id, block_start = "begin", block_end = "end") => {
                 const cell = this.state.notebook.cell_inputs[cell_id]
+                if (!cell) return
                 const new_code = `${block_start}\n\t${cell.code.replace(/\n/g, "\n\t")}\n${block_end}`
 
                 await this.setStatePromise(
@@ -512,7 +513,7 @@ export class Editor extends Component {
             },
             split_remote_cell: async (cell_id, boundaries, submit = false) => {
                 const cell = this.state.notebook.cell_inputs[cell_id]
-
+                if (!cell) return
                 const old_code = cell.code
                 const padded_boundaries = [0, ...boundaries]
                 /** @type {Array<String>} */
@@ -598,7 +599,7 @@ export class Editor extends Component {
             },
             confirm_delete_multiple: async (cell_ids) => {
                 if (cell_ids.length <= 1 || confirm(t("t_confirm_delete_multiple_cells", { count: cell_ids.length }))) {
-                    if (cell_ids.some((cell_id) => this.state.notebook.cell_results[cell_id].running || this.state.notebook.cell_results[cell_id].queued)) {
+                    if (cell_ids.some((cell_id) => this.state.notebook.cell_results[cell_id]?.running || this.state.notebook.cell_results[cell_id]?.queued)) {
                         if (confirm(t("t_confirm_delete_multiple_interrupt_notebook"))) {
                             this.actions.interrupt_remote(cell_ids[0])
                         }
@@ -630,7 +631,8 @@ export class Editor extends Component {
             fold_remote_cells: async (cell_ids, new_value) => {
                 await update_notebook((notebook) => {
                     for (let cell_id of cell_ids) {
-                        notebook.cell_inputs[cell_id].code_folded = new_value ?? !notebook.cell_inputs[cell_id].code_folded
+                        const cell = notebook.cell_inputs[cell_id]
+                        if (cell) cell.code_folded = new_value ?? !cell.code_folded
                     }
                 })
             },
@@ -638,13 +640,13 @@ export class Editor extends Component {
                 const changed = this.state.notebook.cell_order.filter(
                     (cell_id) =>
                         this.state.cell_inputs_local[cell_id] != null &&
-                        this.state.notebook.cell_inputs[cell_id].code !== this.state.cell_inputs_local[cell_id]?.code
+                        this.state.notebook.cell_inputs[cell_id]?.code !== this.state.cell_inputs_local[cell_id]?.code
                 )
                 this.actions.set_and_run_multiple(changed)
                 return changed.length > 0
             },
             set_and_run_multiple: async (cell_ids) => {
-                // TODO: this function is called with an empty list sometimes, where?
+                // This function is called with an empty list when you press Shift+Enter without any selected cells.
                 if (cell_ids.length > 0) {
                     window.dispatchEvent(
                         new CustomEvent("set_waiting_to_run_smart", {
@@ -657,7 +659,9 @@ export class Editor extends Component {
                     await update_notebook((notebook) => {
                         for (let cell_id of cell_ids) {
                             if (this.state.cell_inputs_local[cell_id]) {
-                                notebook.cell_inputs[cell_id].code = this.state.cell_inputs_local[cell_id].code
+                                if (notebook.cell_inputs[cell_id]) {
+                                    notebook.cell_inputs[cell_id].code = this.state.cell_inputs_local[cell_id].code
+                                }
                             }
                         }
                     })
@@ -756,9 +760,9 @@ export class Editor extends Component {
                                 new_notebook = applyPatches(old_state ?? state.notebook, patches)
                             } catch (exception) {
                                 /** Example: `"a.b[2].c"` */
-                                const failing_path = String(exception).match(".*'(.*)'.*")?.[1].replace(/\//gi, ".") ?? String(exception)
+                                const failing_path = String(exception).match(".*'(.*)'.*")?.[1]?.replace(/\//gi, ".") ?? String(exception)
                                 const path_value = _.get(this.state.notebook, failing_path, "Not Found")
-                                console.log(String(exception).match(".*'(.*)'.*")?.[1].replace(/\//gi, ".") ?? exception, failing_path, typeof failing_path)
+                                console.log(String(exception).match(".*'(.*)'.*")?.[1]?.replace(/\//gi, ".") ?? exception, failing_path, typeof failing_path)
                                 const ignore = should_ignore_patch_error(failing_path)
 
                                 ;(ignore ? console.log : console.error)(
@@ -1097,9 +1101,9 @@ all patches: ${JSON.stringify(patches, null, 1)}
                 // if the other cell depends on the variable `sym`...
                 if (deps.upstream_cells_map.hasOwnProperty(sym)) {
                     // and the cell is not disabled
-                    const running_disabled = this.state.notebook.cell_inputs[cell_id].metadata.disabled
+                    const running_disabled = this.state.notebook.cell_inputs[cell_id]?.metadata?.disabled ?? false
                     // or indirectly disabled
-                    const indirectly_disabled = this.state.notebook.cell_results[cell_id].depends_on_disabled_cells
+                    const indirectly_disabled = this.state.notebook.cell_results[cell_id]?.depends_on_disabled_cells ?? false
                     return !(running_disabled || indirectly_disabled)
                 }
             })
@@ -1119,7 +1123,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
          *     A bond value is considered a "first value" if it is sent using an `"add"` patch. This is why we require `x.op === "replace"`.
          */
         const bond_patch_will_trigger_evaluation = (/** @type {Patch} */ x) =>
-            x.op === "replace" && x.path.length >= 1 && bond_will_trigger_evaluation(x.path[1])
+            x.op === "replace" && x.path[1] != undefined && bond_will_trigger_evaluation(x.path[1])
 
         let last_update_notebook_task = Promise.resolve()
         /** @param {(notebook: NotebookData) => void} mutate_fn */
@@ -1147,7 +1151,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
 
                 if (DEBUG_DIFFING) {
                     try {
-                        let previous_function_name = new Error().stack?.split("\n")[2].trim().split(" ")[1]
+                        let previous_function_name = new Error().stack?.split("\n")[2]?.trim().split(" ")[1]
                         console.log(`Changes to send to server from "${previous_function_name}":`, changes)
                     } catch (error) {}
                 }
@@ -1284,7 +1288,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
         this.serialize_selected = (/** @type {string?} */ cell_id = null) => {
             const cells_to_serialize = cell_id == null || this.state.selected_cells.includes(cell_id) ? this.state.selected_cells : [cell_id]
             if (cells_to_serialize.length) {
-                return serialize_cells(cells_to_serialize.map((id) => this.state.notebook.cell_inputs[id]))
+                return serialize_cells(cells_to_serialize.map((id) => this.state.notebook.cell_inputs[id]).filter((c) => c != null))
             }
         }
 
@@ -1447,7 +1451,7 @@ ${t("t_key_autosave_description")}`
 
         window.addEventListener("beforeunload", (event) => {
             const unsaved_cells = this.state.notebook.cell_order.filter(
-                (id) => this.state.cell_inputs_local[id] && this.state.notebook.cell_inputs[id].code !== this.state.cell_inputs_local[id].code
+                (id) => this.state.cell_inputs_local[id] && this.state.notebook.cell_inputs[id]?.code !== this.state.cell_inputs_local[id].code
             )
             const first_unsaved = unsaved_cells[0]
             if (first_unsaved != null) {
@@ -1578,7 +1582,8 @@ ${t("t_key_autosave_description")}`
             let jv_after = notebook.nbpkg?.installed_versions?.__internal_julia_version
             const to_minor = (v) => (v && semver.valid(v) ? `${semver.major(v)}.${semver.minor(v)}` : "unknown")
 
-            let warn_about_changed_julia_version = to_minor(jv_before) !== "unknown" && to_minor(jv_after) !== "unknown" && to_minor(jv_before) !== to_minor(jv_after)
+            let warn_about_changed_julia_version =
+                to_minor(jv_before) !== "unknown" && to_minor(jv_after) !== "unknown" && to_minor(jv_before) !== to_minor(jv_after)
 
             const version_i18n = {
                 version_old: to_minor(jv_before),

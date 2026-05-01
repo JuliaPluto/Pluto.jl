@@ -245,8 +245,8 @@ export const ProjectTomlEditor = ({ notebook, process_waiting_for_permission }) 
 const current_toml_section = (/** @type {EditorState} */ state, pos) => {
     const before = state.sliceDoc(0, pos)
     const sections = [...before.matchAll(/^\[([^\]]*)\]/gm)]
-    if (sections.length === 0) return null
-    return sections[sections.length - 1][1]
+    if (sections.length === 0) return undefined
+    return sections[sections.length - 1]?.[1]
 }
 
 /**

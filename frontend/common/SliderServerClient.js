@@ -10,12 +10,12 @@ const actions_to_keep = ["get_published_object", "get_launch_params", "get_noteb
 
 const where_referenced = (/** @type {import("../components/Editor.js").CellDependencyGraph} */ graph, /** @type {Set<string> | string[]} */ vars) => {
     const all_cells = Object.keys(graph)
-    return all_cells.filter((cell_id) => _.some([...vars], (v) => Object.keys(graph[cell_id].upstream_cells_map).includes(v)))
+    return all_cells.filter((cell_id) => _.some([...vars], (v) => Object.keys(graph[cell_id]?.upstream_cells_map ?? {}).includes(v)))
 }
 
 const where_assigned = (/** @type {import("../components/Editor.js").CellDependencyGraph} */ graph, /** @type {Set<string> | string[]} */ vars) => {
     const all_cells = Object.keys(graph)
-    return all_cells.filter((cell_id) => _.some([...vars], (v) => Object.keys(graph[cell_id].downstream_cells_map).includes(v)))
+    return all_cells.filter((cell_id) => _.some([...vars], (v) => Object.keys(graph[cell_id]?.downstream_cells_map ?? {}).includes(v)))
 }
 
 export const downstream_recursive = (/** @type {import("../components/Editor.js").CellDependencyGraph} */ graph, starts, { recursive = true } = {}) => {
@@ -24,7 +24,7 @@ export const downstream_recursive = (/** @type {import("../components/Editor.js"
     const ends = [...starts]
     while (ends.length > 0) {
         const node = ends.splice(0, 1)[0]
-        _.flatten(Object.values(graph[node].downstream_cells_map)).forEach((next_cellid) => {
+        _.flatten(Object.values(graph[node]?.downstream_cells_map ?? {})).forEach((next_cellid) => {
             if (!deps.has(next_cellid)) {
                 if (recursive) ends.push(next_cellid)
                 deps.add(next_cellid)
@@ -40,7 +40,7 @@ export const upstream_recursive = (/** @type {import("../components/Editor.js").
     const ends = [...starts]
     while (ends.length > 0) {
         const node = ends.splice(0, 1)[0]
-        _.flatten(Object.values(graph[node].upstream_cells_map)).forEach((next_cellid) => {
+        _.flatten(Object.values(graph[node]?.upstream_cells_map ?? {})).forEach((next_cellid) => {
             if (!deps.has(next_cellid)) {
                 if (recursive) ends.push(next_cellid)
                 deps.add(next_cellid)
