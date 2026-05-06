@@ -49,6 +49,46 @@ using Pluto.WorkspaceManager: WorkspaceManager, poll
     close(server)
 end
 
+@testset "pretty_address" begin
+    make_session(; kwargs...) = Pluto.ServerSession(;
+        options=Pluto.Configuration.from_flat_kwargs(;
+            launch_browser=false,
+            require_secret_for_access=false,
+            require_secret_for_open_links=false,
+            kwargs...,
+        ),
+    )
+    call(session) = Pluto.pretty_address(session, Sockets.IPv4("127.0.0.1"), 1234)
+
+    clean_env(f) = withenv(f, "JULIAHUB_APP_URL" => nothing, "JH_APP_URL" => nothing)
+
+    clean_env() do
+        @test call(make_session()) == "http://localhost:1234/"
+    end
+
+    clean_env() do
+        session = make_session(; root_url="https://x.example/{PORT}/")
+        @test call(session) == "https://x.example/1234/"
+    end
+
+    withenv("JULIAHUB_APP_URL" => "https://x.juliahub.com/", "JH_APP_URL" => nothing) do
+        @test call(make_session()) == "https://x.juliahub.com/proxy/1234/"
+    end
+
+    withenv("JULIAHUB_APP_URL" => nothing, "JH_APP_URL" => "https://legacy.juliahub.com/") do
+        @test call(make_session()) == "https://legacy.juliahub.com/proxy/1234/"
+    end
+
+    withenv("JULIAHUB_APP_URL" => "https://new.juliahub.com/", "JH_APP_URL" => "https://legacy.juliahub.com/") do
+        @test call(make_session()) == "https://new.juliahub.com/proxy/1234/"
+    end
+
+    withenv("JULIAHUB_APP_URL" => "https://x.juliahub.com/", "JH_APP_URL" => nothing) do
+        session = make_session(; root_url="https://override.example/{PORT}/")
+        @test call(session) == "https://override.example/1234/"
+    end
+end
+
 @testset "UTF-8 to Codemirror UTF-16 byte mapping" begin
     # range ends are non inclusives
     tests = [
