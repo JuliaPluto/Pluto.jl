@@ -51,8 +51,13 @@ const resources = {
     "pl": without_empty_keys(polski),
 }
 
-export const t = (/** @type {string} */ key, options = {}) => {
-    const { count, interpolation = {}, returnObjects = false, defaultValue = key, fallbackLng = true, lng } = options
+/**
+ * @overload @param {string} key @param {{ returnObjects: true, [k: string]: any }} options @returns {string | Record<string, any> | string[]}
+ * @overload @param {string} key @param {{ returnObjects?: false, [k: string]: any }=} options @returns {string}
+ * @param {string} key @param {{ returnObjects?: boolean, [k: string]: any }=} options @returns {string | Record<string, any> | string[]}
+ **/
+export const t = (key, options = {}) => {
+    const { count, interpolation = {}, returnObjects = false, defaultValue = key, fallbackLng = true, lng, ...extra_options } = options
     const { escapeValue = false } = interpolation // not implemented
 
     const lang = lng ?? getCurrentLanguage()
@@ -61,6 +66,7 @@ export const t = (/** @type {string} */ key, options = {}) => {
         let keys_to_search = [key]
         if (count != null && typeof count === "number") {
             keys_to_search = [`${key}_${new Intl.PluralRules(lang).select(count)}`, key]
+            if (count === 0) keys_to_search.unshift(`${key}_zero`)
         }
 
         for (const key of keys_to_search) {
@@ -70,7 +76,7 @@ export const t = (/** @type {string} */ key, options = {}) => {
         return null
     }
 
-    /** @type {string | Object | string[]} */
+    /** @type {string | Record<string,any> | string[]} */
     const found =
         find_entry(lang) ??
         (fallbackLng ? find_entry("en") : null) ??
@@ -78,14 +84,18 @@ export const t = (/** @type {string} */ key, options = {}) => {
             console.warn(`Missing localization for key "${key}" in language "${lang}"`)
             return defaultValue
         })()
-    if (returnObjects) return found
 
-    return Object.keys(options).reduce(
-        (str, interp) =>
-            // Interpolate
-            str.replaceAll(`{{${interp}}}`, options[interp]),
-        found
-    )
+    if (returnObjects) {
+        if (Object.keys(extra_options).length > 0 || count != null)
+            throw new Error(`Found entry for key "${key}" in language "${lang}" is not a string, interpolate has not yet been implemented.`)
+
+        return found
+    }
+
+    return Object.keys(options).reduce((str, interp) => {
+        // Interpolate
+        return str.replaceAll(`{{${interp}}}`, options[interp])
+    }, String(found))
 }
 
 /**
@@ -172,12 +182,12 @@ export const th = (key, insertions) => {
     const slots_extended = [{ start: 0, end: 0, name: "" }, ...slots, { start: with_slots.length, end: with_slots.length, name: "" }]
 
     // The strings inbetween slots, including an initial and final string (possibly empty).
-    const string_parts = slots_extended.slice(1).map((slot, i) => with_slots.slice(slots_extended[i].end, slot.start))
+    const string_parts = slots_extended.slice(1).map((slot, i) => with_slots.slice(slots_extended[i]?.end, slot.start))
 
     // Objects to fill the slots with.
     const to_interpolate = slots.map((slot) => insertions?.[slot.name])
 
-    const cache_key = [key, ...Object.keys(insertions ?? {}), ...Object.values(insertions ?? {}).map((v) => can_interpolate_directly(v))]
+    const cache_key = [key, ...Object.keys(insertions ?? {}), ...Object.values(insertions ?? {}).map((v) => (can_interpolate_directly(v) ? v : null))]
     return html(to_template_strings_array_cached(string_parts, cache_key), ...to_interpolate)
 }
 
@@ -186,7 +196,7 @@ const find_slots = (/** @type {string} */ string) => {
     return matches.map((m) => ({
         start: m.index,
         end: m.index + m[0].length,
-        name: m[1],
+        name: m[1] ?? "asfwefasfasdf",
     }))
 }
 
