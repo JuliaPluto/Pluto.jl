@@ -355,7 +355,10 @@ function pretty_address(session::ServerSession, hostIP, port)
     root = if session.options.server.root_url !== nothing
         @assert endswith(session.options.server.root_url, "/")
         replace(session.options.server.root_url, "{PORT}" => string(Int(port)))
+    elseif haskey(ENV, "JULIAHUB_APP_URL")
+        "$(ENV["JULIAHUB_APP_URL"])proxy/$(Int(port))/"
     elseif haskey(ENV, "JH_APP_URL")
+        # legacy name for JULIAHUB_APP_URL, still set on older JuliaHub jobs
         "$(ENV["JH_APP_URL"])proxy/$(Int(port))/"
     else
         host_str = string(hostIP)

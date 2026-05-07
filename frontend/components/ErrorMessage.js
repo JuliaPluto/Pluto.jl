@@ -373,7 +373,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
                     >${th("t_wrap_all_code_in_a_begin_end_block")}</a
                 >`
                 if (x.includes("\n\nBoundaries: ")) {
-                    const boundaries = JSON.parse(x.split("\n\nBoundaries: ")[1]).map((x) => x - 1) // Julia to JS index
+                    const boundaries = JSON.parse(x.split("\n\nBoundaries: ")[1] ?? "[]").map((x) => x - 1) // Julia to JS index
                     const split_hint = html`<p>
                         <a
                             href="#"
@@ -418,7 +418,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
                     const match = line.match(/Cyclic references among (.*)\./)
 
                     if (match) {
-                        let syms_string = match[1]
+                        let syms_string = match[1] ?? ""
                         let syms = syms_string.split(/, | and /)
 
                         let symbol_links = syms.map((what) => html`<a href="#${encodeURI(what)}">${what}</a>`)
@@ -441,7 +441,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
 
                     if (match) {
                         // replace: remove final dot
-                        let syms_string = match[1].replace(/\.$/, "")
+                        let syms_string = (match[1] ?? "").replace(/\.$/, "")
                         let syms = syms_string.split(/, | and /)
 
                         let symbol_links = syms.map((what) => {
@@ -551,7 +551,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
 
     const [stacktrace_waiting_to_view, set_stacktrace_waiting_to_view] = useState(true)
     useEffect(() => {
-        const from_another_cell = first_stack_from_here !== -1 && extract_cell_id(stacktrace[first_stack_from_here].file) !== cell_id
+        const from_another_cell = first_stack_from_here !== -1 && extract_cell_id(stacktrace[first_stack_from_here]?.file ?? "") !== cell_id
         set_stacktrace_waiting_to_view(!from_another_cell)
     }, [msg, stacktrace, cell_id])
 
@@ -641,12 +641,12 @@ const get_erred_upstreams = (
     /** @type {Record<string, string>} */
     let erred_upstreams = {}
     if (notebook != null && notebook?.cell_results?.[cell_id]?.errored) {
-        const referenced_variables = Object.keys(notebook.cell_dependencies[cell_id]?.upstream_cells_map)
+        const referenced_variables = Object.keys(notebook.cell_dependencies[cell_id]?.upstream_cells_map ?? {})
 
         referenced_variables.forEach((key) => {
             if (!visited_edges.includes(key)) {
                 visited_edges.push(key)
-                const cells_that_define_this_variable = notebook.cell_dependencies[cell_id]?.upstream_cells_map[key]
+                const cells_that_define_this_variable = notebook.cell_dependencies[cell_id]?.upstream_cells_map[key] ?? []
 
                 cells_that_define_this_variable.forEach((upstream_cell_id) => {
                     let upstream_errored_cells = get_erred_upstreams(notebook, upstream_cell_id, visited_edges) ?? {}
@@ -654,7 +654,7 @@ const get_erred_upstreams = (
                     erred_upstreams = { ...erred_upstreams, ...upstream_errored_cells }
                     // if upstream got no errors and current cell is errored
                     // then current cell is responsible for errors
-                    if (Object.keys(upstream_errored_cells).length === 0 && notebook.cell_results[upstream_cell_id].errored && upstream_cell_id !== cell_id) {
+                    if (Object.keys(upstream_errored_cells).length === 0 && notebook.cell_results[upstream_cell_id]?.errored && upstream_cell_id !== cell_id) {
                         erred_upstreams[key] = upstream_cell_id
                     }
                 })
