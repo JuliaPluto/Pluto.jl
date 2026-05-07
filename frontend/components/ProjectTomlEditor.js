@@ -219,7 +219,7 @@ export const ProjectTomlEditor = ({ notebook, process_waiting_for_permission }) 
         base.current.insertBefore(current_cm.dom, base.current.firstElementChild)
     }, [])
 
-    return html`<dialog ref=${dialog_ref} class="pluto-modal pluto-project_toml">
+    return html`<dialog ref=${dialog_ref} class="pluto-modal pluto-modal-dark pluto-project_toml">
         <h1>${th("t_project_toml_editor_title")}</h1>
         <p>
             ${t("t_project_toml_editor_description")} (<a href="https://pkgdocs.julialang.org/dev/toml-files/"

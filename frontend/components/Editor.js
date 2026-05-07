@@ -1350,6 +1350,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
                 }
             } else if (e.key === "Enter" && e.shiftKey) {
                 this.run_selected()
+                e.preventDefault()
             } else if (e.key === "ArrowUp" && e.altKey) {
                 this.move_selected(e, -1)
             } else if (e.key === "ArrowDown" && e.altKey) {

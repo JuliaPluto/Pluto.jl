@@ -193,7 +193,17 @@
     "t_ai_syntax_fix_failed": "Failed to fix syntax error: {{error}}",
     "t_ai_fix_syntax_with_ai": "Fix syntax with AI",
     "t_ai_fix_syntax_with_ai_description": "Attempt to fix this syntax error using an LLM service",
-    "t_confirm_run_many_cells": "This cell and its {{count}} dependencies might take {{time}} to run. Confirm?",
+    
+    "t_confirm_run_many_cells_single_root_other": "This cell and its {{count}} dependencies might take {{time}} to run. Confirm?",
+    "t_confirm_run_many_cells_single_root_one": "This cell and its dependency might take {{time}} to run. Confirm?",
+    "t_confirm_run_many_cells_single_root_zero": "This cell might take {{time}} to run. Confirm?",
+    
+    "t_confirm_run_many_cells_multiple_roots_other": "These {{roots}} cells and their {{count}} dependencies might take {{time}} to run. Confirm?",
+    "t_confirm_run_many_cells_multiple_roots_zero": "These {{roots}} cells might take {{time}} to run. Confirm?",
+    
+    "t_confirm_run_many_cells_bonus_a": "Tip: You can edit multiple cells, and then run all in a single batch using {{submit_all_changes}}.",
+    "t_confirm_run_many_cells_bonus_b": "Tip: You can use the {{disable_cell}} feature to control which cells run reactively.",
+    
     "t_confirm_delete_multiple_cells": "Delete {{count}} cells?",
     "t_confirm_delete_multiple_interrupt_notebook": "This cell is still running - would you like to interrupt the notebook?",
     "t_confirm_move_file": "Are you sure? Will move from\n\n{{old_path}}\n\nto\n\n{{new_path}}?",

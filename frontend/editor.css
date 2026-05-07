@@ -859,6 +859,17 @@ dialog.confirm-before-long-runtime {
     background: linear-gradient(180deg, #ffffff, #fdf8e9);
 }
 
+.confirm-before-long-runtime p.bonus-info {
+    font-size: 0.9em;
+    /* color: hsl(0deg 0% 39.96%); */
+    margin-block-end: 2rem;
+    padding: 1em 1.2em;
+    background: #ffffff;
+    border-radius: 3px;
+    /* box-shadow: 0 0 10px #0000000f; */
+    border-inline-start: 3px solid #dadaf1;
+}
+
 .confirm-before-long-runtime .final button {
     padding: 0.5em 0.9em;
     border: 2px solid #c1c1c1;
@@ -870,6 +881,10 @@ dialog.confirm-before-long-runtime {
     background: black;
     color: #eaeaea;
     border-color: #9b9b9b;
+}
+
+.confirm-before-long-runtime .final button.final-yes:not(:focus-within) kbd {
+    opacity: 0;
 }
 
 .confirm-before-long-runtime .final button kbd {
@@ -4186,50 +4201,56 @@ pluto-cell.hooked_up > pluto-output {
 .pluto-modal {
     font-family: var(--system-ui-font-stack);
     width: min(31rem, 90vw);
-    color: var(--export-color);
-    background: var(--export-bg-color);
     border-radius: 1.8em;
     padding: 1.3em 1.9em;
     border: none;
     box-shadow: 0 0 55px #00000052;
     position: fixed;
 }
-.pluto-modal h1 {
+
+.pluto-modal-dark {
+    color: var(--export-color);
+    background: var(--export-bg-color);
+}
+.pluto-modal-dark h1 {
     color: white;
     font-weight: 900;
     margin-block-start: 0.3em;
 }
 
-.pluto-modal :is(a) {
+.pluto-modal-dark :is(a) {
     color: var(--export-color);
     text-decoration-color: var(--export-color);
 }
 
 .pluto-modal button {
     cursor: pointer;
-    background-color: var(--frontmatter-button-bg-color);
     border-radius: 0.5em;
-    border: 2px solid var(--frontmatter-button-bg-color);
     font-weight: 500;
 }
 
-.pluto-modal button:hover {
+.pluto-modal-dark button {
+    background-color: var(--frontmatter-button-bg-color);
+    border: 2px solid var(--frontmatter-button-bg-color);
+}
+
+.pluto-modal-dark button:hover {
     border-color: var(--frontmatter-input-border-color);
 }
 
-.pluto-modal input {
+.pluto-modal-dark input {
     background-color: var(--frontmatter-input-bg-color);
     border-radius: 0.5em;
     border: 2px solid var(--frontmatter-input-border-color);
     padding: 0.3em 0.5em;
 }
-.pluto-modal label {
+.pluto-modal-dark label {
     font-weight: 500;
 }
 
 .pluto-modal .final {
     display: flex;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     justify-content: flex-end;
     gap: 0.5em;
 }

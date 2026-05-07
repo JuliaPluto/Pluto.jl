@@ -116,7 +116,7 @@ export const FrontMatterInput = ({ filename, remote_frontmatter, set_remote_fron
         `
     }
 
-    return html`<dialog ref=${dialog_ref} class="pluto-modal pluto-frontmatter">
+    return html`<dialog ref=${dialog_ref} class="pluto-modal pluto-modal-dark pluto-frontmatter">
         <h1>${t("t_frontmatter_title")}</h1>
         <p>${t("t_frontmatter_description")}</p>
         <div class="card-preview" aria-hidden="true">
