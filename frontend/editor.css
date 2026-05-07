@@ -857,6 +857,11 @@ dialog.confirm-before-long-runtime {
     border-radius: 10px;
     max-width: 37ch;
     background: linear-gradient(180deg, #ffffff, #fdf8e9);
+
+    bottom: 1rem;
+    left: 1rem;
+    top: auto;
+    right: auto;
 }
 
 .confirm-before-long-runtime p.bonus-info {
@@ -881,6 +886,8 @@ dialog.confirm-before-long-runtime {
     background: black;
     color: #eaeaea;
     border-color: #9b9b9b;
+    position: relative;
+    overflow: hidden;
 }
 
 .confirm-before-long-runtime .final button.final-yes:not(:focus-within) kbd {
@@ -890,6 +897,25 @@ dialog.confirm-before-long-runtime {
 .confirm-before-long-runtime .final button kbd {
     opacity: 0.8;
     font-size: 0.8em;
+}
+
+.confirm-before-long-runtime .final button.final-yes.will-auto-accept::before {
+    content: "";
+    display: block;
+    background: linear-gradient(90deg, black, #757575);
+    /* width: 100%; */
+    /* height: 100%; */
+    translate: calc(var(--auto-click-progress) * 100% - 100%) 0%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.confirm-before-long-runtime .final button.final-yes span {
+    translate: 0 0;
+    display: inline-block;
 }
 
 nav#at_the_top h1 {
