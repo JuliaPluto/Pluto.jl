@@ -853,10 +853,9 @@ dialog.export-html-dialog > div.final button {
 
 dialog.confirm-before-long-runtime {
     color: var(--pluto-output-color);
-    background: var(--main-bg-color);
     border-radius: 10px;
     max-width: 37ch;
-    background: linear-gradient(180deg, #ffffff, #fdf8e9);
+    background: var(--confirm-runtime-bg);
 
     bottom: 1rem;
     left: 1rem;
@@ -866,26 +865,24 @@ dialog.confirm-before-long-runtime {
 
 .confirm-before-long-runtime p.bonus-info {
     font-size: 0.9em;
-    /* color: hsl(0deg 0% 39.96%); */
     margin-block-end: 2rem;
     padding: 1em 1.2em;
-    background: #ffffff;
+    background: var(--confirm-runtime-bonus-bg);
     border-radius: 3px;
-    /* box-shadow: 0 0 10px #0000000f; */
-    border-inline-start: 3px solid #dadaf1;
+    border-inline-start: 3px solid var(--confirm-runtime-bonus-border);
 }
 
 .confirm-before-long-runtime .final button {
     padding: 0.5em 0.9em;
-    border: 2px solid #c1c1c1;
-    background: #f4f4f4;
+    border: 2px solid var(--confirm-runtime-button-border);
+    background: var(--confirm-runtime-button-bg);
     font-weight: bold;
 }
 
 .confirm-before-long-runtime .final button.final-yes {
-    background: black;
-    color: #eaeaea;
-    border-color: #9b9b9b;
+    background: var(--confirm-runtime-yes-bg);
+    color: var(--confirm-runtime-yes-color);
+    border-color: var(--confirm-runtime-yes-border);
     position: relative;
     overflow: hidden;
 }
@@ -902,9 +899,7 @@ dialog.confirm-before-long-runtime {
 .confirm-before-long-runtime .final button.final-yes.will-auto-accept::before {
     content: "";
     display: block;
-    background: linear-gradient(90deg, black, #757575);
-    /* width: 100%; */
-    /* height: 100%; */
+    background: var(--confirm-runtime-yes-progress);
     translate: calc(var(--auto-click-progress) * 100% - 100%) 0%;
     left: 0;
     right: 0;
