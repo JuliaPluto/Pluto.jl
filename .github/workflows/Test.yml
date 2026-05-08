@@ -7,7 +7,6 @@ on:
     push:
         paths-ignore:
             - "frontend/**"
-            - "frontend-bundler/**"
             - "frontend-dist/**"
             - "test/frontend/**"
             - "**.md"
@@ -16,7 +15,6 @@ on:
     pull_request:
         paths-ignore:
             - "frontend/**"
-            - "frontend-bundler/**"
             - "frontend-dist/**"
             - "test/frontend/**"
             - "**.md"

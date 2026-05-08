@@ -13,10 +13,9 @@ frontend-dist
 node_modules
 .parcel-cache
 frontend/dist
-frontend/dist-ui
 .net
 net
-frontend/package-lock.json
+/package-lock.json
 
 # PProf
 profile.pb.gz

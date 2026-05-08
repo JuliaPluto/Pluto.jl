@@ -51,13 +51,13 @@ jobs:
               with:
                   node-version: 22.x
                   cache: "npm"
-                  cache-dependency-path: frontend-bundler/package-lock.json
+                  cache-dependency-path: frontend/package-lock.json
 
             - run: npm install
-              working-directory: frontend-bundler
-            
+              working-directory: frontend
+
             - name: The Actual Build (try 3 times)
-              working-directory: frontend-bundler
+              working-directory: frontend
               run: |
                 (npm run build) || (npm run build) || (npm run build)
                                 

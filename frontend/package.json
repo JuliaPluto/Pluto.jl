@@ -3,19 +3,29 @@
   "version": "0.6.21",
   "description": "TypeScript/JavaScript API for programmatically interacting with Pluto notebooks",
   "type": "module",
-  "main": "dist/standalone/index.js",
-  "module": "dist/standalone/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/standalone/index.d.ts",
+  "ui-main": "dist/ui.cjs",
+  "ui-module": "dist/ui.mjs",
+  "react-main": "dist/react.cjs",
+  "react-module": "dist/react.mjs",
+  "source": "standalone/index.js",
   "files": [
     "dist",
-    "src"
+    "standalone/integrations/node-polyfill.js"
+  ],
+  "workspaces": [
+    "parcel-resolver-like-a-browser"
   ],
   "scripts": {
-    "build": "npm run clean && npm run rollup && npm run build:ui ",
-    "build:ui": "cd ../frontend-bundler && npm run build:ui",
-    "rollup": "rollup -c",
-    "clean": "rm -rf dist && rm -rf dist-ui",
-    "prepublishOnly": "npm run build",
+    "build": "npm run clean && npm run build:rainbow && npm run build:editor",
+    "build:editor": "parcel build --no-source-maps --target pluto",
+    "build:rainbow": "parcel build --no-source-maps --target main --target module --target ui-main --target ui-module --target react-main --target react-module && npm run build:types",
+    "build:types": "mkdir -p dist/standalone/integrations && cp standalone/index.d.ts dist/standalone/index.d.ts && cp standalone/integrations/react.d.ts dist/standalone/integrations/react.d.ts",
+    "start": "parcel --target pluto",
+    "clean": "rm -rf dist ../frontend-dist",
+    "prepublishOnly": "npm run build:rainbow",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
@@ -30,7 +40,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fonsp/Pluto.jl.git",
-    "directory": "frontend/api"
+    "directory": "frontend"
+  },
+  "engines": {
+    "node": ">=22 <23",
+    "npm": ">=10 <11"
   },
   "targets": {
     "pluto": {
@@ -38,60 +52,109 @@
         "index.html",
         "editor.html",
         "error.jl.html"
-      ]
-    },
-    "ui": {
-      "source": [
-        "./dist/ui.esm.js"
       ],
+      "distDir": "../frontend-dist",
+      "publicUrl": ".",
+      "context": "browser"
+    },
+    "main": {
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
+    },
+    "module": {
+      "isLibrary": true,
       "outputFormat": "esmodule",
-      "isLibrary": true
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
+    },
+    "ui-main": {
+      "source": "ui.ts",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
+    },
+    "ui-module": {
+      "source": "ui.ts",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
+    },
+    "react-main": {
+      "source": "standalone/integrations/react.js",
+      "isLibrary": true,
+      "outputFormat": "commonjs",
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
+    },
+    "react-module": {
+      "source": "standalone/integrations/react.js",
+      "isLibrary": true,
+      "outputFormat": "esmodule",
+      "context": "browser",
+      "includeNodeModules": {
+        "react": false,
+        "react-dom": false
+      }
     }
-  },
-  "devDependencies": {
-    "@highlightjs/cdn-assets": "^11.11.1",
-    "@parcel/transformer-typescript-types": "^2.12.0",
-    "@rollup/plugin-alias": "^5.1.1",
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^12.1.4",
-    "@types/lodash-es": "^4.17.6",
-    "@types/node": "^20.11.0",
-    "@types/react": "^19.1.10",
-    "@types/ws": "^8.18.1",
-    "@web/rollup-plugin-copy": "^0.5.1",
-    "memfs": "^4.36.0",
-    "path-browserify": "^1.0.1",
-    "rollup": "^4.46.2",
-    "rollup-plugin-node-polyfills": "^0.2.1",
-    "tslib": "^2.6.2",
-    "typescript": "^5.3.3",
-    "webcrypto": "^0.1.1",
-    "ws": "^8.18.3"
   },
   "exports": {
     ".": {
       "types": "./dist/standalone/index.d.ts",
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.js",
-      "default": "./dist/index.esm.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
     },
     "./node-polyfill": {
-      "default": "./dist/standalone/integrations/node-polyfill.js"
+      "default": "./standalone/integrations/node-polyfill.js"
     },
     "./react": {
       "types": "./dist/standalone/integrations/react.d.ts",
-      "import": "./dist/react.esm.js",
-      "require": "./dist/react.js",
-      "default": "./dist/react.esm.js"
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.cjs",
+      "default": "./dist/react.mjs"
     },
     "./ui": {
-      "types": "./dist/ui.d.ts",
-      "import": "./dist/ui/ui.esm.js",
-      "require": "./dist/ui/ui.esm.js",
-      "default": "./dist/ui/ui.esm.js"
+      "import": "./dist/ui.mjs",
+      "require": "./dist/ui.cjs",
+      "default": "./dist/ui.mjs"
     }
+  },
+  "devDependencies": {
+    "@highlightjs/cdn-assets": "^11.11.1",
+    "@parcel/config-default": "~2.12.0",
+    "@parcel/optimizer-blob-url": "~2.12.0",
+    "@parcel/optimizer-data-url": "~2.12.0",
+    "@parcel/transformer-typescript-tsc": "~2.12.0",
+    "@plutojl/posthtml-crossorigin": "^1.0.0",
+    "@types/lodash-es": "^4.17.6",
+    "@types/node": "^22",
+    "@types/react": "^19.1.10",
+    "@types/ws": "^8.18.1",
+    "parcel": "~2.12.0",
+    "parcel-reporter-bundle-manifest": "^1.0.0",
+    "parcel-resolver-like-a-browser": "*",
+    "posthtml": "^0.16.6",
+    "posthtml-sri": "^2.0.0",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
@@ -102,7 +165,8 @@
     "msgpack-lite": "github:fonsp/msgpack-lite#0.1.27-es.1",
     "requestidlecallback-polyfill": "^1.0.2",
     "seamless-scroll-polyfill": "^2.3.4",
-    "vmsg": "^0.4.0"
+    "vmsg": "^0.4.0",
+    "ws": "^8.18.3"
   },
   "peerDependencies": {
     "react": "^19.1.1",

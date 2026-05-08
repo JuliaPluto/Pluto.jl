@@ -25,16 +25,11 @@ module.exports = new Resolver({
     async resolve({ specifier, dependency, options }) {
         let my_temp_cave = path.join(options.cacheDir, ".net")
 
-        await new Promise((resolve) => setTimeout(resolve, 10000))
         if (dependency.specifierType === "commonjs") {
             if (specifier === "process") {
                 return { filePath: "/dev/null.js", code: "" }
             }
-            if (specifier.startsWith("@parcel") || dependency.sourcePath.includes("node_modules/@parcel")) {
-                return null
-            }
-            console.error(`Unrecognized commonjs import:`, dependency)
-            return DONT_INCLUDE
+            return null
         }
 
         // So yeah, our sample urls aren't real urls....
@@ -106,19 +101,32 @@ module.exports = new Resolver({
             return { filePath: fullpath }
         }
 
-        if (dependency.specifierType === "esm" || dependency.specifierType === "url") {
+        // Relative imports from inside the CDN cache: resolve to a local file path.
+        if (dependency.sourcePath?.startsWith?.(my_temp_cave) && (dependency.specifierType === "esm" || dependency.specifierType === "url")) {
             return {
-                filePath: path.join(path.dirname(dependency.sourcePath ?? "/"), specifier),
+                filePath: path.join(path.dirname(dependency.sourcePath), specifier),
             }
         }
 
-        console.error(`Dependency unrecognized:`, {
-            specifier: dependency.specifier,
-            specifierType: dependency.specifierType,
-            sourcePath: dependency.sourcePath,
-        })
+        // Relative ".js" imports of TypeScript-compiled siblings: TS source convention.
+        // Try .ts/.tsx fallback when the literal .js file doesn't exist.
+        if (
+            (specifier.startsWith("./") || specifier.startsWith("../")) &&
+            specifier.endsWith(".js") &&
+            dependency.sourcePath
+        ) {
+            let baseDir = path.dirname(dependency.sourcePath)
+            let jsPath = path.join(baseDir, specifier)
+            if (!(await fileExists(jsPath))) {
+                for (let ext of [".ts", ".tsx"]) {
+                    let candidate = jsPath.slice(0, -3) + ext
+                    if (await fileExists(candidate)) {
+                        return { filePath: candidate }
+                    }
+                }
+            }
+        }
 
-        // This shouldn't lead to an error, but this does make the bundle unusable
-        return DONT_INCLUDE
+        return null
     },
 })
