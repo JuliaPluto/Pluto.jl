@@ -58,10 +58,15 @@ export const resolvable_promise = () => {
     }
 }
 
+export const assert_not_null = (x) => {
+    if (x == null) throw new Error("Unexpected null value")
+    return x
+}
+
 /**
  * @returns {string}
  */
-const get_unique_short_id = () => crypto.getRandomValues(new Uint32Array(1))[0].toString(36)
+const get_unique_short_id = () => assert_not_null(crypto.getRandomValues(new Uint32Array(1))[0]).toString(36)
 
 const socket_is_alright = (socket) => socket.readyState == WebSocket.OPEN || socket.readyState == WebSocket.CONNECTING
 
