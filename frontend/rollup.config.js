@@ -12,7 +12,6 @@ const external = [
   "https://esm.sh/preact@10.13.2?pin=v113&target=es2020",
   "https://esm.sh/preact@10.13.2/hooks?pin=v113&target=es2020",
   "https://esm.sh/htm@3.1.1?pin=v113&target=es2020",
-  "https://cdn.jsdelivr.net/npm/lodash-es@4.17.21/+esm",
   "https://cdn.jsdelivr.net/gh/JuliaPluto/codemirror-pluto-setup@2001.0.0/dist/index.es.min.js",
   "https://esm.sh/dompurify@3.2.3?pin=v135",
   "https://cdn.jsdelivr.net/npm/ansi_up@5.1.0/+esm",
