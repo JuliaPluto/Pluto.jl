@@ -13,7 +13,7 @@ export let pluto_paste_plugin = ({ pluto_actions, cell_id }) => {
             // Prevent this event from reaching the Editor-level paste handler
             event.stopPropagation()
 
-            const topaste = event.clipboardData.getData("text/plain")
+            const topaste = event.clipboardData?.getData("text/plain") ?? ""
             const deserializer = detect_deserializer(topaste)
             if (deserializer == null) {
                 return false

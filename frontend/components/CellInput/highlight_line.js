@@ -47,7 +47,7 @@ function create_range_decorations(view) {
  * @type Facet<number?, number?>
  */
 export const HighlightLineFacet = Facet.define({
-    combine: (values) => values[0],
+    combine: (values) => values[0] ?? null,
     compare: (a, b) => a === b,
 })
 
@@ -55,7 +55,7 @@ export const HighlightLineFacet = Facet.define({
  * @type Facet<{from: number, to: number}?, {from: number, to: number}?>
  */
 export const HighlightRangeFacet = Facet.define({
-    combine: (values) => values[0],
+    combine: (values) => values[0] ?? null,
     compare: (a, b) => a === b,
 })
 

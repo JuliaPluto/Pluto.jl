@@ -14,7 +14,7 @@ const format_code = (s) =>
 ${s}
 </julia-code-block>`
 
-const format_cell_output = (/** @type {import("./Editor.js").CellResultData?} */ cell_result, /** @type {number} */ truncate_limit) => {
+const format_cell_output = (/** @type {import("./Editor.js").CellResultData | undefined} */ cell_result, /** @type {number} */ truncate_limit) => {
     const text = cell_output_to_plaintext(cell_result, truncate_limit)
 
     return text == null
@@ -159,7 +159,7 @@ The current cell uses the following variables from other cells: ${variables_used
 
 These variables are defined in the following cells:
 
-${upstream_cells.map((cid) => format_code(notebook.cell_inputs[cid].code)).join("\n\n")}
+${upstream_cells.map((cid) => format_code(notebook.cell_inputs[cid]?.code)).join("\n\n")}
 </pluto-ai-context-variables>
 `
 
@@ -181,7 +181,7 @@ ${packages_context(notebook)}
     return prompt
 }
 
-const cell_output_to_plaintext = (/** @type {import("./Editor.js").CellResultData?} */ cell_result, /** @type {number} */ truncate_limit) => {
+const cell_output_to_plaintext = (/** @type {import("./Editor.js").CellResultData | undefined} */ cell_result, /** @type {number} */ truncate_limit) => {
     if (cell_result == null) return null
 
     const cell_output = cell_result.output

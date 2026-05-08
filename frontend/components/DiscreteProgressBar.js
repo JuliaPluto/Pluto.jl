@@ -36,7 +36,7 @@ export const DiscreteProgressBarTest = () => {
 
     useEffect(() => {
         let handle = setInterval(() => {
-            const [done, busy, total] = done_total_ref.current
+            const [done = 0, busy = 0, total = 0] = done_total_ref.current
 
             if (Math.random() < 0.3) {
                 if (done < total) {

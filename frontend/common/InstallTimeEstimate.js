@@ -25,10 +25,10 @@ export const get_data = () => {
             .then((res) => res.text())
             .then((text) => {
                 const lines = text.split("\n")
-                const header = lines[0].split(",")
+                const header = lines[0]?.split(",")
                 return new Map(
                     lines.slice(1).map((line) => {
-                        let [pkg, ...times] = line.split(",")
+                        let [pkg = "", ...times] = line.split(",")
 
                         return [pkg, { install: Number(times[0]), precompile: Number(times[1]), load: Number(times[2]) }]
                     })
@@ -41,7 +41,7 @@ export const get_data = () => {
                 (text) =>
                     new Map(
                         text.split("\n").map((line) => {
-                            let [pkg, ...deps] = line.split(",")
+                            let [pkg = "", ...deps] = line.split(",")
                             return [pkg, deps]
                         })
                     )

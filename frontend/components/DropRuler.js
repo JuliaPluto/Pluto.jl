@@ -192,6 +192,7 @@ export const get_drop_index_for_paste = (/** @type {HTMLElement} */ pluto_editor
 
     const last_cell = cell_nodes[cell_nodes.length - 1]
     const cell_edges = cell_nodes.map((el) => el.offsetTop)
+
     cell_edges.push(last_cell.offsetTop + last_cell.scrollHeight)
 
     const main_element = pluto_editor_element.querySelector("main") ?? pluto_editor_element

@@ -32,4 +32,4 @@ jobs:
         working-directory: frontend
       
       - name: Run TypeScript checks on frontend/
-        run: tsc --noEmit --strictNullChecks false
+        run: tsc --noEmit

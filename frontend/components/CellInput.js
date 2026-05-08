@@ -57,7 +57,7 @@ import { commentKeymap } from "./CellInput/comment_mixed_parsers.js"
 import { ScopeStateField } from "./CellInput/scopestate_statefield.js"
 import { mod_d_command } from "./CellInput/mod_d_command.js"
 import { open_bottom_right_panel } from "./BottomRightPanel.js"
-import { timeout_promise } from "../common/PlutoConnection.js"
+import { assert_not_null, timeout_promise } from "../common/PlutoConnection.js"
 import { LastFocusWasForcedEffect, tab_help_plugin } from "./CellInput/tab_help_plugin.js"
 import { useEventListener } from "../common/useEventListener.js"
 import { moveLineDown } from "../imports/CodemirrorPlutoSetup.js"
@@ -412,10 +412,10 @@ export const CellInput = ({
                     // Corner case: block is empty after removing markdown
                     setValue6(cm, "")
                 } else {
-                    while (/\s/.test(trimmed[start])) {
+                    while (/\s/.test(assert_not_null(trimmed[start]))) {
                         ++start
                     }
-                    while (/\s/.test(trimmed[end - 1])) {
+                    while (/\s/.test(assert_not_null(trimmed[end - 1]))) {
                         --end
                     }
 
@@ -779,7 +779,7 @@ export const CellInput = ({
             const lines_wrapper_resize_observer = new ResizeObserver(() => {
                 const line_nodes = lines_wrapper_dom_node.children
                 const tops = _.map(line_nodes, (c) => /** @type{HTMLElement} */ (c).offsetTop)
-                const diffs = tops.slice(1).map((y, i) => y - tops[i])
+                const diffs = tops.slice(1).map((y, i) => y - assert_not_null(tops[i]))
                 const heights = [...diffs, 15]
                 on_line_heights(heights)
             })

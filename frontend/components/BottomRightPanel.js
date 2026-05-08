@@ -60,6 +60,7 @@ export let BottomRightPanel = ({
     const status = useWithBackendStatus(notebook, backend_launch_phase)
 
     const [status_total, status_done] = useMemo(
+        /** @returns {[number, number]} */
         () =>
             status == null
                 ? [0, 0]
