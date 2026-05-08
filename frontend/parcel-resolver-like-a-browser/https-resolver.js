@@ -110,11 +110,7 @@ module.exports = new Resolver({
 
         // Relative ".js" imports of TypeScript-compiled siblings: TS source convention.
         // Try .ts/.tsx fallback when the literal .js file doesn't exist.
-        if (
-            (specifier.startsWith("./") || specifier.startsWith("../")) &&
-            specifier.endsWith(".js") &&
-            dependency.sourcePath
-        ) {
+        if ((specifier.startsWith("./") || specifier.startsWith("../")) && specifier.endsWith(".js") && dependency.sourcePath) {
             let baseDir = path.dirname(dependency.sourcePath)
             let jsPath = path.join(baseDir, specifier)
             if (!(await fileExists(jsPath))) {

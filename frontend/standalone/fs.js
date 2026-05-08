@@ -4,7 +4,7 @@
  * This module provides functionality to recursively resolve all include() statements
  * in Julia files, replacing them with the actual file contents.
  */
-import { resolve, dirname } from "path";
+import { resolve, dirname } from "path"
 
 /**
  * Resolve an include path relative to the current file's directory
@@ -15,16 +15,16 @@ import { resolve, dirname } from "path";
 function _resolveIncludePath(includePath, currentDir) {
     // Handle relative paths
     if (includePath.startsWith("./") || includePath.startsWith("../")) {
-        return resolve(currentDir, includePath);
+        return resolve(currentDir, includePath)
     }
 
     // Handle absolute paths
     if (includePath.startsWith("/")) {
-        return includePath;
+        return includePath
     }
 
     // Handle paths relative to current directory (no ./ prefix)
-    return resolve(currentDir, includePath);
+    return resolve(currentDir, includePath)
 }
 
 /**
@@ -38,66 +38,66 @@ function _resolveIncludePath(includePath, currentDir) {
  */
 function _resolveIncludesRecursive(fs, processedFiles, includePattern, filePath, rootPath) {
     // Resolve to absolute path
-    const absolutePath = resolve(filePath);
+    const absolutePath = resolve(filePath)
 
     // Check for circular includes
     if (processedFiles.has(absolutePath)) {
-        console.warn(`Circular include detected: ${absolutePath}`);
-        return `# Circular include detected: ${filePath}`;
+        console.warn(`Circular include detected: ${absolutePath}`)
+        return `# Circular include detected: ${filePath}`
     }
 
     // Add to processed files
-    processedFiles.add(absolutePath);
+    processedFiles.add(absolutePath)
 
     try {
         // Read the file content
-        const content = fs.readFileSync(absolutePath, "utf8");
+        const content = fs.readFileSync(absolutePath, "utf8")
 
         // Process line by line to check for commented includes
-        const lines = content.split("\n");
+        const lines = content.split("\n")
         const resolvedLines = lines.map((line) => {
             // Check if the line contains an include
-            const includeMatch = line.match(includePattern);
+            const includeMatch = line.match(includePattern)
             if (!includeMatch) {
-                return line;
+                return line
             }
 
             // Check if the line is commented out (starts with # after trimming)
-            const trimmedLine = line.trim();
+            const trimmedLine = line.trim()
             if (trimmedLine.startsWith("#")) {
                 // This is a commented include, leave it as is
-                return line;
+                return line
             }
 
             // Process the include
             return line.replace(includePattern, (_, includePath) => {
                 try {
                     // Resolve the include path relative to the current file's directory
-                    const currentDir = dirname(absolutePath);
-                    const resolvedIncludePath = _resolveIncludePath(includePath, currentDir);
+                    const currentDir = dirname(absolutePath)
+                    const resolvedIncludePath = _resolveIncludePath(includePath, currentDir)
 
                     // Add a comment to mark where the include was resolved
-                    const includeComment = `\n# ===== Included from: ${includePath} =====\n`;
-                    const endComment = `\n# ===== End of ${includePath} =====\n`;
+                    const includeComment = `\n# ===== Included from: ${includePath} =====\n`
+                    const endComment = `\n# ===== End of ${includePath} =====\n`
 
                     // Recursively resolve the included file
-                    const includedContent = _resolveIncludesRecursive(fs, processedFiles, includePattern, resolvedIncludePath, rootPath);
+                    const includedContent = _resolveIncludesRecursive(fs, processedFiles, includePattern, resolvedIncludePath, rootPath)
 
-                    return includeComment + includedContent + endComment;
+                    return includeComment + includedContent + endComment
                 } catch (error) {
-                    console.error(`Error resolving include "${includePath}" in ${filePath}:`, error.message);
-                    return `# Error resolving include: ${includePath} - ${error.message}`;
+                    console.error(`Error resolving include "${includePath}" in ${filePath}:`, error.message)
+                    return `# Error resolving include: ${includePath} - ${error.message}`
                 }
-            });
-        });
+            })
+        })
 
-        return resolvedLines.join("\n");
+        return resolvedLines.join("\n")
     } catch (error) {
-        console.error(`Error reading file ${filePath}:`, error.message);
-        return `# Error reading file: ${filePath} - ${error.message}`;
+        console.error(`Error reading file ${filePath}:`, error.message)
+        return `# Error reading file: ${filePath} - ${error.message}`
     } finally {
         // Remove from processed files when done (allows for includes in different contexts)
-        processedFiles.delete(absolutePath);
+        processedFiles.delete(absolutePath)
     }
 }
 
@@ -108,8 +108,8 @@ function _resolveIncludesRecursive(fs, processedFiles, includePattern, filePath,
  * @returns {string} File content with all includes resolved
  */
 export function resolveIncludes(fs, filePath) {
-    const processedFiles = new Set();
-    const includePattern = /include\(\s*["']([^"']+)["']\s*\)/g;
+    const processedFiles = new Set()
+    const includePattern = /include\(\s*["']([^"']+)["']\s*\)/g
 
-    return _resolveIncludesRecursive(fs, processedFiles, includePattern, filePath, filePath);
+    return _resolveIncludesRecursive(fs, processedFiles, includePattern, filePath, filePath)
 }
