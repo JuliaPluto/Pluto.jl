@@ -213,6 +213,34 @@ export class Host {
             throw error
         }
     }
+
+    /**
+     * Open a notebook so that the running Pluto server tracks it at `path` on disk.
+     *
+     * Pluto's HTTP API only exposes "create new notebook from text" — there is no
+     * "open this file by path". To make Pluto save subsequent changes back to `path`,
+     * we upload the content as a new notebook, then ask Pluto to move its temp file
+     * to `path`. `moveTo` rejects if the path already exists, so we unlink it first
+     * (best-effort; ignored if the file does not exist or we are not on Node).
+     *
+     * @param {string} path Absolute path the server should track this notebook at
+     * @param {string} content Notebook text to upload (caller reads the file themself)
+     * @param {{unlink?: boolean}} [options] Set `unlink: false` if `path` is guaranteed not to exist
+     * @returns {Promise<Worker>}
+     */
+    async openByPath(path, content, { unlink: doUnlink = true } = {}) {
+        const worker = await this.createWorker(content)
+        if (doUnlink) {
+            try {
+                const { unlink } = await import("fs/promises")
+                await unlink(path)
+            } catch {
+                // File may not exist, or we are running in a browser without fs — fine.
+            }
+        }
+        await worker.moveTo(path)
+        return worker
+    }
 }
 
 /**
@@ -933,6 +961,30 @@ end`,
     }
 
     /**
+     * Merge the given keys into a cell's metadata (e.g. `{ disabled: true }`,
+     * `{ show_logs: false }`). Goes through the canonical patch flow so server
+     * state and local state stay in sync.
+     *
+     * @param {string} cell_id
+     * @param {Object} metadata Partial metadata to merge into the existing metadata object
+     * @returns {Promise<void>}
+     */
+    async setCellMetadata(cell_id, metadata) {
+        if (!this.client || !this.notebook_state) {
+            throw new Error("Not connected to notebook")
+        }
+        if (!this.notebook_state.cell_inputs?.[cell_id]) {
+            throw new Error(`Cell ${cell_id} not found`)
+        }
+        await this._update_notebook_state((notebook) => {
+            notebook.cell_inputs[cell_id].metadata = {
+                ...notebook.cell_inputs[cell_id].metadata,
+                ...metadata,
+            }
+        })
+    }
+
+    /**
      * Interrupt notebook execution
      * @returns {Promise<void>}
      */
@@ -1067,6 +1119,26 @@ end`,
                 }
 
                 let new_notebook = applyPatches(this.notebook_state, patches)
+
+                // Decode binary cell-output bodies (Uint8Array/ArrayBuffer) to UTF-8 strings.
+                // The websocket delivers msgpack-decoded binary blobs; downstream consumers
+                // (HTML/SVG renderers, postMessage) expect strings when output.mime is set.
+                const cells_with_output_changes = new Set()
+                for (const p of patches) {
+                    if (p.path?.[0] === "cell_results" && p.path.length >= 2) {
+                        cells_with_output_changes.add(p.path[1])
+                    }
+                }
+                if (cells_with_output_changes.size > 0) {
+                    ;[new_notebook] = produceWithPatches(new_notebook, (draft) => {
+                        for (const cell_id of cells_with_output_changes) {
+                            const out = draft.cell_results?.[cell_id]?.output
+                            if (out?.mime && (out.body instanceof Uint8Array || out.body instanceof ArrayBuffer)) {
+                                out.body = new TextDecoder().decode(new Uint8Array(out.body))
+                            }
+                        }
+                    })
+                }
 
                 this.notebook_state = new_notebook
                 this.last_update_time = Date.now()
