@@ -301,7 +301,12 @@ export class Worker {
         this.last_update_time = 0
     }
 
-    async wait(ready = true) {
+    /**
+     * @param {boolean} [ready=true] desired idle state; resolves once `isIdle() === ready`
+     * @param {number} [timeoutMs=-1] reject after this many ms; <=0 disables the timeout
+     * @throws {Error} on disconnect or timeout
+     */
+    async wait(ready = true, timeoutMs = -1) {
         // Sleep for 35ms
         await new Promise((r) => setTimeout(r, 35))
         if (this.isIdle() === ready) {
@@ -311,9 +316,11 @@ export class Worker {
         return new Promise((resolve, reject) => {
             let cleanupUpdate = () => {}
             let cleanupConn = () => {}
+            let t = 0
             const finish = (fn) => {
                 cleanupUpdate()
                 cleanupConn()
+                clearTimeout(t)
                 fn()
             }
             cleanupUpdate = this.onUpdate(() => {
@@ -322,6 +329,9 @@ export class Worker {
             cleanupConn = this.onConnectionStatus(({ connected, hopeless }) => {
                 if (!connected || hopeless) finish(() => reject(new Error("Connection lost while waiting")))
             })
+            if (timeoutMs > 0) {
+                t = setTimeout(() => finish(() => reject(new Error(`wait timed out after ${timeoutMs}ms`))), timeoutMs)
+            }
         })
     }
 
@@ -751,6 +761,28 @@ end`,
             }
         })
     }
+
+    /**
+     * Run code without leaving a cell behind: creates a snippet at index 0, waits for it to
+     * finish, then deletes it (best-effort cleanup even if the run fails).
+     *
+     * @param {string} code
+     * @param {{timeout?: number, metadata?: Object}} [options]
+     * @returns {Promise<import("../components/Editor.js").CellResultData>}
+     */
+    async runEphemeral(code, { timeout = -1, metadata = {} } = {}) {
+        const cell_id = uuidv4()
+        try {
+            return await this.waitSnippet(0, code, metadata, cell_id, timeout)
+        } finally {
+            try {
+                await this.deleteSnippets([cell_id])
+            } catch (e) {
+                console.warn("runEphemeral: failed to delete temporary cell", cell_id, e)
+            }
+        }
+    }
+
     /**
      * Add a new cell to the notebook
      *
