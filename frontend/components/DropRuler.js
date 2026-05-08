@@ -193,7 +193,7 @@ export const get_drop_index_for_paste = (/** @type {HTMLElement} */ pluto_editor
     const last_cell = cell_nodes[cell_nodes.length - 1]
     const cell_edges = cell_nodes.map((el) => el.offsetTop)
 
-    cell_edges.push(last_cell.offsetTop + last_cell.scrollHeight)
+    if (last_cell != null) cell_edges.push(last_cell.offsetTop + last_cell.scrollHeight)
 
     const main_element = pluto_editor_element.querySelector("main") ?? pluto_editor_element
     const main_top = main_element.getBoundingClientRect().top + document.documentElement.scrollTop
@@ -204,7 +204,7 @@ export const get_drop_index_for_paste = (/** @type {HTMLElement} */ pluto_editor
     let best_index = 0
     let best_distance = Infinity
     for (let i = 0; i < cell_edges.length; i++) {
-        const distance = Math.abs(cell_edges[i] - editorY - 8)
+        const distance = Math.abs((cell_edges[i] ?? 0) - editorY - 8)
         if (distance < best_distance) {
             best_distance = distance
             best_index = i

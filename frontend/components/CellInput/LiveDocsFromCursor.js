@@ -129,11 +129,12 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                         // We're inside a `x::X` inside the struct
                     } else if (parents.includes("SubtypedExpression") && parents.indexOf("SubtypedExpression") < index_of_struct_in_parents) {
                         // We're inside `Real` in `struct MyNumber<:Real`
-                        while (parent?.name !== "SubtypedExpression") {
+                        while (parent != null && parent.name !== "SubtypedExpression") {
                             parent = parent.parent
                         }
+                        if (parent == null) return undefined
                         const type_node = parent.lastChild
-                        if (type_node.from <= cursor.from && type_node.to >= cursor.to) {
+                        if (type_node != null && type_node.from <= cursor.from && type_node.to >= cursor.to) {
                             return state.doc.sliceString(type_node.from, type_node.to)
                         }
                     } else if (cursor.name === "struct" || cursor.name === "mutable") {
@@ -219,15 +220,16 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                 // EXEPT, when we are in the last part (the value) of a NamedField, because then we can show
                 // the value.
                 if (cursor.name === "Identifier" && parent.name === "NamedField") {
-                    if (parent.lastChild.from != cursor.from && parent.lastChild.to != cursor.to) {
+                    if (parent.lastChild != null && parent.lastChild.from != cursor.from && parent.lastChild.to != cursor.to) {
                         continue
                     }
                 }
 
                 // `a = 1` would yield `=`, `a += 1` would yield `+=`
                 if (cursor.name === "binding") {
-                    let end_of_first = cursor.node.firstChild.to
-                    let beginning_of_last = cursor.node.lastChild.from
+                    let end_of_first = cursor.node.firstChild?.to
+                    let beginning_of_last = cursor.node.lastChild?.from
+                    if (end_of_first == null || beginning_of_last == null) return undefined
                     return state.doc.sliceString(end_of_first, beginning_of_last).trim()
                 }
 
@@ -240,7 +242,7 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                 if (
                     cursor.name === "Identifier" &&
                     parent.name === "ArgumentList" &&
-                    (parent.parent.parent.name === "FunctionAssignmentExpression" || parent.parent.name === "FunctionDefinition")
+                    (parent.parent?.parent?.name === "FunctionAssignmentExpression" || parent.parent?.name === "FunctionDefinition")
                 ) {
                     continue
                 }
@@ -277,8 +279,9 @@ export let get_selected_doc_from_state = (/** @type {EditorState} */ state, verb
                 // A bit odd, but we don't get the span of the actual operator in a binary expression,
                 // so we infer it from the end of the left side and start of the right side.
                 if (cursor.name === "BinaryExpression") {
-                    let end_of_first = cursor.node.firstChild.to
-                    let beginning_of_last = cursor.node.lastChild.from
+                    let end_of_first = cursor.node.firstChild?.to
+                    let beginning_of_last = cursor.node.lastChild?.from
+                    if (end_of_first == null || beginning_of_last == null) return undefined
                     return state.doc.sliceString(end_of_first, beginning_of_last).trim()
                 }
 

@@ -252,7 +252,7 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
 const dirname = (/** @type {string} */ str) => {
     // using regex /\/|\\/
     const idx = [...str.matchAll(/[\/\\]/g)].map((r) => r.index)
-    return idx.length > 0 ? str.slice(0, idx[idx.length - 1] + 1) : str
+    return idx.length > 0 ? str.slice(0, (idx[idx.length - 1] ?? 0) + 1) : str
 }
 
 const basename = (/** @type {string} */ str) => (str.split("/").pop() ?? "").split("\\").pop() ?? ""

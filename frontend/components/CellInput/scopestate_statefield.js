@@ -550,21 +550,19 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
                     // Bare declaration: global k
                     const name = doc.sliceString(cursor.from, cursor.to)
                     const scope =
-                        local_scope_stack.length > 0
-                            ? _.last(local_scope_stack)
-                            : cursor.node.parent?.parent
-                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
-                              : { from: 0, to: doc.length }
+                        _.last(local_scope_stack) ??
+                        (cursor.node.parent?.parent
+                            ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                            : { from: 0, to: doc.length })
                     global_declared.push({ name, scope })
                     // @ts-ignore
                 } else if (cursor.name === "OpenTuple") {
                     // Bare declarations: global x, y, z
                     const scope =
-                        local_scope_stack.length > 0
-                            ? _.last(local_scope_stack)
-                            : cursor.node.parent?.parent
-                              ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
-                              : { from: 0, to: doc.length }
+                        _.last(local_scope_stack) ??
+                        (cursor.node.parent?.parent
+                            ? { from: cursor.node.parent.parent.from, to: cursor.node.parent.parent.to }
+                            : { from: 0, to: doc.length })
                     if (cursor.firstChild()) {
                         do {
                             // @ts-ignore
@@ -588,11 +586,10 @@ export let explore_variable_usage = (tree, doc, _scopestate, verbose = VERBOSE) 
 
             // Compute validity for locals created by this statement
             const local_validity =
-                local_scope_stack.length > 0
-                    ? _.last(local_scope_stack)
-                    : cursor.node.parent
-                      ? { from: cursor.node.parent.from, to: cursor.node.parent.to }
-                      : { from: 0, to: doc.length }
+                _.last(local_scope_stack) ??
+                (cursor.node.parent
+                    ? { from: cursor.node.parent.from, to: cursor.node.parent.to }
+                    : { from: 0, to: doc.length })
 
             if (cursor.firstChild()) {
                 cursor.nextSibling() // skip 'local' keyword

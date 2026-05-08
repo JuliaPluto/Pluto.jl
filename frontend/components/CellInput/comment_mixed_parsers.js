@@ -1,3 +1,4 @@
+// @ts-nocheck
 // This is "just" https://github.com/codemirror/comment/blob/da336b8660dedab23e06ced2b430f2ac56ef202d/src/comment.ts
 // (@codemirror/comment)
 // But with a change that helps mixed parser environments:

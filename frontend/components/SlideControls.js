@@ -42,13 +42,14 @@ export const SlideControls = () => {
         edges.push(notebook_node.getBoundingClientRect().bottom + window.scrollY)
 
         const scrollPositions = headers.map((el, i) => {
+            const edge_i = edges[i] ?? 0
             if (el.tagName == "H1") {
                 // center vertically
-                const slideHeight = edges[i + 1] - edges[i] - height
-                return edges[i] - Math.max(0, (height - slideHeight) / 2)
+                const slideHeight = (edges[i + 1] ?? 0) - edge_i - height
+                return edge_i - Math.max(0, (height - slideHeight) / 2)
             } else {
                 // align to top
-                return edges[i] - 20
+                return edge_i - 20
             }
         })
 

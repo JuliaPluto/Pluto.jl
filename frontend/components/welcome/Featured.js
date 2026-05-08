@@ -62,7 +62,7 @@ const placeholder_data = [
 /** This HTML is shown instead of the featured notebooks if the user is offline. */
 const offline_html = html`
     <div class="featured-source">
-        <h1>${placeholder_data[0].title}</h1>
+        <h1>${placeholder_data[0]?.title}</h1>
         <p>Here are a couple of notebooks to get started with Pluto.jl:</p>
         <ul>
             <li>1. <a href="sample/Getting%20started.jl">Getting started</a></li>
@@ -229,9 +229,10 @@ const collection = (/** @type {SourceManifestNotebookEntry[]} */ notebooks, /** 
  * @returns {Promise}
  */
 const promise_any_with_priority = (/** @type {Promise[]} */ promises, /** @type {Promise[]} */ already_rejected = []) => {
-    if (promises.length <= 1) {
+    const first = promises[0]
+    if (promises.length <= 1 || first == null) {
         return Promise.any([...promises, ...already_rejected])
     } else {
-        return promises[0].catch(() => promise_any_with_priority(promises.slice(1), [...already_rejected, promises[0]]))
+        return first.catch(() => promise_any_with_priority(promises.slice(1), [...already_rejected, first]))
     }
 }
