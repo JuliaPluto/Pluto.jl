@@ -195,6 +195,21 @@ console.log(`Offline mode enabled: ${should_be_offline}`)
 const blocked_domains = ["cdn.jsdelivr.net", "unpkg.com", "cdn.skypack.dev", "esm.sh", "firebase.google.com"]
 const hide_warning = (url) => url.includes("mathjax")
 
+/**
+ * Auto-accept the "confirm before long runtime" dialog in tests by clicking
+ * its confirm button on a 1-second interval. Installed via
+ * `evaluateOnNewDocument` so it runs across navigations.
+ *
+ * @param {import("puppeteer").Page} page
+ */
+export const autoAcceptConfirmBeforeLongRuntime = async (page) => {
+    await page.evaluateOnNewDocument(() => {
+        setInterval(() => {
+            document.querySelector("dialog.confirm-before-long-runtime:open button.final-yes")?.click()
+        }, 1000)
+    })
+}
+
 export const createPage = async (browser) => {
     /** @type {import("puppeteer").Page} */
     const page = await browser.newPage()
@@ -202,6 +217,7 @@ export const createPage = async (browser) => {
     failOnError(page)
     dismissBeforeUnloadDialogs(page)
     dismissVersionDialogs(page)
+    await autoAcceptConfirmBeforeLongRuntime(page)
 
     if (should_be_offline) {
         page.setRequestInterception(true)

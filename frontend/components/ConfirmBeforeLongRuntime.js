@@ -37,8 +37,6 @@ export const maybe_abort_long_runtime = async (notebook, cell_ids) => {
 
     const runtimes = [...found_downstream].map((id) => (notebook.cell_results[id]?.runtime ?? 0) / 1e9)
 
-    console.log({ l: found_downstream.size, s: _.sum(runtimes), runtimes, found_downstream })
-
     const total_runtime = _.sum(runtimes)
     if (total_runtime > long_threshold_seconds) {
         const confirmed = await new Promise((resolve) => {
@@ -99,7 +97,6 @@ export const ConfirmBeforeLongRuntime = ({}) => {
         window,
         "confirm before long runtime",
         (/** @type {CustomEvent} */ e) => {
-            console.log("Received confirm before long runtime event", { detail: e.detail })
             set_open_event_detail(e.detail)
             open()
         },
@@ -109,17 +106,13 @@ export const ConfirmBeforeLongRuntime = ({}) => {
     useEffect(() => {
         // If the dialog gets closed (e.g. by the user pressing Esc)
         if (!currently_open && typeof on_result === "function") {
-            console.log("Dialog closed without confirmation, sending false result")
             on_result(false)
         }
     }, [currently_open])
 
-    console.log({ open_event_detail, cell_ids, currently_open })
-
     const open_time = (useMillisSinceTruthy(currently_open) ?? 0) / 1e3
 
     if (will_auto_accept && open_time > auto_accept_after_seconds) {
-        console.log("Auto-accepting long runtime after", auto_accept_after_seconds, "seconds")
         send_result(true)
         close()
     }
@@ -156,23 +149,12 @@ export const ConfirmBeforeLongRuntime = ({}) => {
                 : null}
         </div>
         <div class="final">
-            <button
-                class="final-no"
-                onClick=${() => {
-                    console.log("User declined long runtime, closing...")
-
-                    close()
-                }}
-                aria-label=${t("t_no")}
-            >
-                ${th("t_no_key", { key: html`<kbd aria-hidden="true">Esc</kbd>` })}
-            </button>
+            <button class="final-no" onClick=${close} aria-label=${t("t_no")}>${th("t_no_key", { key: html`<kbd aria-hidden="true">Esc</kbd>` })}</button>
             <button
                 style="--auto-click-progress: ${open_time / (auto_accept_after_seconds * 0.8)}"
                 class=${cl({ "final-yes": true, "will-auto-accept": will_auto_accept })}
                 autofocus
                 onClick=${() => {
-                    console.log("User confirmed long runtime, sending true result")
                     send_result(true)
                     close()
                 }}
