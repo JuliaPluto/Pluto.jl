@@ -139,7 +139,6 @@
         --pkg-popup-border-color: #574f56;
         --pkg-popup-buttons-bg-color: var(--input-context-menu-bg-color);
         --pkg-version-color: #bbb;
-
         --black: white;
         --white: black;
         --pkg-terminal-bg-color: #252627;
@@ -248,14 +247,14 @@
         --welcome-card-author-backdrop: #0000006b;
 
         /* confirm-before-long-runtime dialog */
-        --confirm-runtime-bg: linear-gradient(180deg, hsl(0deg 0% 14%), hsl(45deg 14% 17%));
+        --confirm-runtime-bg: linear-gradient(180deg, hsl(0 0% 19% / 1), hsl(243 14% 23% / 1));
         --confirm-runtime-bonus-bg: hsl(0deg 0% 17%);
         --confirm-runtime-bonus-border: #4a4a66;
         --confirm-runtime-button-bg: #3a3a3a;
         --confirm-runtime-button-border: #5a5a5a;
-        --confirm-runtime-yes-bg: #f0f0f0;
+        --confirm-runtime-yes-bg: #ddd1d6;
         --confirm-runtime-yes-color: #1a1a1a;
-        --confirm-runtime-yes-border: #bcbcbc;
+        --confirm-runtime-yes-border: #9f9f9f;
         --confirm-runtime-yes-progress: linear-gradient(90deg, #f0f0f0, #9a9a9a);
     }
 

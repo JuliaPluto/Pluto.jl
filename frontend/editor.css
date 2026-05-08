@@ -856,20 +856,20 @@ dialog.confirm-before-long-runtime {
     border-radius: 10px;
     max-width: 37ch;
     background: var(--confirm-runtime-bg);
-
-    bottom: 1rem;
-    left: 1rem;
+    bottom: 0.8rem;
+    left: 0.8rem;
     top: auto;
     right: auto;
+    box-shadow: 0 0 20px #00000059;
 }
 
 .confirm-before-long-runtime p.bonus-info {
     font-size: 0.9em;
     margin-block-end: 2rem;
     padding: 1em 1.2em;
-    background: var(--confirm-runtime-bonus-bg);
+    background: hsl(0deg 0% 12.85%);
     border-radius: 3px;
-    border-inline-start: 3px solid var(--confirm-runtime-bonus-border);
+    border-inline-start: 3px solid #636363;
 }
 
 .confirm-before-long-runtime .final button {
@@ -881,7 +881,7 @@ dialog.confirm-before-long-runtime {
 
 .confirm-before-long-runtime .final button.final-yes {
     background: var(--confirm-runtime-yes-bg);
-    color: var(--confirm-runtime-yes-color);
+    color: #000000;
     border-color: var(--confirm-runtime-yes-border);
     position: relative;
     overflow: hidden;

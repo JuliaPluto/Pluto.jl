@@ -151,7 +151,7 @@ export const ConfirmBeforeLongRuntime = ({}) => {
         <div class="final">
             <button class="final-no" onClick=${close} aria-label=${t("t_no")}>${th("t_no_key", { key: html`<kbd aria-hidden="true">Esc</kbd>` })}</button>
             <button
-                style="--auto-click-progress: ${open_time / (auto_accept_after_seconds * 0.8)}"
+                style="--auto-click-progress: ${will_auto_accept ? open_time / (auto_accept_after_seconds * 0.8) : 0}"
                 class=${cl({ "final-yes": true, "will-auto-accept": will_auto_accept })}
                 autofocus
                 onClick=${() => {
