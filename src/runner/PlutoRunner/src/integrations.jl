@@ -39,6 +39,9 @@ const integrations = Integration[
                 if isdefined(AbstractPlutoDingetjes.Display, Symbol("@auto_id"))
                     supported!(getfield(AbstractPlutoDingetjes.Display, Symbol("@auto_id")))
                 end
+                if isdefined(AbstractPlutoDingetjes.Display, Symbol("@embed"))
+                    supported!(getfield(AbstractPlutoDingetjes.Display, Symbol("@embed")))
+                end
             end
 
         end,

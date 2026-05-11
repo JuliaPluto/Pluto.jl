@@ -12,6 +12,7 @@ const default_iocontext = IOContext(devnull,
     :pluto_published_to_js => (io, x) -> core_published_to_js(io, x),
     :pluto_with_js_link => (io, callback, on_cancellation) -> core_with_js_link(io, callback, on_cancellation),
     :pluto_auto_id! => auto_id!,
+    :pluto_embed_display => (io, x, script_id) -> EmbeddableDisplay(x, script_id),
 )
 
 # `stdout` mimics a TTY, the only relevant property is :color
