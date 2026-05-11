@@ -9,7 +9,7 @@ tree_data(@nospecialize(e::DivElement), context::Context) = Dict{Symbol, Any}(
     :style => e.style, 
     :classname => e.class, 
     :children => Any[
-        with_counter(context, i) do io
+        with_auto_id_counter(context, i) do io
             format_output_default(value, io)
         end
         for (i, value) in enumerate(e.children)

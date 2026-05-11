@@ -1,25 +1,25 @@
-const StackElement = Union{Symbol,Int}
+const AutoIDStackElement = Union{Symbol,Int64}
 
 function auto_id!(io::IO)::String
-    stack = get(io, :script_id_counter, StackElement[])::Vector{StackElement}
+    stack = get(io, :pluto_auto_id_counter, AutoIDStackElement[])::Vector{AutoIDStackElement}
 
     if length(stack) >= 1
         stack[end] += 1
         join(stack, ",")
     else
         # Fallback for when @auto_id is used inside an IO that never received a counter stack:
-        string(rand(Int))
+        string("PlutoRunner-auto-id-fallback", rand(Int64))
     end
 end
 
-function with_counter(f::Function, io::IO, addkey::Union{StackElement,Nothing}=nothing)
-    oldstack = get(io, :script_id_counter, StackElement[])::Vector{StackElement}
+function with_auto_id_counter(f::Function, io::IO, addkey::Union{AutoIDStackElement,Nothing}=nothing)
+    oldstack = get(io, :pluto_auto_id_counter, AutoIDStackElement[])::Vector{AutoIDStackElement}
 
     newstack = if addkey === nothing
-        StackElement[oldstack..., 0]
+        AutoIDStackElement[oldstack..., 0]
     else
-        StackElement[oldstack..., addkey, 0]
+        AutoIDStackElement[oldstack..., addkey, 0]
     end
 
-    f(IOContext(io, :script_id_counter => newstack))
+    f(IOContext(io, :pluto_auto_id_counter => newstack))
 end
