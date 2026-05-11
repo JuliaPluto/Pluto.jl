@@ -173,6 +173,10 @@ function sync_nbpkg_core(
                         Status.report_business!(pkg_status, :instantiate1) do
                             _instantiate(notebook, iolistener)
                         end
+                        
+                        # this might have updated packages or removed compat entries, so let's update the auto-compat entries.
+                        PkgCompat.clear_auto_compat_entries!(notebook.nbpkg_ctx)
+                        PkgCompat.write_auto_compat_entries!(notebook.nbpkg_ctx)
                     end
                     
                     to_add = filter(PkgCompat.package_exists, added)
