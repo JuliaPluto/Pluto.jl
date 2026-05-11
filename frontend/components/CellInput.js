@@ -41,6 +41,7 @@ import {
     setDiagnostics,
     moveLineUp,
     Facet,
+    StateField,
 } from "../imports/CodemirrorPlutoSetup.js"
 
 import { markdown, html as htmlLang, javascript, sqlLang, python, julia_mixed } from "./CellInput/mixedParsers.js"
@@ -64,6 +65,7 @@ import { moveLineDown } from "../imports/CodemirrorPlutoSetup.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { AIContext } from "./AIContext.js"
 import { AiSuggestionPlugin } from "./CellInput/ai_suggestion.js"
+import { detect_indent_unit } from "./CellInput/detect_indent_unit.js"
 import { t } from "../common/lang.js"
 
 export const ENABLE_CM_MIXED_PARSER = window.localStorage.getItem("ENABLE_CM_MIXED_PARSER") === "true"
@@ -224,6 +226,14 @@ let useCompartment = (/** @type {import("../imports/Preact.js").Ref<EditorView?>
 export const LastRemoteCodeSetTimeFacet = Facet.define({
     combine: (values) => values[0],
     compare: _.isEqual,
+})
+
+// Per-cell detected indent unit ("\t" or "    "). Re-detected on every doc
+// change; when the doc has no indented lines, we keep the previous value to
+// avoid flapping while the user is typing into an empty cell.
+const indentUnitField = StateField.define({
+    create: (state) => detect_indent_unit(state.doc, "\t"),
+    update: (value, tr) => (tr.docChanged ? detect_indent_unit(tr.state.doc, value) : value),
 })
 
 let line_and_ch_to_cm6_position = (/** @type {import("../imports/CodemirrorPlutoSetup.js").Text} */ doc, { line, ch }) => {
@@ -402,10 +412,11 @@ export const CellInput = ({
             if (anySelect) {
                 return indentMore(cm)
             } else {
+                const unit = cm.state.facet(indentUnit)
                 cm.dispatch(
                     cm.state.changeByRange((selection) => ({
-                        range: EditorSelection.cursor(selection.from + 1),
-                        changes: { from: selection.from, to: selection.to, insert: "\t" },
+                        range: EditorSelection.cursor(selection.from + unit.length),
+                        changes: { from: selection.from, to: selection.to, insert: unit },
                     }))
                 )
                 return true
@@ -680,7 +691,8 @@ export const CellInput = ({
                         }
                     }),
                     EditorState.tabSize.of(4),
-                    indentUnit.of("\t"),
+                    indentUnitField,
+                    indentUnit.from(indentUnitField),
                     ...(ENABLE_CM_MIXED_PARSER
                         ? [
                               julia_mixed(),

@@ -55,6 +55,8 @@ import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterfac
 import { with_query_params } from "../common/URLTools.js"
 import semver from "../imports/semver-es.js"
 import { ConfirmBeforeLongRuntime, maybe_abort_long_runtime } from "./ConfirmBeforeLongRuntime.js"
+import { detect_indent_unit } from "./CellInput/detect_indent_unit.js"
+import { Text } from "../imports/CodemirrorPlutoSetup.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -501,7 +503,8 @@ export class Editor extends Component {
             wrap_remote_cell: async (cell_id, block_start = "begin", block_end = "end") => {
                 const cell = this.state.notebook.cell_inputs[cell_id]
                 if (!cell) return
-                const new_code = `${block_start}\n\t${cell.code.replace(/\n/g, "\n\t")}\n${block_end}`
+                const unit = detect_indent_unit(Text.of(cell.code.split("\n")), "\t")
+                const new_code = `${block_start}\n${unit}${cell.code.replace(/\n/g, `\n${unit}`)}\n${block_end}`
 
                 await this.setStatePromise(
                     immer((/** @type {EditorState} */ state) => {
