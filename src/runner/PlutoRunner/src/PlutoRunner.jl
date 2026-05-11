@@ -83,6 +83,7 @@ include("./ide features/docs.jl")
 include("./bonds.jl")
 include("./js/published_to_js.jl")
 include("./display/embed_display.jl")
+include("./display/ReactDOMElement.jl")
 include("./display/DivElement.jl")
 
 include("./js/jslink.jl")

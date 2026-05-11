@@ -42,6 +42,9 @@ const integrations = Integration[
                 if isdefined(AbstractPlutoDingetjes.Display, Symbol("@embed"))
                     supported!(getfield(AbstractPlutoDingetjes.Display, Symbol("@embed")))
                 end
+                if isdefined(AbstractPlutoDingetjes.Display, :ReactDOMElement)
+                    supported!(AbstractPlutoDingetjes.Display.ReactDOMElement)
+                end
             end
 
         end,

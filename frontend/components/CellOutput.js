@@ -4,7 +4,7 @@ import DOMPurify from "../imports/DOMPurify.js"
 import { ansi_to_html } from "../imports/AnsiUp.js"
 
 import { ErrorMessage, ParseError } from "./ErrorMessage.js"
-import { TreeView, TableView, DivElement } from "./TreeView.js"
+import { TreeView, TableView, ReactDOMElement } from "./TreeView.js"
 
 import {
     add_bonds_disabled_message_handler,
@@ -192,8 +192,8 @@ export const OutputBody = ({ mime, body, cell_id, persist_js_state = false, last
         case "application/vnd.pluto.stacktrace+object":
             return html`<div><${ErrorMessage} cell_id=${cell_id} ...${body} /></div>`
             break
-        case "application/vnd.pluto.divelement+object":
-            return DivElement({ cell_id, ...body, persist_js_state, sanitize_html })
+        case "application/vnd.pluto.reactdomelement+object":
+            return ReactDOMElement({ cell_id, ...body, persist_js_state, sanitize_html })
             break
         case "text/plain":
             if (body) {
