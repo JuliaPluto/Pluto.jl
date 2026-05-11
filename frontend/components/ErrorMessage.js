@@ -513,7 +513,13 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
         {
             pattern: /^ArgumentError: Package (.*) not found in current path/,
             display: (/** @type{string} */ x) => {
-                if (pluto_actions.get_notebook().nbpkg?.enabled === false) return default_rewriter.display(x)
+                if (pluto_actions.get_notebook().nbpkg?.enabled === false) {
+                    const rewritten = x
+                        .split("\n")
+                        .map((line) => (line.includes("Pkg.add") ? t("t_package_not_found_manual_pkg_activate_hint") : line))
+                        .join("\n")
+                    return default_rewriter.display(rewritten)
+                }
 
                 const match = x.match(/^ArgumentError: Package (.*) not found in current path/)
                 const package_name = (match?.[1] ?? "").replaceAll("`", "")
