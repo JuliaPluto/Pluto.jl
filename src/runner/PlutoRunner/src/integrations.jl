@@ -36,6 +36,9 @@ const integrations = Integration[
                 if isdefined(AbstractPlutoDingetjes.Display, :with_js_link)
                     supported!(AbstractPlutoDingetjes.Display.with_js_link)
                 end
+                if isdefined(AbstractPlutoDingetjes.Display, Symbol("@auto_id"))
+                    supported!(getfield(AbstractPlutoDingetjes.Display, Symbol("@auto_id")))
+                end
             end
 
         end,

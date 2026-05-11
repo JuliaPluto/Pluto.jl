@@ -9,7 +9,10 @@ tree_data(@nospecialize(e::DivElement), context::Context) = Dict{Symbol, Any}(
     :style => e.style, 
     :classname => e.class, 
     :children => Any[
-        format_output_default(value, context) for value in e.children
+        with_counter(context, i) do io
+            format_output_default(value, io)
+        end
+        for (i, value) in enumerate(e.children)
     ],
 )
 pluto_showable(::MIME"application/vnd.pluto.divelement+object", ::DivElement) = true
