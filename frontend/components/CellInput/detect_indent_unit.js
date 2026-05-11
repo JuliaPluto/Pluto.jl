@@ -8,7 +8,7 @@
 export const detect_indent_unit = (doc, fallback) => {
     let tab_lines = 0
     let space_lines = 0
-    const max_lines = Math.min(doc.lines, 500)
+    const max_lines = Math.min(doc.lines, 20)
     for (let i = 1; i <= max_lines; i++) {
         const text = doc.line(i).text
         if (text[0] === "\t") tab_lines++

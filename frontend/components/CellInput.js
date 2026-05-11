@@ -228,9 +228,7 @@ export const LastRemoteCodeSetTimeFacet = Facet.define({
     compare: _.isEqual,
 })
 
-// Per-cell detected indent unit ("\t" or "    "). Re-detected on every doc
-// change; when the doc has no indented lines, we keep the previous value to
-// avoid flapping while the user is typing into an empty cell.
+// Per-cell detected indent unit ("\t" or "    "). Re-detected on every doc change.
 const indentUnitField = StateField.define({
     create: (state) => detect_indent_unit(state.doc, "\t"),
     update: (value, tr) => (tr.docChanged ? detect_indent_unit(tr.state.doc, value) : value),
