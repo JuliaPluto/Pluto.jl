@@ -195,6 +195,21 @@ export const OutputBody = ({ mime, body, cell_id, persist_js_state = false, last
         case "application/vnd.pluto.reactdomelement+object":
             return ReactDOMElement({ cell_id, ...body, persist_js_state, sanitize_html })
             break
+        case "application/vnd.pluto.divelement+object": {
+            // TODO: remove me in the future. @deprecate Does not need to be a breaking Pluto release, just sometime after July 2026
+            // Backwards-compat: statefiles produced by older Pluto versions still contain DivElement, see https://github.com/JuliaPluto/Pluto.jl/pull/3544
+            const attributes = {}
+            if (body?.style) attributes.style = body.style
+            if (body?.classname) attributes.class = body.classname
+            return ReactDOMElement({
+                cell_id,
+                tag: "div",
+                attributes,
+                children: body?.children ?? [],
+                persist_js_state,
+                sanitize_html,
+            })
+        }
         case "text/plain":
             if (body) {
                 return html`<div><${ANSITextOutput} body=${body} /></div>`
