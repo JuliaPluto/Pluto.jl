@@ -75,6 +75,7 @@ include("./display/syntax error.jl")
 include("./display/Exception.jl")
 include("./display/mime dance.jl")
 include("./display/tree viewer.jl")
+include("./display/ReactDOMElement.jl")
 
 
 include("./integrations.jl")
@@ -83,7 +84,6 @@ include("./ide features/docs.jl")
 include("./bonds.jl")
 include("./js/published_to_js.jl")
 include("./display/embed_display.jl")
-include("./display/ReactDOMElement.jl")
 include("./display/DivElement.jl")
 
 include("./js/jslink.jl")
