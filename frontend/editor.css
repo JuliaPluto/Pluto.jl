@@ -867,9 +867,9 @@ dialog.confirm-before-long-runtime {
     font-size: 0.9em;
     margin-block-end: 2rem;
     padding: 1em 1.2em;
-    background: hsl(0deg 0% 12.85%);
+    background: var(--confirm-runtime-bonus-bg);
     border-radius: 3px;
-    border-inline-start: 3px solid #636363;
+    border-inline-start: 3px solid var(--confirm-runtime-bonus-border);
 }
 
 .confirm-before-long-runtime .final button {
@@ -881,7 +881,7 @@ dialog.confirm-before-long-runtime {
 
 .confirm-before-long-runtime .final button.final-yes {
     background: var(--confirm-runtime-yes-bg);
-    color: #000000;
+    color: var(--confirm-runtime-yes-color);
     border-color: var(--confirm-runtime-yes-border);
     position: relative;
     overflow: hidden;
