@@ -57,6 +57,7 @@ import semver from "../imports/semver-es.js"
 import { ConfirmBeforeLongRuntime, maybe_abort_long_runtime } from "./ConfirmBeforeLongRuntime.js"
 import { detect_indent_unit } from "./CellInput/detect_indent_unit.js"
 import { Text } from "../imports/CodemirrorPlutoSetup.js"
+import { Settings } from "./Settings.js"
 
 // This is imported asynchronously - uncomment for development
 // import environment from "../common/Environment.js"
@@ -1782,6 +1783,7 @@ ${t("t_key_autosave_description")}`
                     <${BigPkgTerminal}
                         notebook=${notebook}
                     />
+                    <${Settings} />
                     ${this.props.preamble_element}
                     <${Main}>
                         <${Preamble}
@@ -1868,8 +1870,11 @@ ${t("t_key_autosave_description")}`
                     <${SlideControls} />
                     <footer>
                         <div id="info">
-                            <${LanguagePicker} />
-                            <a href="https://plutojl.org/en/docs/" target="_blank">${t("t_FAQ")}</a>
+                            <a href="#" onClick=${() => {
+                                window.dispatchEvent(new CustomEvent("pluto open settings"))
+                                console.log("yolo")
+                            }}>${t("t_footer_button_settings")}</a>
+                            <a href="https://plutojl.org/en/docs/" target="_blank">${t("t_footer_button_FAQ")}</a>
                             <span style="flex: 1 1 0%; min-width: 5ch;"></span>
                             <form id="feedback" action="#" method="post">
                                 <label for="opinion">${th("t_how_can_we_improve", {

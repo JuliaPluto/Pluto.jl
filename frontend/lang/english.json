@@ -93,6 +93,10 @@
     "t_edit_frontmatter": "Edit frontmatter",
     "t_start_presentation": "Start presentation",
     "t_close": "Close",
+    
+    "t_settings_title": "Settings",
+    "t_settings_lang_description": "User interface language",
+    
 
     "t_export_action_ellipsis": "Export...",
     "t_export_category_export": "export",
@@ -139,7 +143,8 @@
     "t_instant_feedback_ellipsis": "Instant feedback...",
     "t_instant_feedback_send": "Send",
     "t_how_can_we_improve": "🙋 How can we make {{pluto}} better?",
-    "t_FAQ": "FAQ",
+    "t_footer_button_settings": "Settings",
+    "t_footer_button_FAQ": "FAQ",
 
     "t_loading_cells": "Loading cells...",
     "t_reading_hidden_code": "👀 Reading hidden code",

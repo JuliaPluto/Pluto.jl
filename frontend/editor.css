@@ -851,6 +851,45 @@ dialog.export-html-dialog > div.final button {
     cursor: pointer;
 }
 
+dialog.psettings {
+    border-radius: 0.7rem;
+    width: min(34rem, 90vw);
+}
+
+.psettings label {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    cursor: pointer;
+    padding: 1em 0.7em;
+    border-radius: 0.7rem;
+    align-items: center;
+}
+
+.big-list-of-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.psettings input[type="checkbox"] {
+    font-size: 26px;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    /* scale: 1.7; */
+}
+
+.psettings label:hover {
+    background: #eee;
+}
+
+.psettings :is(h4, p) {
+    margin: 0;
+}
+
 dialog.confirm-before-long-runtime {
     color: var(--pluto-output-color);
     border-radius: 10px;
@@ -3443,10 +3482,10 @@ footer #info {
 /* LANGUAGE PICKER */
 
 .language-picker {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-inline-end: 1rem;
+    /* margin-inline-end: 1rem; */
     font-size: 0.75rem;
     flex: 0 2 auto;
 }
