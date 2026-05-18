@@ -22,7 +22,7 @@ import register from "../imports/PreactCustomElement.js"
 
 import { EditorState, EditorView, defaultHighlightStyle, syntaxHighlighting } from "../imports/CodemirrorPlutoSetup.js"
 
-import { pluto_syntax_colors_julia, ENABLE_CM_MIXED_PARSER } from "./CellInput.js"
+import { pluto_syntax_colors_julia } from "./CellInput.js"
 
 import hljs from "../imports/highlightjs.js"
 import { julia_mixed } from "./CellInput/mixedParsers.js"
@@ -30,6 +30,7 @@ import { julia } from "../imports/CodemirrorPlutoSetup.js"
 import { SafePreviewSanitizeMessage } from "./SafePreviewUI.js"
 import lodashLibrary from "../imports/lodash.js"
 import { t } from "../common/lang.js"
+import { get_settings } from "./Settings.js"
 
 const prettyAssignee = (assignee) =>
     assignee && assignee.startsWith("const ") ? html`<span style="color: var(--cm-color-keyword)">const</span> ${assignee.slice(6)}` : assignee
@@ -647,7 +648,7 @@ export let highlight = (code_element, language) => {
                         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
                         EditorState.tabSize.of(4),
                         // TODO Other languages possibly?
-                        ...(language === "julia" ? [ENABLE_CM_MIXED_PARSER ? julia_mixed() : julia()] : []),
+                        ...(language === "julia" ? [get_settings().CM_MIXED_PARSER ? julia_mixed() : julia()] : []),
                         EditorView.lineWrapping,
                         EditorView.editable.of(false),
                     ].filter((x) => x != null),

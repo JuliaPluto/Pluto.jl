@@ -67,37 +67,14 @@ import { AIContext } from "./AIContext.js"
 import { AiSuggestionPlugin } from "./CellInput/ai_suggestion.js"
 import { detect_indent_unit } from "./CellInput/detect_indent_unit.js"
 import { t } from "../common/lang.js"
-
-export const ENABLE_CM_MIXED_PARSER = window.localStorage.getItem("ENABLE_CM_MIXED_PARSER") === "true"
-export const ENABLE_CM_SPELLCHECK = window.localStorage.getItem("ENABLE_CM_SPELLCHECK") === "true"
-export const ENABLE_CM_AUTOCOMPLETE_ON_TYPE = (window.localStorage.getItem("ENABLE_CM_AUTOCOMPLETE_ON_TYPE") ?? "true") === "true"
-
-if (ENABLE_CM_MIXED_PARSER) {
-    console.log(`YOU ENABLED THE CODEMIRROR MIXED LANGUAGE PARSER
-Thanks! Awesome!
-Please let us know if you find any bugs...
-If enough people do this, we can make it the default parser.
-`)
-}
-
-// Added this so we can have people test the mixed parser, because I LIKE IT SO MUCH - DRAL
-// @ts-ignore
-window.PLUTO_TOGGLE_CM_MIXED_PARSER = (val = !ENABLE_CM_MIXED_PARSER) => {
-    window.localStorage.setItem("ENABLE_CM_MIXED_PARSER", String(val))
-    window.location.reload()
-}
+import { get_settings } from "./Settings.js"
 
 // @ts-ignore
-window.PLUTO_TOGGLE_CM_SPELLCHECK = (val = !ENABLE_CM_SPELLCHECK) => {
-    window.localStorage.setItem("ENABLE_CM_SPELLCHECK", String(val))
-    window.location.reload()
-}
-
+window.PLUTO_TOGGLE_CM_MIXED_PARSER = () => console.error("Use the Settings menu instead.")
 // @ts-ignore
-window.PLUTO_TOGGLE_CM_AUTOCOMPLETE_ON_TYPE = (val = !ENABLE_CM_AUTOCOMPLETE_ON_TYPE) => {
-    window.localStorage.setItem("ENABLE_CM_AUTOCOMPLETE_ON_TYPE", String(val))
-    window.location.reload()
-}
+window.PLUTO_TOGGLE_CM_SPELLCHECK = () => console.error("Use the Settings menu instead.")
+// @ts-ignore
+window.PLUTO_TOGGLE_CM_AUTOCOMPLETE_ON_TYPE = () => console.error("Use the Settings menu instead.")
 
 const common_style_tags = [
     { tag: tags.comment, color: "var(--cm-color-comment)", fontStyle: "italic", filter: "none" },
@@ -691,7 +668,7 @@ export const CellInput = ({
                     EditorState.tabSize.of(4),
                     indentUnitField,
                     indentUnit.from(indentUnitField),
-                    ...(ENABLE_CM_MIXED_PARSER
+                    ...(get_settings().CM_MIXED_PARSER
                         ? [
                               julia_mixed(),
                               markdown({
@@ -744,7 +721,7 @@ export const CellInput = ({
                     keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, ...foldKeymap]),
                     placeholder(t("t_cell_input_placeholder")),
 
-                    EditorView.contentAttributes.of({ spellcheck: String(ENABLE_CM_SPELLCHECK) }),
+                    EditorView.contentAttributes.of({ spellcheck: String(get_settings().CM_SPELLCHECK) }),
 
                     EditorView.lineWrapping,
                     awesome_line_wrapping,

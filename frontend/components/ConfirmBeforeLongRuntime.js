@@ -10,9 +10,8 @@ import { pretty_long_time } from "./EditOrRunButton.js"
 import { and, ctrl_or_cmd_name } from "../common/KeyboardShortcuts.js"
 import { useMillisSinceTruthy } from "./RunArea.js"
 import { cl } from "../common/ClassTable.js"
+import { get_settings } from "./Settings.js"
 
-// const long_threshold_seconds = 40
-const long_threshold_seconds = 120
 const auto_accept_after_seconds = 20
 
 /**
@@ -39,7 +38,8 @@ export const maybe_abort_long_runtime = async (notebook, cell_ids) => {
     const runtimes = [...found_downstream].map((id) => (notebook.cell_results[id]?.runtime ?? 0) / 1e9)
 
     const total_runtime = _.sum(runtimes)
-    if (total_runtime > long_threshold_seconds) {
+    console.log({ total_runtime, threshold: get_settings().CONFIRM_LONG_RUNTIMES_SECONDS, settings: get_settings() })
+    if (total_runtime > get_settings().CONFIRM_LONG_RUNTIMES_SECONDS) {
         const confirmed = await new Promise((resolve) => {
             window.dispatchEvent(
                 new CustomEvent("confirm before long runtime", {

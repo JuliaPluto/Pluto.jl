@@ -30,6 +30,7 @@ export const LanguagePicker = () => {
     return html`
         <div class="language-picker">
             <select
+                class="language-picker"
                 id="language-select"
                 aria-label=${t("t_language_picker_description")}
                 title=${t("t_language_picker_description")}
