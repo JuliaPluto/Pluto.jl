@@ -44,18 +44,19 @@ const integrations = Integration[
                 end
                 if isdefined(AbstractPlutoDingetjes.Display, :ReactDOMElement)
                     supported!(AbstractPlutoDingetjes.Display.ReactDOMElement)
+                    
+                    function get_react_child_key(i, value::AbstractPlutoDingetjes.Display.ReactDOMElement)
+                        found = get(value.attributes, "key", get(value.attributes, :key, nothing))
+                        if found === nothing
+                            i
+                        elseif found isa Union{Symbol,Int64}
+                            found
+                        else
+                            Symbol(string(found))
+                        end
+                    end
                 end
-            end
-            
-            function get_react_child_key(i, value::AbstractPlutoDingetjes.Display.ReactDOMElement)
-                found = get(value.attributes, "key", get(value.attributes, :key, nothing))
-                if found === nothing
-                    i
-                elseif found isa Union{Symbol,Int64}
-                    found
-                else
-                    Symbol(string(found))
-                end
+                
             end
         end,
     ),
