@@ -48,7 +48,7 @@ import { markdown, html as htmlLang, javascript, sqlLang, python, julia_mixed } 
 import { julia } from "../imports/CodemirrorPlutoSetup.js"
 import { pluto_autocomplete } from "./CellInput/pluto_autocomplete.js"
 import { NotebookpackagesFacet, pkgBubblePlugin } from "./CellInput/pkg_bubble_plugin.js"
-import { awesome_line_wrapping, get_start_tabs } from "./CellInput/awesome_line_wrapping.js"
+import { ARBITRARY_INDENT_LINE_WRAP_LIMIT, awesome_line_wrapping, get_leading_indent } from "./CellInput/awesome_line_wrapping.js"
 import { cell_movement_plugin, prevent_holding_a_key_from_doing_things_across_cells } from "./CellInput/cell_movement_plugin.js"
 import { pluto_paste_plugin } from "./CellInput/pluto_paste_plugin.js"
 import { bracketMatching } from "./CellInput/block_matcher_plugin.js"
@@ -1130,17 +1130,29 @@ const InputContextMenuItem = ({ contents, title, onClick, setOpen, tag }) =>
         </button>
     </li>`
 
+const generate_fake_deco_indent_text = (width) => {
+    const tab_size = 4
+    const max_indent_ch = ARBITRARY_INDENT_LINE_WRAP_LIMIT * tab_size
+    if (width <= max_indent_ch) return " ".repeat(width)
+
+    const left = width - max_indent_ch
+    return " ".repeat(max_indent_ch) + "⇥ ".repeat(Math.floor(left / 4)) + " ".repeat(left % 4)
+}
+
 const StaticCodeMirrorFaker = ({ value }) => {
+    const tab_size = 4
     const lines = value.split("\n").map((line, i) => {
-        const start_tabs = get_start_tabs(line)
+        const { text: indent_text, width: indent_width } = get_leading_indent(line, tab_size)
+        const max_indent_ch = ARBITRARY_INDENT_LINE_WRAP_LIMIT * tab_size
+        const offset = Math.min(indent_width, max_indent_ch)
 
         const tabbed_line =
-            start_tabs.length == 0
+            indent_text.length == 0
                 ? line
-                : html`<span class="awesome-wrapping-plugin-the-tabs"><span class="ͼo">${start_tabs}</span></span
-                      >${line.substring(start_tabs.length)}`
+                : html`<span class="awesome-wrapping-plugin-the-tabs"><span class="ͼo">${generate_fake_deco_indent_text(indent_width)}</span></span
+                      >${line.substring(indent_text.length)}`
 
-        return html`<div class="awesome-wrapping-plugin-the-line cm-line" style="--indented: ${4 * start_tabs.length}ch;">
+        return html`<div class="awesome-wrapping-plugin-the-line cm-line" style="--indented: ${offset}ch;">
             ${line.length === 0 ? html`<br />` : tabbed_line}
         </div>`
     })
