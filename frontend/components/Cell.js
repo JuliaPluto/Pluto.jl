@@ -1,4 +1,4 @@
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html, useState, useEffect, useMemo, useRef, useContext, useLayoutEffect, useErrorBoundary, useCallback } from "../imports/Preact.js"
 
 import { CellOutput } from "./CellOutput.js"

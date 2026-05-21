@@ -118,7 +118,7 @@
     "t_export_card_static_html_description": "Notatnik w postaci statycznego pliku <b>.html</b>.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Notatnik w postaci pliku <b>.pdf</b>.",
-    "t_export_card_record": "Nagraj <em>(podgląd)</em>",
+    "t_export_card_record": "Nagraj ",
     "t_export_card_record_description": "Przechwyć notatnik z wprowadzanymi zmianami.",
     "t_export_card_pride_month_message": "Przyszłość ma więcej kolorów niż tęcza po LSD!",
 

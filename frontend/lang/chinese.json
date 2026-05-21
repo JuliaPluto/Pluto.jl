@@ -96,7 +96,7 @@
     "t_export_card_static_html_description": "用于您的网页或在线共享的 <b>.html</b> 文件。",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "用于打印或电子邮件发送的静态 <b>.pdf</b> 文件。",
-    "t_export_card_record": "录制 <em>(预览)</em>",
+    "t_export_card_record": "录制 ",
     "t_export_card_record_description": "录制整个笔记本以及您所做的任何更改。",
     "t_export_card_pride_month_message": "未来是<strong>酷儿</strong>的！",
     "t_save_notebook_ellipsis": "保存笔记本...",

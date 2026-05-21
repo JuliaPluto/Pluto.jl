@@ -99,7 +99,7 @@
     "t_export_card_static_html_description": "Soubor <b>.html</b> pro tvojí webovou stránku nebo pro sdílení online.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Statické <b>.pdf</b> pro tisk nebo e-mail.",
-    "t_export_card_record": "Spustit záznam <em>(preview)</em>",
+    "t_export_card_record": "Spustit záznam ",
     "t_export_card_record_description": "Spustit záznam celého sešitu a všech změn, které provádíš.",
     "t_export_card_pride_month_message": "Budoucnost je <strong>queer</strong>!",
 

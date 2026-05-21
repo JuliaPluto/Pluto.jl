@@ -8,7 +8,7 @@ The MIMEs that Pluto supports, in order of how much I like them.
 
 `text/plain` should always match - the difference between `show(::IO, ::MIME"text/plain", x)` and `show(::IO, x)` is an unsolved mystery.
 """
-const allmimes = MIME[MIME"application/vnd.pluto.table+object"(); MIME"application/vnd.pluto.divelement+object"(); MIME"text/html"(); imagemimes; MIME"application/vnd.pluto.tree+object"(); MIME"text/latex"(); MIME"text/plain"()]
+const allmimes = MIME[MIME"application/vnd.pluto.table+object"(); MIME"application/vnd.pluto.reactdomelement+object"(); MIME"text/html"(); imagemimes; MIME"application/vnd.pluto.tree+object"(); MIME"text/latex"(); MIME"text/plain"()]
 
 
 "Return a `(String, Any)` tuple containing function output as the second entry."
@@ -86,8 +86,8 @@ function show_richest(io::IO, @nospecialize(x))::Tuple{<:Any,MIME}
             show(io, MIME"text/plain"(), x)
             nothing, MIME"text/plain"()
         end
-    elseif mime isa MIME"application/vnd.pluto.divelement+object"
-        tree_data(x, io), mime
+    elseif mime isa MIME"application/vnd.pluto.reactdomelement+object"
+        reactdom_data(x, io), mime
     elseif mime ∈ imagemimes
         show(io, mime, x)
         nothing, mime

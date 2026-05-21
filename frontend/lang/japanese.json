@@ -96,7 +96,7 @@
     "t_export_card_static_html_description": "<b>.html</b>ファイルとして出力します。",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "<b>.pdf</b>ファイルとして出力します。",
-    "t_export_card_record": "録画<em>(ベータ版)</em>",
+    "t_export_card_record": "録画",
     "t_export_card_record_description": "ノートブックの画面録画をします。",
     "t_export_card_pride_month_message": "",
     "t_save_notebook_ellipsis": "セーブする",

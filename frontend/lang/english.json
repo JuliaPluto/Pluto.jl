@@ -108,7 +108,7 @@
     "t_export_card_static_html_description": "An <b>.html</b> file for your web page, or to share online.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "A static <b>.pdf</b> file for print or email.",
-    "t_export_card_record": "Record <em>(preview)</em>",
+    "t_export_card_record": "Record ",
     "t_export_card_record_description": "Capture the entire notebook, and any changes you make.",
     "t_export_card_pride_month_message": "The future is <strong>queer</strong>!",
 

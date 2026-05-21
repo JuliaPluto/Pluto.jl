@@ -1,5 +1,5 @@
 import { syntaxTree, StateField, NodeWeakMap, Text } from "../../imports/CodemirrorPlutoSetup.js"
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 
 const VERBOSE = false
 

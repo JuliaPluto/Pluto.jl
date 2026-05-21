@@ -254,7 +254,7 @@
         --confirm-runtime-button-bg: #f4f4f4;
         --confirm-runtime-button-border: #c1c1c1;
         --confirm-runtime-yes-bg: black;
-        --confirm-runtime-yes-color: #eaeaea;
+        --confirm-runtime-yes-color: #fff;
         --confirm-runtime-yes-border: #9b9b9b;
         --confirm-runtime-yes-progress: linear-gradient(90deg, black, #757575);
     }

@@ -2,7 +2,7 @@ import { trailingslash } from "./Binder.js"
 import { plutohash_arraybuffer, debounced_promises, base64url_arraybuffer } from "./PlutoHash.js"
 import { pack, unpack } from "./MsgPack.js"
 import immer from "../imports/immer.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 const assert_response_ok = (/** @type {Response} */ r) => (r.ok ? r : Promise.reject(r))
 

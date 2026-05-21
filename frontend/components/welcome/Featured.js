@@ -1,4 +1,4 @@
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { html, useEffect, useState } from "../../imports/Preact.js"
 import register from "../../imports/PreactCustomElement.js"
 import { FeaturedCard } from "./FeaturedCard.js"

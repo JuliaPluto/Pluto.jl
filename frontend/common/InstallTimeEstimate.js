@@ -1,5 +1,5 @@
 import { useEffect, useState } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 const loading_times_url = `https://julia-loading-times-test.netlify.app/pkg_load_times.csv`
 const package_list_url = `https://julia-loading-times-test.netlify.app/top_packages_sorted_with_deps.txt`

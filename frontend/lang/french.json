@@ -98,7 +98,7 @@
     "t_export_card_static_html_description": "Un fichier <b>.html</b> statique pour ta page web, ou pour partager en ligne.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Un <b>.pdf</b> statique pour imprimer ou pour un courriel.",
-    "t_export_card_record": "Enregistrer <em>(aperçu)</em>",
+    "t_export_card_record": "Enregistrer ",
     "t_export_card_record_description": "Capturer tout le notebook, et tous les changements réalisés.",
     "t_export_card_pride_month_message": "Le futur est <strong>queer</strong> !",
     "t_save_notebook_ellipsis": "Sauvegarder le notebook...",

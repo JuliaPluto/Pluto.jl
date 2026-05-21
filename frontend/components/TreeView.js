@@ -5,6 +5,7 @@ import { PlutoActionsContext } from "../common/PlutoContext.js"
 import { useEventListener } from "../common/useEventListener.js"
 import { is_noop_action } from "../common/SliderServerClient.js"
 import { t } from "../common/lang.js"
+import { SafePreviewSanitizeMessage } from "./SafePreviewUI.js"
 
 // this is different from OutputBody because:
 // it does not wrap in <div>. We want to do that in OutputBody for reasons that I forgot (feel free to try and remove it), but we dont want it here
@@ -249,9 +250,22 @@ export const TableView = ({ mime, body, cell_id, persist_js_state, sanitize_html
     </table>`
 }
 
-export let DivElement = ({ cell_id, style, classname, children, persist_js_state = false, sanitize_html = true }) => {
-    const mimepair_output = (pair) =>
-        html`<${SimpleOutputBody} cell_id=${cell_id} mime=${pair[1]} body=${pair[0]} persist_js_state=${persist_js_state} sanitize_html=${sanitize_html} />`
+export let ReactDOMElement = ({ cell_id, tag, attributes, children, persist_js_state = false, sanitize_html = true }) => {
+    if (sanitize_html) {
+        return html`<div dangerouslySetInnerHTML=${SafePreviewSanitizeMessage}></div>`
+    }
+    const mimepair_output = (pair) => {
+        const [body, mime] = pair
+        const key = mime === "application/vnd.pluto.reactdomelement+object" ? body?.attributes?.key : undefined
+        return html`<${SimpleOutputBody}
+            key=${key}
+            cell_id=${cell_id}
+            mime=${mime}
+            body=${body}
+            persist_js_state=${persist_js_state}
+            sanitize_html=${sanitize_html}
+        />`
+    }
 
-    return html`<div style=${style} class=${classname}>${children.map(mimepair_output)}</div>`
+    return html`<${tag ?? "div"} ...${attributes ?? {}}>${(children ?? []).map(mimepair_output)}<//>`
 }

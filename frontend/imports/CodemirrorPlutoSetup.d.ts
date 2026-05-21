@@ -400,7 +400,7 @@ declare class SelectionRange {
     /**
     Extend this range to cover at least `from` to `to`.
     */
-    extend(from: number, to?: number): SelectionRange;
+    extend(from: number, to?: number, assoc?: number): SelectionRange;
     /**
     Compare this range to another range.
     */
@@ -488,7 +488,7 @@ declare class EditorSelection {
     /**
     Create a selection range.
     */
-    static range(anchor: number, head: number, goalColumn?: number, bidiLevel?: number): SelectionRange;
+    static range(anchor: number, head: number, goalColumn?: number, bidiLevel?: number, assoc?: number): SelectionRange;
 }
 
 type FacetConfig<Input, Output> = {
@@ -1258,9 +1258,9 @@ declare class EditorState {
     A facet used to register [language
     data](https://codemirror.net/6/docs/ref/#state.EditorState.languageDataAt) providers.
     */
-    static languageData: Facet<(state: EditorState, pos: number, side: 0 | 1 | -1) => readonly {
+    static languageData: Facet<(state: EditorState, pos: number, side: -1 | 0 | 1) => readonly {
         [name: string]: any;
-    }[], readonly ((state: EditorState, pos: number, side: 0 | 1 | -1) => readonly {
+    }[], readonly ((state: EditorState, pos: number, side: -1 | 0 | 1) => readonly {
         [name: string]: any;
     }[])[]>;
     /**
@@ -1875,7 +1875,7 @@ declare abstract class WidgetType {
     couldn't (in which case the widget will be redrawn). The default
     implementation just returns false.
     */
-    updateDOM(dom: HTMLElement, view: EditorView): boolean;
+    updateDOM(dom: HTMLElement, view: EditorView, from: this): boolean;
     /**
     The estimated height this widget will have, to be used when
     estimating the height of content that hasn't been drawn. May
@@ -2017,6 +2017,13 @@ interface BlockWrapperSpec {
     attributes?: {
         [key: string]: string;
     };
+    /**
+    When multiple overlapping block wrappers are produced by the
+    same source, this determines their relative precedence. Lower
+    rank wrappers are nested inside higher-rank ones. Should be
+    a number between 0 and 100.
+    */
+    rank?: number;
 }
 /**
 A block wrapper defines a DOM node that wraps lines or other block
@@ -2025,8 +2032,6 @@ widget that starts inside its range, including blocks starting
 directly at `from` but not including `to`.
 */
 declare class BlockWrapper extends RangeValue {
-    readonly tagName: string;
-    readonly attributes: Attrs;
     private constructor();
     eq(other: RangeValue): boolean;
     /**
@@ -2055,7 +2060,7 @@ declare class ScrollTarget {
     readonly yMargin: number;
     readonly xMargin: number;
     readonly isSnapshot: boolean;
-    constructor(range: SelectionRange, y?: ScrollStrategy, x?: ScrollStrategy, yMargin?: number, xMargin?: number, isSnapshot?: boolean);
+    constructor(range: SelectionRange, y: ScrollStrategy, x: ScrollStrategy, yMargin: number, xMargin: number, isSnapshot?: boolean);
     map(changes: ChangeDesc): ScrollTarget;
     clip(state: EditorState): ScrollTarget;
 }
@@ -2815,7 +2820,7 @@ declare class EditorView {
     setTabFocusMode(to?: boolean | number): void;
     /**
     Facet to add a [style
-    module](https://github.com/marijnh/style-mod#documentation) to
+    module](https://code.haverbeke.berlin/marijn/style-mod#documentation) to
     an editor view. The view will ensure that the module is
     mounted in its [document
     root](https://codemirror.net/6/docs/ref/#view.EditorView.constructor^config.root).
@@ -2994,16 +2999,30 @@ declare class EditorView {
     */
     static bidiIsolatedRanges: Facet<DecorationSet | ((view: EditorView) => DecorationSet), readonly (DecorationSet | ((view: EditorView) => DecorationSet))[]>;
     /**
+    Can be used to specify the distance that scrolling cursor into
+    view keeps it away from the sides of the editor, either as a
+    single pixel number or two different values for the different
+    axes. Defaults to 5 pixels on both axes.
+    */
+    static cursorScrollMargin: Facet<number | {
+        x: number;
+        y: number;
+    }, {
+        x: number;
+        y: number;
+    }>;
+    /**
     Facet that allows extensions to provide additional scroll
     margins (space around the sides of the scrolling element that
     should be considered invisible). This can be useful when the
     plugin introduces elements that cover part of that element (for
-    example a horizontally fixed gutter).
+    example a horizontally fixed gutter). Not to be confused with
+    [`cursorScrollMargin`](https://codemirror.net/6/docs/ref/#view.EditorView^cursorScrollMargin).
     */
     static scrollMargins: Facet<(view: EditorView) => Partial<Rect> | null, readonly ((view: EditorView) => Partial<Rect> | null)[]>;
     /**
     Create a theme extension. The first argument can be a
-    [`style-mod`](https://github.com/marijnh/style-mod#documentation)
+    [`style-mod`](https://code.haverbeke.berlin/marijn/style-mod#documentation)
     style spec providing the styles for the theme. These will be
     prefixed with a generated class for the style.
     
@@ -3205,6 +3224,12 @@ type SelectionConfig = {
     true.
     */
     drawRangeCursor?: boolean;
+    /**
+    Because hiding the cursor also hides the selection handles in
+    the iOS browser, when this is enabled (the default), the
+    extension draws handles on the side of the selection in iOS.
+    */
+    iosSelectionHandles?: boolean;
 };
 /**
 Returns an extension that hides the browser's native selection and
@@ -8252,7 +8277,9 @@ declare class Chunk {
     /**
     The end of the chunk in document A. This is equal to `fromA`
     when the chunk covers no lines in document A, or is one unit
-    past the end of the last line in the chunk if it does.
+    past the end of the last line in the chunk if it does. (Note
+    that this may point outside the document if the chunk ends at
+    the end of the last line. See also `endA`.)
     */
     readonly toA: number;
     /**
@@ -8282,7 +8309,9 @@ declare class Chunk {
     /**
     The end of the chunk in document A. This is equal to `fromA`
     when the chunk covers no lines in document A, or is one unit
-    past the end of the last line in the chunk if it does.
+    past the end of the last line in the chunk if it does. (Note
+    that this may point outside the document if the chunk ends at
+    the end of the last line. See also `endA`.)
     */
     toA: number, 
     /**

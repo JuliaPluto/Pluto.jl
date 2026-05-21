@@ -4,7 +4,7 @@ import { RunLocalButton, BinderButton } from "../EditOrRunButton.js"
 import { start_local } from "../../common/RunLocal.js"
 import { BackendLaunchPhase, start_binder } from "../../common/Binder.js"
 import immer, { applyPatches, produceWithPatches } from "../../imports/immer.js"
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { open_pluto_popup } from "../../common/open_pluto_popup.js"
 import { th } from "../../common/lang.js"
 

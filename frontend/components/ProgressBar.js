@@ -1,5 +1,5 @@
 import { t } from "../common/lang.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html, useContext, useEffect, useMemo, useState } from "../imports/Preact.js"
 import { useDelayedTruth } from "./BottomRightPanel.js"
 import { scroll_cell_into_view } from "./Scroller.js"

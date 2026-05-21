@@ -100,7 +100,7 @@
     "t_export_card_static_html_description": "Een <b>.html</b>-bestand voor je site, of om te delen.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Een statisch <b>.pdf</b>-bestand om the printen of e-mailen.",
-    "t_export_card_record": "Opname <em>(bèta)</em>",
+    "t_export_card_record": "Opname ",
     "t_export_card_record_description": "Film de hele notebook, en jouw interacties.",
     "t_export_card_pride_month_message": "De toekomst is <strong>queer</strong>!",
     "t_save_notebook_ellipsis": "Notebook opslaan...",

@@ -1,7 +1,5 @@
 // @ts-ignore
-import AnsiUpPackage from "https://cdn.jsdelivr.net/npm/ansi_up@5.1.0/+esm"
-// needs .default a second time, weird
-const AnsiUp = AnsiUpPackage.default
+import { AnsiUp } from "https://cdn.jsdelivr.net/npm/ansi_up@6.0.6/+esm"
 
 export const ansi_to_html = (ansi, { use_classes = true } = {}) => {
     const ansi_up = new AnsiUp()

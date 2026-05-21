@@ -1,4 +1,4 @@
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html, useContext, useEffect, useMemo, useState } from "../imports/Preact.js"
 
 import { in_textarea_or_input } from "../common/KeyboardShortcuts.js"

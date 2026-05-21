@@ -1,4 +1,4 @@
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { EditorView, syntaxTree, Decoration, ViewUpdate, ViewPlugin, Facet, EditorState } from "../../imports/CodemirrorPlutoSetup.js"
 import { PkgStatusMark, PkgActivateMark } from "../PkgStatusMark.js"
 import { html } from "../../imports/Preact.js"
@@ -90,9 +90,6 @@ function find_import_statements({ state, from, to }) {
                 }
 
                 things_to_return.push(item)
-
-                // This is just for show... might delete it later
-                if (currently_using_or_import === "using" && !currently_selected_import) things_to_return.push({ ...item, type: "implicit_using" })
             }
 
             if (go_to_parent_afterwards) {
@@ -146,29 +143,6 @@ function pkg_decorations(view, { pluto_actions, notebook_id, nbpkg }) {
                         side: 1,
                     })
                     return deco.range(thing.to)
-                } else if (thing.type === "implicit_using") {
-                    if (thing.name === "HypertextLiteral") {
-                        let deco = Decoration.widget({
-                            widget: new ReactWidget(
-                                html`<span style=${{ position: "relative" }}>
-                                    <div
-                                        style=${{
-                                            position: `absolute`,
-                                            display: `inline`,
-                                            left: 0,
-                                            whiteSpace: `nowrap`,
-                                            opacity: 0.3,
-                                            pointerEvents: `none`,
-                                        }}
-                                    >
-                                        : @htl, @htl_str
-                                    </div>
-                                </span>`
-                            ),
-                            side: 1,
-                        })
-                        return deco.range(thing.to)
-                    }
                 }
             })
         })

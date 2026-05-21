@@ -4,7 +4,7 @@ import DOMPurify from "../imports/DOMPurify.js"
 import { ansi_to_html } from "../imports/AnsiUp.js"
 
 import { ErrorMessage, ParseError } from "./ErrorMessage.js"
-import { TreeView, TableView, DivElement } from "./TreeView.js"
+import { TreeView, TableView, ReactDOMElement } from "./TreeView.js"
 
 import {
     add_bonds_disabled_message_handler,
@@ -28,7 +28,7 @@ import hljs from "../imports/highlightjs.js"
 import { julia_mixed } from "./CellInput/mixedParsers.js"
 import { julia } from "../imports/CodemirrorPlutoSetup.js"
 import { SafePreviewSanitizeMessage } from "./SafePreviewUI.js"
-import lodashLibrary from "../imports/lodash.js"
+import lodashLibrary from "../imports/lodash-es.js"
 import { t } from "../common/lang.js"
 import { get_settings } from "./Settings.js"
 
@@ -193,9 +193,24 @@ export const OutputBody = ({ mime, body, cell_id, persist_js_state = false, last
         case "application/vnd.pluto.stacktrace+object":
             return html`<div><${ErrorMessage} cell_id=${cell_id} ...${body} /></div>`
             break
-        case "application/vnd.pluto.divelement+object":
-            return DivElement({ cell_id, ...body, persist_js_state, sanitize_html })
+        case "application/vnd.pluto.reactdomelement+object":
+            return ReactDOMElement({ cell_id, ...body, persist_js_state, sanitize_html })
             break
+        case "application/vnd.pluto.divelement+object": {
+            // TODO: remove me in the future. @deprecate Does not need to be a breaking Pluto release, just sometime after July 2026
+            // Backwards-compat: statefiles produced by older Pluto versions still contain DivElement, see https://github.com/JuliaPluto/Pluto.jl/pull/3544
+            const attributes = {}
+            if (body?.style) attributes.style = body.style
+            if (body?.classname) attributes.class = body.classname
+            return ReactDOMElement({
+                cell_id,
+                tag: "div",
+                attributes,
+                children: body?.children ?? [],
+                persist_js_state,
+                sanitize_html,
+            })
+        }
         case "text/plain":
             if (body) {
                 return html`<div><${ANSITextOutput} body=${body} /></div>`

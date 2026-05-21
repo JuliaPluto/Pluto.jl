@@ -97,7 +97,7 @@
     "t_export_card_static_html_description": "En <b>.html</b>-fil til din webside eller til at dele online.",
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "En statisk <b>.pdf</b>-fil til print eller e-mail.",
-    "t_export_card_record": "Optag <em>(preview)</em>",
+    "t_export_card_record": "Optag ",
     "t_export_card_record_description": "Optag hele notebooken og alle ændringer, du laver.",
     "t_export_card_pride_month_message": "Fremtiden er <strong>queer</strong>!",
     "t_save_notebook_ellipsis": "Gem notebook...",

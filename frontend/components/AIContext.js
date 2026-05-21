@@ -1,4 +1,4 @@
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html, useState, useRef, useContext } from "../imports/Preact.js"
 
 import { cl } from "../common/ClassTable.js"

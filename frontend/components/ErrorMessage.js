@@ -3,7 +3,7 @@ import { html, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState
 import { PlutoActionsContext } from "../common/PlutoContext.js"
 import { highlight } from "./CellOutput.js"
 import { PkgTerminalView } from "./PkgTerminalView.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { open_bottom_right_panel } from "./BottomRightPanel.js"
 import { ansi_to_html } from "../imports/AnsiUp.js"
 import { FixWithAIButton } from "./FixWithAIButton.js"

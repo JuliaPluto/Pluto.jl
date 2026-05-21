@@ -1,6 +1,6 @@
 import { Facet, ViewPlugin, Decoration, EditorView } from "../../imports/CodemirrorPlutoSetup.js"
 import { ctrl_or_cmd_name, has_ctrl_or_cmd_pressed } from "../../common/KeyboardShortcuts.js"
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { ScopeStateField } from "./scopestate_statefield.js"
 
 /**
