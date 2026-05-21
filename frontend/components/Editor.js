@@ -124,7 +124,7 @@ const statusmap = (/** @type {EditorState} */ state, /** @type {LaunchParameters
     recording_waiting_to_start: state.recording_waiting_to_start,
     is_recording: state.is_recording,
     isolated_cell_view: launch_params.isolated_cell_ids != null && launch_params.isolated_cell_ids.length > 0,
-    sanitize_html: state.notebook.process_status === ProcessStatus.waiting_for_permission,
+    sanitize_html: state.notebook.process_status === ProcessStatus.waiting_for_permission || state.static_preview,
 })
 
 const first_true_key = (obj) => {
