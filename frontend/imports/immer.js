@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { produce as immer, produceWithPatches, applyPatches, enablePatches, setAutoFreeze } from "https://cdn.jsdelivr.net/npm/immer@10.1.3/dist/immer.mjs"
+import { produce as immer, produceWithPatches, applyPatches, enablePatches, setAutoFreeze } from "https://cdn.jsdelivr.net/npm/immer@11.1.8/dist/immer.mjs"
 
 // note that on the previous version, we used `import immer, { produceWithPatches, ... } from "https://cdn.jsdelivr.net/npm/immer@8.0.0/dist/immer.esm.js"`
 // the `immer` variable was actually shadowing the `produce` function on the previously used version

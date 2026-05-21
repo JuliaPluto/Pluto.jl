@@ -1,4 +1,4 @@
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { html, useEffect, useState, useRef } from "../../imports/Preact.js"
 import * as preact from "../../imports/Preact.js"
 

@@ -1,6 +1,6 @@
 import { html, useRef, useLayoutEffect, useState, useEffect, useCallback, useContext } from "../imports/Preact.js"
 import { has_ctrl_or_cmd_pressed } from "../common/KeyboardShortcuts.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import semver from "../imports/semver-es.js"
 
 import {

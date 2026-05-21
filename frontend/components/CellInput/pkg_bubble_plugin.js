@@ -1,4 +1,4 @@
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { EditorView, syntaxTree, Decoration, ViewUpdate, ViewPlugin, Facet, EditorState } from "../../imports/CodemirrorPlutoSetup.js"
 import { PkgStatusMark, PkgActivateMark } from "../PkgStatusMark.js"
 import { html } from "../../imports/Preact.js"

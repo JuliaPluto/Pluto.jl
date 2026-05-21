@@ -1,7 +1,7 @@
 import { html, Component } from "../imports/Preact.js"
 import * as preact from "../imports/Preact.js"
 import immer, { applyPatches, produceWithPatches } from "../imports/immer.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 import { empty_notebook_state, is_editor_embedded_inside_editor, set_disable_ui_css } from "../editor.js"
 import { create_pluto_connection, ws_address_from_base } from "../common/PlutoConnection.js"

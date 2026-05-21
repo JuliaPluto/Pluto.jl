@@ -1,5 +1,5 @@
 import { html, Component } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 /**
  * @typedef DropRulerProps

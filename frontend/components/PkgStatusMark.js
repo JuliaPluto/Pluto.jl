@@ -1,6 +1,6 @@
 import { t, th } from "../common/lang.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html, useEffect, useState } from "../imports/Preact.js"
 import { InlineIonicon } from "./PlutoLandUpload.js"
 

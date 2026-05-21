@@ -1,4 +1,4 @@
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { createSilentAudio, create_recorder } from "../common/AudioRecording.js"
 import { html, useEffect, useState, useRef, useCallback, useLayoutEffect, useMemo } from "../imports/Preact.js"
 import { AudioPlayer } from "./AudioPlayer.js"

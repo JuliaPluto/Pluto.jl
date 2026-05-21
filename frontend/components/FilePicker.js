@@ -14,7 +14,7 @@ import {
 } from "../imports/CodemirrorPlutoSetup.js"
 import { guess_notebook_location } from "../common/NotebookLocationFromURL.js"
 import { tab_help_plugin } from "./CellInput/tab_help_plugin.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 let { autocompletion, completionKeymap } = autocomplete
 

@@ -1,5 +1,5 @@
 import { html, useState, useEffect, useLayoutEffect, useRef, useContext, useMemo } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 import { utf8index_to_ut16index } from "../common/UnicodeTools.js"
 import { PlutoActionsContext } from "../common/PlutoContext.js"

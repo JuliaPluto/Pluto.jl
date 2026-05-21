@@ -1,5 +1,5 @@
 import { html, useEffect, useState } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 //@ts-ignore
 import { useDialog } from "../common/useDialog.js"

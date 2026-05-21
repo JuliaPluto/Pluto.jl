@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@types/lodash-es": "^4.17.6",
+    "@types/lodash": "^4.17.24",
     "@types/semver": "^7.7.1"
   }
 }

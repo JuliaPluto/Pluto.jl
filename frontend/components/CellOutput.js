@@ -28,7 +28,7 @@ import hljs from "../imports/highlightjs.js"
 import { julia_mixed } from "./CellInput/mixedParsers.js"
 import { julia } from "../imports/CodemirrorPlutoSetup.js"
 import { SafePreviewSanitizeMessage } from "./SafePreviewUI.js"
-import lodashLibrary from "../imports/lodash.js"
+import lodashLibrary from "../imports/lodash-es.js"
 import { t } from "../common/lang.js"
 
 const prettyAssignee = (assignee) =>

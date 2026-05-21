@@ -47,7 +47,7 @@ We mix three CDNs depending on what each package ships:
 - `cdn.jsdelivr.net/npm/<pkg>@<ver>/+esm` — jsdelivr's auto-converted ESM build. Used for packages that don't ship native ESM. Sometimes needs `.default` twice (see `AnsiUp.js`).
 - `cdn.jsdelivr.net/npm/<pkg>@<ver>/<file>.mjs` — when the package already publishes a working ESM entry point (`immer`).
 - `cdn.jsdelivr.net/gh/<owner>/<repo>@<tag>/<file>` — for packages we publish ourselves or forks we maintain (`JuliaPluto/codemirror-pluto-setup`, `fonsp/msgpack-lite`, `highlightjs/cdn-release`). Tag must exist on GitHub.
-- `esm.sh/<pkg>@<ver>?pin=v<n>&target=es2020` — esm.sh's pre-bundled ESM with a `pin=` that freezes their build pipeline so the output doesn't shift under us. **Keep the `pin=` value** when bumping — only update it deliberately, after confirming the new pin still works. Used for `preact`, `htm`, `dompurify`, `semver`.
+- `esm.sh/<pkg>@<ver>?target=es2020` — esm.sh's pre-bundled ESM
 
 ## Per-file notes
 

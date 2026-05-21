@@ -1,6 +1,6 @@
 import { html, useRef, useLayoutEffect, useState, useEffect, useCallback } from "../imports/Preact.js"
 import { has_ctrl_or_cmd_pressed } from "../common/KeyboardShortcuts.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 import "https://cdn.jsdelivr.net/gh/fonsp/rebel-tag-input@1.0.6/lib/rebel-tag-input.mjs"
 

@@ -1,5 +1,5 @@
 import { html } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 
 // This file does not use i18next because of the following reasons:
 // - Depending on a library requires more maintenance.

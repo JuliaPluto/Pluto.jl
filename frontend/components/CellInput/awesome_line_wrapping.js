@@ -1,4 +1,4 @@
-import _ from "../../imports/lodash.js"
+import _ from "../../imports/lodash-es.js"
 import { StateField, EditorView, Decoration } from "../../imports/CodemirrorPlutoSetup.js"
 import { ReactWidget } from "./ReactWidget.js"
 import { html } from "../../imports/Preact.js"

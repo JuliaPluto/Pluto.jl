@@ -1,6 +1,6 @@
 import { t, th } from "../common/lang.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
-import _ from "../imports/lodash.js"
+import _ from "../imports/lodash-es.js"
 import { html } from "../imports/Preact.js"
 
 export const SafePreviewUI = ({ process_waiting_for_permission, risky_file_source, restart, warn_about_untrusted_code }) => {
