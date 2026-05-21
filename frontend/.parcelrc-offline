@@ -9,6 +9,7 @@
         "parcel-reporter-bundle-manifest"
     ],
     "transformers": {
+        "*.{ts,tsx}": ["@parcel/transformer-typescript-tsc"],
         "*.svg": [
             "...",
             "@parcel/transformer-inline"

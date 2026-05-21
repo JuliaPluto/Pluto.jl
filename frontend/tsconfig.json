@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "node16",
+    "lib": ["ES2021", "DOM"],
+    "allowJs": true,
+    "declaration": true,
+    "rootDir": ".",
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["./"]
+    }
+  },
+  "include": [
+    ".",
+    "standalone/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "components/CellInput/mixedParsers.js"]
+}

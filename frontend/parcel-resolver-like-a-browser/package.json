@@ -13,6 +13,7 @@
     "license": "ISC",
     "dependencies": {
         "@parcel/node-resolver-core": "^3.3.0",
-        "@parcel/plugin": "^2.0.0"
+        "@parcel/plugin": "^2.0.0",
+        "mkdirp": "^3.0.1"
     }
 }

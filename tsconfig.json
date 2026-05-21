@@ -15,5 +15,9 @@
         "noUncheckedIndexedAccess": true,
     },
     "include": ["frontend/**/*.js", "node_modules/**/*.js", "frontend/Desktop.d.ts"],
-    "exclude": ["frontend/components/CellInput/tests/"]
+    "exclude": [
+        "frontend/components/CellInput/tests/",
+        "frontend/standalone/**/*",
+        "frontend/parcel-resolver-like-a-browser/**/*"
+    ]
 }

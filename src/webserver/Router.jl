@@ -212,9 +212,19 @@ function http_router_for(session::ServerSession)
     end
     HTTP.register!(router, "POST", "/notebookupload", serve_notebookupload)
     
+    # Build/dev-only files that live under frontend/ in development checkouts but are
+    # never part of a shipped editor bundle. Refuse to serve them so a `Pluto.run!()`
+    # against a dev tree doesn't expose `tsconfig.json`, lockfiles, etc.
+    is_unservable_dev_file(name) =
+        name in ("tsconfig.json", "tsconfig.build.json", "package.json", "package-lock.json", ".parcelrc", ".parcelrc-offline")
+
     function serve_asset(request::HTTP.Request)
         uri = HTTP.URI(request.target)
-        filepath = project_relative_path(frontend_directory(), relpath(HTTP.unescapeuri(uri.path), "/"))
+        relative = relpath(HTTP.unescapeuri(uri.path), "/")
+        if is_unservable_dev_file(basename(relative))
+            return default_404_response(request)
+        end
+        filepath = project_relative_path(frontend_directory(), relative)
         asset_response(filepath; cacheable=should_cache(filepath))
     end
     HTTP.register!(router, "GET", "/**", serve_asset)

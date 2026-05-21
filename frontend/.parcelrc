@@ -8,6 +8,9 @@
         "...",
         "parcel-reporter-bundle-manifest"
     ],
+    "transformers": {
+        "*.{ts,tsx}": ["@parcel/transformer-typescript-tsc"]
+    },
     "optimizers": {
         "*.html": []
     }
