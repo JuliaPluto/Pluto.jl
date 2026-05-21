@@ -13,9 +13,26 @@ In dev the browser loads these files directly and the CDN URLs resolve over the 
 For most deps there are two files:
 
 - `Foo.js` — does `import … from "https://cdn.jsdelivr.net/…/foo@X.Y.Z/…"` and re-exports what we use. Tagged `// @ts-ignore` or `// @ts-nocheck` on the CDN import line so `tsc` doesn't try to fetch types from the URL.
-- `Foo.d.ts` — either hand-written types, or a one-liner like `import * as _ from "lodash-es"; export default _` that re-uses the npm package's types. The npm packages used purely for types live in `frontend/package.json` `devDependencies`; run `npm install` inside `frontend/` to populate them so your editor picks them up.
+- `Foo.d.ts` — either hand-written types, or a one-liner like `import _ from "lodash"; export default _` that re-uses the npm package's types. The npm packages used purely for types live in `frontend/package.json` `devDependencies`; run `npm install` inside `frontend/` to populate them so your editor picks them up.
 
-Filenames matter when the npm package name collides with our wrapper. `semver-es.js` is named that way on purpose — a file called `semver.js` would shadow the `semver` npm package in the `.d.ts` import. Keep that pattern when adding new deps.
+Filenames matter when the npm package name collides with our wrapper. `semver-es.js` and `lodash-es.js` are named that way on purpose — if the wrapper file were called `semver.js` or `lodash.js`, then the `.d.ts` stub would be unable to import from the real npm package:
+
+```ts
+// inside lodash.d.ts — BROKEN: TypeScript resolves "lodash" back to this very file
+import _ from "lodash"
+export default _
+```
+
+TypeScript's `checkJs` mode treats every included `.js` file as a module whose name is the bare filename (without extension). A file called `lodash.js` therefore *is* the `"lodash"` module as far as the type checker is concerned, and importing `"lodash"` inside `lodash.d.ts` creates a circular alias that TypeScript rejects with `TS2303: Circular definition of import alias`.
+
+The fix is to give the wrapper a name that doesn't match the npm package — the `-es` suffix is our convention for this:
+
+```
+lodash-es.js   ← wrapper; imports from cdn.jsdelivr.net/npm/lodash@…/+esm
+lodash-es.d.ts ← type stub; imports from "lodash" (@types/lodash) without any circularity
+```
+
+Keep this pattern when adding any new dep whose npm package name would collide with the wrapper filename.
 
 ## How to update a dependency
 
