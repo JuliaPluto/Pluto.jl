@@ -466,9 +466,11 @@ pluto-output kbd,
 kbd {
     letter-spacing: -0.7px;
     border: 1px solid var(--kbd-border-color);
-    border-radius: 3px;
+    box-shadow: 0px 1px 0px #00000008;
+    border-bottom-width: 2px;
+    border-radius: 5px;
     padding: 0.1em 0.4em;
-    font-family: var(--julia-mono-font-stack);
+    font-family: var(--system-fonts-mono);
     font-size: 0.9rem;
     font-weight: 600;
 }
