@@ -1,17 +1,13 @@
-import { html, useEffect, useMemo, useRef, useState } from "../imports/Preact.js"
-import _ from "../imports/lodash.js"
+import { html, useContext, useEffect, useMemo, useRef, useState } from "../imports/Preact.js"
+import _ from "../imports/lodash-es.js"
 
 //@ts-ignore
 import { useDialog } from "../common/useDialog.js"
 import { useEventListener } from "../common/useEventListener.js"
 import { t, th } from "../common/lang.js"
-import { downstream_recursive } from "../common/SliderServerClient.js"
-import { pretty_long_time } from "./EditOrRunButton.js"
-import { and, ctrl_or_cmd_name } from "../common/KeyboardShortcuts.js"
-import { useMillisSinceTruthy } from "./RunArea.js"
-import { cl } from "../common/ClassTable.js"
 import { LanguagePicker } from "./LanguagePicker.js"
-import { require } from "../common/SetupCellEnvironment.js"
+import { cl } from "../common/ClassTable.js"
+import { PlutoActionsContext } from "../common/PlutoContext.js"
 
 export const Settings = ({}) => useMemo(() => html`<${_Settings} />`, [])
 
@@ -26,6 +22,8 @@ const _Settings = ({}) => {
         },
         [open]
     )
+
+    const pluto_actions = useContext(PlutoActionsContext)
 
     const [require_reload, set_require_reload] = useState(false)
 
@@ -53,6 +51,8 @@ const _Settings = ({}) => {
 
     const settings = get_settings()
 
+    const [render, set_render] = useState(0)
+
     /**
      * @template {keyof typeof DEFAULT_SETTINGS} K
      * @param {K} key
@@ -64,7 +64,22 @@ const _Settings = ({}) => {
     }
 
     const make_checkbox = (/** @type {keyof typeof DEFAULT_SETTINGS} */ setting_name) =>
-        html`<input type="checkbox" checked=${!!settings[setting_name]} onChange=${(e) => set(setting_name, e.target.checked)} />`
+        html`<input
+            id=${`setting_${setting_name}`}
+            type="checkbox"
+            checked=${!!settings[setting_name]}
+            onChange=${(e) => set(setting_name, e.target.checked)}
+        />`
+
+    const make_textfield = (/** @type {keyof typeof DEFAULT_SETTINGS} */ setting_name, placeholder) =>
+        html`<input
+            id=${`setting_${setting_name}`}
+            value=${settings[setting_name] ?? ""}
+            onChange=${(e) => set(setting_name, e.target.value)}
+            placeholder=${placeholder}
+        />`
+
+    const ai_disabled_from_backend = pluto_actions.get_session_options?.()?.server?.enable_ai_editor_features === false
 
     const settings_ui = [
         {
@@ -75,7 +90,6 @@ const _Settings = ({}) => {
         {
             title: "Motivational stickers",
             description: "Show motivational stickers on error messages",
-            // TODO
             component: make_checkbox("MOTIVATIONAL_STICKERS"),
         },
         {
@@ -96,16 +110,21 @@ const _Settings = ({}) => {
                 max="99999"
             />`,
         },
-        {
-            title: "AI features",
-            description: html`Enable educational AI features <a href="https://plutojl.org/en/docs/ai-editor-features/" target="_blank">(learn more)</a>`,
-            // TODO
-            component: make_checkbox("AI_EDITOR_FEATURES"),
-        },
+        ...(ai_disabled_from_backend
+            ? []
+            : [
+                  {
+                      title: "AI features",
+                      description: html`Enable educational AI features
+                          <a href="https://plutojl.org/en/docs/ai-editor-features/" target="_blank">(learn more)</a>`,
+                      component: make_checkbox("AI_EDITOR_FEATURES"),
+                  },
+              ]),
         {
             title: "Dark mode",
             description: "Pluto will automatically adapt to your system theme (light/dark). Change your system theme to see the effect.",
             component: null,
+            style: "cursor: unset;",
         },
     ]
 
@@ -118,6 +137,12 @@ const _Settings = ({}) => {
                 <option value="4">4 spaces</option>
                 <option value="tab">Tab</option>
             </select>`,
+        },
+        {
+            title: "Code typeface",
+            description:
+                "Enter the name of a locally installed font to use for code editing. Note that other people will still read your notebook in the default font.",
+            component: make_textfield("CUSTOM_CODE_FONT_STACK", "JuliaMono"),
         },
         {
             title: "Nested syntax highlighting",
@@ -146,14 +171,16 @@ const _Settings = ({}) => {
         },
     ]
 
-    const render_setting = ({ title, description, component }) => html`
-        <label>
-            <setting-label>
-                ${title ? html`<h4>${t(title)}</h4>` : null} ${typeof description === "string" ? html`<p>${t(description)}</p>` : description}
-            </setting-label>
-            ${component}
-        </label>
-    `
+    const render_setting = ({ title, description, component, style }) => {
+        return html`
+            <label style=${style}>
+                <setting-label>
+                    ${title ? html`<h4>${t(title)}</h4>` : null} ${typeof description === "string" ? html`<p>${t(description)}</p>` : description}
+                </setting-label>
+                ${component}
+            </label>
+        `
+    }
 
     return html`<dialog ref=${dialog_ref} class="pluto-modal psettings">
         <h1>${t("t_settings_title")}</h1>
@@ -164,14 +191,25 @@ const _Settings = ({}) => {
         <h2>Accessibility</h2>
         <div class="big-list-of-settings">${settings_accessibility.map(render_setting)}</div>
         <div class="final">
-            <button class="final-no" onClick=${close} aria-label=${t("t_no")}>${th("t_no_key", { key: html`<kbd aria-hidden="true">Esc</kbd>` })}</button>
+            <button
+                class="final-reset"
+                type="reset"
+                aria-label=${t("t_settings_reset")}
+                onClick=${() => {
+                    clear_settings()
+                    set_require_reload(true)
+                    close()
+                }}
+            >
+                ${t("t_settings_reset")}
+            </button>
             <button
                 onClick=${() => {
                     close()
                 }}
-                aria-label=${t("t_yes")}
+                aria-label=${t("t_settings_save")}
             >
-                <setting-label> ${th("t_yes_key", { key: html`<kbd aria-hidden="true">Enter</kbd>` })} </setting-label>
+                ${t("t_settings_save")}
             </button>
         </div>
     </dialog>`
@@ -188,6 +226,7 @@ export const DEFAULT_SETTINGS = {
     CM_MIXED_PARSER: false,
     CM_INDENT_UNIT: "tab",
     CM_TAB_KEY_FOR_INDENT: true,
+    CUSTOM_CODE_FONT_STACK: "",
 }
 
 /**
@@ -216,4 +255,10 @@ export const get_settings = () =>
  */
 export const set_setting = (key, value) => {
     localStorage.setItem(`pluto_setting_${key}`, JSON.stringify(value))
+}
+
+export const clear_settings = () => {
+    Object.keys(DEFAULT_SETTINGS).forEach((key) => {
+        localStorage.removeItem(`pluto_setting_${key}`)
+    })
 }

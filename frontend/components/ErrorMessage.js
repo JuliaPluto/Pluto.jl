@@ -8,6 +8,7 @@ import { open_bottom_right_panel } from "./BottomRightPanel.js"
 import { ansi_to_html } from "../imports/AnsiUp.js"
 import { FixWithAIButton } from "./FixWithAIButton.js"
 import { localized_list_htl, t, th } from "../common/lang.js"
+import { get_settings } from "./Settings.js"
 
 const nbsp = "\u00A0"
 
@@ -612,7 +613,7 @@ export const ErrorMessage = ({ msg, stacktrace, plain_error, cell_id }) => {
                             : null}
                     </ol>
                 </section>`}
-        ${pluto_actions.get_session_options?.()?.server?.dismiss_motivational_quotes !== true ? html`<${Motivation} stacktrace=${stacktrace} />` : null}
+        ${get_settings().MOTIVATIONAL_STICKERS ? html`<${Motivation} stacktrace=${stacktrace} />` : null}
     </jlerror>`
 }
 

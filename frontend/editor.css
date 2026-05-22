@@ -48,6 +48,9 @@
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", system-ui,
         sans-serif;
     color-scheme: light dark;
+
+    --custom-code-font-stack: "";
+    --code-font-stack: var(--julia-mono-font-stack); /* Will be overriden later */
 }
 
 /* GENERAL PAGE LAYOUT */
@@ -113,6 +116,8 @@ pluto-editor main {
 pluto-notebook {
     display: block;
     background: var(--main-bg-color);
+
+    --code-font-stack: var(--custom-code-font-stack), var(--julia-mono-font-stack);
 }
 
 /* STANDARD HTML ELEMENTS */
@@ -3930,7 +3935,7 @@ pluto-input .cm-editor .cm-tooltip.cm-tooltip-autocomplete > ul > li {
     float: right;
     margin-right: 0.5em;
     font-size: 0.8em;
-    font-family: var(--julia-mono-font-stack);
+    font-family: var(--code-font-stack);
     font-style: normal;
 }
 
@@ -4017,7 +4022,7 @@ pluto-input .cm-editor .cm-scroller {
 pluto-input .cm-editor .cm-content,
 pluto-input .cm-editor .cm-scroller,
 .cm-editor .cm-tooltip-autocomplete .cm-completionLabel {
-    font-family: var(--julia-mono-font-stack) !important;
+    font-family: var(--code-font-stack) !important;
     font-variant-ligatures: none;
     font-size: 0.8rem;
 }

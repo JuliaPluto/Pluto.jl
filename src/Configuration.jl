@@ -72,7 +72,7 @@ The HTTP server options. See [`SecurityOptions`](@ref) for additional settings.
 - `port_hint::Integer = $PORT_HINT_DEFAULT` If the other setting `port` is not specified, then this setting (`port_hint`) will be used as the starting point in finding an available port to run the server on. 
 - `launch_browser::Bool = $LAUNCH_BROWSER_DEFAULT`
 - `dismiss_update_notification::Bool = $DISMISS_UPDATE_NOTIFICATION_DEFAULT` If `false`, the Pluto frontend will check the Pluto.jl github releases for any new recommended updates, and show a notification if there are any. If `true`, this is disabled.
-- `dismiss_motivational_quotes::Bool = $DISMISS_MOTIVATIONAL_QUOTES` If `true`, motivational quotes on error messages won't be shown.
+- `dismiss_motivational_quotes::Bool = $DISMISS_MOTIVATIONAL_QUOTES` This setting will be removed in a future release. Has no effect.
 - `show_file_system::Bool = $SHOW_FILE_SYSTEM_DEFAULT`
 - `enable_ai_editor_features::Bool = $ENABLE_AI_EDITOR_FEATURES_DEFAULT` Enable or disable LLM-powered editor features
 - `notebook_path_suggestion::String = notebook_path_suggestion()`
@@ -336,6 +336,9 @@ function from_flat_kwargs(;
         threads::Union{Nothing,String,Int} = default_number_of_threads(),
         cpu_target::Union{Nothing,String} = CPU_TARGET_DEFAULT,
     )
+    if dismiss_motivational_quotes
+        @warn "The setting `dismiss_motivational_quotes` has been moved to the Settings panel inside the Pluto UI. It is deprecated and will be removed in a future release."
+    end
     server = ServerOptions(;
         root_url,
         base_url,

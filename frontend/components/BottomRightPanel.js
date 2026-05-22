@@ -7,6 +7,8 @@ import { useMyClockIsAheadBy } from "../common/clock sync.js"
 import { BackendLaunchPhase } from "../common/Binder.js"
 import { useEventListener } from "../common/useEventListener.js"
 import { t, th } from "../common/lang.js"
+import { NotifyWhenDone } from "./NotifyWhenDone.js"
+import { get_settings } from "./Settings.js"
 
 /**
  * @typedef PanelTabName
@@ -188,6 +190,10 @@ export let BottomRightPanel = ({
                             status=${status}
                         />`
                       : null}
+                ${get_settings().ALWAYS_NOTIFY_LONG_BUSY && open_tab !== "process"
+                    ? // Render the NotifyWhenDone component so it can send a notification
+                      html`<div style="display: none" aria-hidden="true"><${NotifyWhenDone} status=${status} /></div>`
+                    : null}
             </pluto-helpbox>
         </aside>
     `

@@ -1077,7 +1077,7 @@ const InputContextMenu = ({
                           setOpen=${setOpen}
                       />
 
-                      ${pluto_actions.get_session_options?.()?.server?.enable_ai_editor_features !== false
+                      ${get_settings().AI_EDITOR_FEATURES && pluto_actions.get_session_options?.()?.server?.enable_ai_editor_features !== false
                           ? html`<${InputContextMenuItem}
                                 tag="ask_ai"
                                 contents=${t("t_ask_ai_action")}

@@ -6,6 +6,9 @@ import { useDelayedTruth } from "./BottomRightPanel.js"
 import { url_logo_small } from "./Editor.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { t, th } from "../common/lang.js"
+import { get_settings } from "./Settings.js"
+
+const VERY_LONG_BUSY_THRESHOLD_SEC = 50
 
 /**
  * @param {{
@@ -16,6 +19,11 @@ export let NotifyWhenDone = ({ status }) => {
     const all_done = Object.values(status.subtasks).every(is_finished)
 
     const [enabled, setEnabled] = useState(false)
+
+    const automatically_enabled = get_settings().ALWAYS_NOTIFY_LONG_BUSY && useDelayedTruth(!all_done, VERY_LONG_BUSY_THRESHOLD_SEC * 1000)
+    useEffect(() => {
+        if (automatically_enabled) setEnabled(true)
+    }, [automatically_enabled])
 
     useEffect(() => {
         if (enabled && all_done) {
@@ -71,17 +79,9 @@ export let NotifyWhenDone = ({ status }) => {
                     disabled=${!visible}
                     onInput=${(e) => {
                         if (e.target.checked) {
-                            Notification.requestPermission().then((r) => {
-                                console.log(r)
-                                const granted = r === "granted"
+                            get_notification_permission().then((granted) => {
                                 setEnabled(granted)
                                 e.target.checked = granted
-
-                                if (!granted)
-                                    open_pluto_popup({
-                                        type: "warn",
-                                        body: th("t_ready_notif_permission"),
-                                    })
                             })
                         } else {
                             setEnabled(false)
@@ -90,4 +90,19 @@ export let NotifyWhenDone = ({ status }) => {
             /></label>
         </div>
     `
+}
+
+export const get_notification_permission = () => {
+    return Notification.requestPermission().then((r) => {
+        console.log(r)
+        const granted = r === "granted"
+
+        if (!granted)
+            open_pluto_popup({
+                type: "warn",
+                body: th("t_ready_notif_permission"),
+            })
+
+        return granted
+    })
 }

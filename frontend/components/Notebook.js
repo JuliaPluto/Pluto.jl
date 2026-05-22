@@ -4,6 +4,7 @@ import { html, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState
 
 import { Cell } from "./Cell.js"
 import { nbpkg_fingerprint } from "./PkgStatusMark.js"
+import { get_settings } from "./Settings.js"
 
 /** Like `useMemo`, but explain to the console what invalidated the memo. */
 export const useMemoDebug = (fn, args) => {
@@ -191,8 +192,11 @@ export const Notebook = ({
         }
     }, [cell_outputs_delayed])
 
+    let custom_font = get_settings().CUSTOM_CODE_FONT_STACK
+    custom_font = custom_font.replace(/'",/g, "").trim()
+    custom_font = custom_font == "" ? "JuliaMono" : custom_font
     return html`
-        <pluto-notebook id=${notebook.notebook_id}>
+        <pluto-notebook id=${notebook.notebook_id} style="--custom-code-font-stack: ${custom_font};">
             ${notebook.cell_order
                 .filter((_, i) => !(cell_outputs_delayed && i > render_cell_outputs_minimum))
                 .map(
