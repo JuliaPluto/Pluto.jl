@@ -5,7 +5,7 @@ import { getCurrentLanguage, getAvailableLanguages, changeLanguage, t } from "..
 /**
  * Language picker component for the footer
  */
-export const LanguagePicker = (onChanged = () => {}) => {
+export const LanguagePicker = ({ onChanged = () => {} }) => {
     const [currentLanguage, setCurrentLanguage] = preact.useState(getCurrentLanguage())
     const availableLanguages = getAvailableLanguages()
 

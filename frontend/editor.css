@@ -745,6 +745,15 @@ pluto-editor.static_preview button.toggle_export {
 .ionicon-icon[data-icon="trash-bin-outline"] {
     background-image: url("https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/trash-bin-outline.svg");
 }
+.ionicon-icon[data-icon="settings-outline"] {
+    background-image: url("https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/settings-outline.svg");
+}
+.ionicon-icon[data-icon="help-circle-outline"] {
+    background-image: url("https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/help-circle-outline.svg");
+}
+.ionicon-icon[data-icon="language-outline"] {
+    background-image: url("https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/language-outline.svg");
+}
 .ionicon-icon[data-icon="arrow-up-circle-outline"] {
     background-image: url("https://cdn.jsdelivr.net/gh/ionic-team/ionicons@5.5.1/src/svg/arrow-up-circle-outline.svg");
 }
@@ -861,6 +870,8 @@ dialog.export-html-dialog > div.final button {
 dialog.psettings {
     border-radius: 0.7rem;
     width: min(34rem, 90vw);
+    background: var(--main-bg-color);
+    color: var(--pluto-output-color);
 }
 
 .psettings label {
@@ -890,11 +901,15 @@ dialog.psettings {
 }
 
 .psettings label:hover {
-    background: #eee;
+    background: var(--shoulder-hover-bg-color);
 }
 
 .psettings :is(h4, p) {
     margin: 0;
+}
+
+.psettings :is(h1, h2, h4) {
+    color: var(--pluto-output-h-color);
 }
 
 .psettings h1 {
@@ -3447,15 +3462,16 @@ footer form > a {
 
 footer a {
     color: var(--footer-atag-color);
-    opacity: 0.6;
     font-weight: 700;
     flex: 0 0 auto;
 }
 
-@media (max-width: 500px) {
-    footer form {
-        display: none;
-    }
+footer a.footer-button {
+    text-decoration: none;
+    background: black;
+    padding: 0.4em 0.9em;
+    border-radius: 0.4em;
+    color: var(--pluto-output-color);
 }
 
 footer input {
@@ -3499,6 +3515,19 @@ footer #info {
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+    gap: 1em;
+}
+
+@media (max-width: 500px) {
+    footer form {
+        display: none;
+    }
+    footer #info {
+        justify-content: flex-start;
+    }
+    footer .footer-spacer {
+        display: none;
+    }
 }
 
 /* LANGUAGE PICKER */

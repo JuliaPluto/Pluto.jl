@@ -47,8 +47,6 @@ const _Settings = ({}) => {
 
     const settings = get_settings()
 
-    const [render, set_render] = useState(0)
-
     /**
      * @template {keyof typeof DEFAULT_SETTINGS} K
      * @param {K} key
@@ -140,6 +138,7 @@ const _Settings = ({}) => {
         {
             title: th("t_settings_code_typeface_title"),
             description: th("t_settings_code_typeface_description"),
+            description_2: th("t_settings_code_typeface_description_2"),
             component: make_textfield("CUSTOM_CODE_FONT_STACK", "JuliaMono"),
         },
         {

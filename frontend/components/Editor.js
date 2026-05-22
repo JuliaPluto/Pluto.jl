@@ -48,7 +48,7 @@ import { open_pluto_popup } from "../common/open_pluto_popup.js"
 import { get_included_external_source } from "../common/external_source.js"
 import { ProjectTomlEditor } from "./ProjectTomlEditor.js"
 import { getCurrentLanguage, getWritingDirection, t, th } from "../common/lang.js"
-import { PlutoLandUpload } from "./PlutoLandUpload.js"
+import { InlineIonicon, PlutoLandUpload } from "./PlutoLandUpload.js"
 import { BigPkgTerminal } from "./PkgTerminalView.js"
 import { is_desktop, move_notebook, wait_for_file_move } from "./DesktopInterface.js"
 import { with_query_params } from "../common/URLTools.js"
@@ -1843,10 +1843,6 @@ ${t("t_key_autosave_description")}`
                         notebook=${this.state.notebook}
                         sanitize_html=${status.sanitize_html}
                     />
-                    <${Popup} 
-                        notebook=${this.state.notebook}
-                        disable_input=${this.state.disable_ui || !this.state.connected /* && this.state.backend_launch_phase == null*/}
-                    />
                     <${RecentlyDisabledInfo} 
                         recently_auto_disabled_cells=${this.state.recently_auto_disabled_cells}
                         notebook=${this.state.notebook}
@@ -1869,12 +1865,18 @@ ${t("t_key_autosave_description")}`
                     <${SlideControls} />
                     <footer>
                         <div id="info">
-                            <a href="#" onClick=${() => {
-                                window.dispatchEvent(new CustomEvent("pluto open settings"))
-                                console.log("yolo")
-                            }}>${t("t_footer_button_settings")}</a>
-                            <a href="https://plutojl.org/en/docs/" target="_blank">${t("t_footer_button_FAQ")}</a>
-                            <span style="flex: 1 1 0%; min-width: 5ch;"></span>
+                            <a class="footer-button" href="#" onClick=${() => window.dispatchEvent(new CustomEvent("pluto open settings"))}>${th(
+                                "t_footer_button_settings",
+                                {
+                                    icon: html`${InlineIonicon("settings-outline", { inlineMargin: false })}${InlineIonicon("language-outline", {
+                                        inlineMargin: true,
+                                    })}`,
+                                }
+                            )}</a>
+                            <a class="footer-button" href="https://plutojl.org/en/docs/" target="_blank">${th("t_footer_button_FAQ", {
+                                icon: InlineIonicon("help-circle-outline", { inlineMargin: false }),
+                            })}</a>
+                            <span class="footer-spacer" style="flex: 1 1 0%; min-width: 5ch;"></span>
                             <form id="feedback" action="#" method="post">
                                 <label for="opinion">${th("t_how_can_we_improve", {
                                     pluto: html`<a href="https://plutojl.org/" target="_blank">Pluto.jl</a>`,
@@ -1884,6 +1886,10 @@ ${t("t_key_autosave_description")}`
                             </form>
                         </div>
                     </footer>
+                    <${Popup} 
+                        notebook=${this.state.notebook}
+                        disable_input=${this.state.disable_ui || !this.state.connected /* && this.state.backend_launch_phase == null*/}
+                    />
                 </${PlutoJSInitializingContext.Provider}>
                 </${PlutoBondsContext.Provider}>
             </${PlutoActionsContext.Provider}>

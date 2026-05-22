@@ -6,7 +6,7 @@
         /* Color scheme */
         --main-bg-color: hsl(0deg 0% 12%);
         --rule-color: rgba(255, 255, 255, 0.15);
-        --kbd-border-color: #222222;
+        --kbd-border-color: #a3a1a1;
         --header-bg-color: hsl(30deg 3% 16%);
         --header-border-color: transparent;
         --ui-button-color: rgb(255, 255, 255);
