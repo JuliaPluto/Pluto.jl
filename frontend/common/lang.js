@@ -28,7 +28,7 @@ import {
 } from "../imports/lang_imports.js"
 
 /**
- * @typedef {keyof typeof english} TranslationKey
+ * @typedef {string & keyof typeof english} TranslationKey
  */
 
 const without_empty_keys = (obj) => {
