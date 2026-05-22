@@ -95,7 +95,6 @@ const _Settings = ({}) => {
         {
             title: "Always notify",
             description: "Always send a browser notification when the notebook completes after having been busy for a long time",
-            // TODO
             component: make_checkbox("ALWAYS_NOTIFY_LONG_BUSY"),
         },
         {
@@ -131,11 +130,11 @@ const _Settings = ({}) => {
     const settings_codemirror = [
         {
             title: "Default indentation unit",
-            description: "",
-            // TODO
-            component: html`<select>
-                <option value="4">4 spaces</option>
-                <option value="tab">Tab</option>
+            description:
+                "When writing new code, should spaces or tabs be used for indentation? For existing code, Pluto will automatically detect and match the existing indentation style.",
+            component: html`<select onChange=${(e) => set("CM_INDENT_UNIT", e.target.value)}>
+                <option value="4" selected=${settings.CM_INDENT_UNIT === "4"}>4 spaces</option>
+                <option value="tab" selected=${settings.CM_INDENT_UNIT === "tab"}>Tab</option>
             </select>`,
         },
         {

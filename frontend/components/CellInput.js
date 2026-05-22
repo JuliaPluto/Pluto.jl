@@ -207,7 +207,7 @@ export const LastRemoteCodeSetTimeFacet = Facet.define({
 
 // Per-cell detected indent unit ("\t" or "    "). Re-detected on every doc change.
 const indentUnitField = StateField.define({
-    create: (state) => detect_indent_unit(state.doc, "\t"),
+    create: (state) => detect_indent_unit(state.doc, get_settings().CM_INDENT_UNIT === "tab" ? "\t" : "    "),
     update: (value, tr) => (tr.docChanged ? detect_indent_unit(tr.state.doc, value) : value),
 })
 
