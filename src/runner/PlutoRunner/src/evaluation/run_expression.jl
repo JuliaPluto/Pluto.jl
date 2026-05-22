@@ -199,6 +199,11 @@ function doc_target_name(@nospecialize(e))
     if e.head === :(=) || e.head === :function || e.head === :macro || e.head === :(->) ||
        e.head === :where || e.head === :call || e.head === :(::) || e.head === :curly
         return isempty(e.args) ? nothing : doc_target_name(e.args[1])
+    elseif e.head === :.
+        # qualified name like `Base.conj` — pick the rightmost symbol; `Docs.Binding`
+        # in any workspace resolves to the same docs via Docs.aliasof.
+        return length(e.args) == 2 && e.args[2] isa QuoteNode && e.args[2].value isa Symbol ?
+            e.args[2].value::Symbol : nothing
     elseif e.head === :struct
         return length(e.args) >= 2 ? doc_target_name(e.args[2]) : nothing
     elseif e.head === :module
