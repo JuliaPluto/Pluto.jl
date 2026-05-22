@@ -965,7 +965,8 @@ all patches: ${JSON.stringify(patches, null, 1)}
                         <a href="./">Go back</a>
                         <br />
                         <a
-                            href="#"
+                            href="javascript:;"
+                            target="_self"
                             onClick=${(e) => {
                                 e.preventDefault()
                                 window.dispatchEvent(new CustomEvent("close pluto popup"))
@@ -1865,7 +1866,7 @@ ${t("t_key_autosave_description")}`
                     <${SlideControls} />
                     <footer>
                         <div id="info">
-                            <a class="footer-button" href="#" onClick=${() => window.dispatchEvent(new CustomEvent("pluto open settings"))}>${th(
+                            <a class="footer-button" href="javascript:;" target="_self" onClick=${() => window.dispatchEvent(new CustomEvent("pluto open settings"))}>${th(
                                 "t_footer_button_settings",
                                 {
                                     icon: html`${InlineIonicon("settings-outline", { inlineMargin: false })}${InlineIonicon("language-outline", {

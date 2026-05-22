@@ -186,6 +186,9 @@
         --footer-filepicker-button-color: white;
         --footer-filepicker-focus-color: #896c6c;
         --footnote-border-color: rgba(23, 115, 119, 0.15);
+        --settings-bg-color: hsl(328 100% 98% / 1);
+        --settings-p2-color: #717070;
+        --settings-header-bg-color: #f9dadf;
 
         /* undo delete cell*/
         --undo-delete-box-shadow-color: #0000000f;

@@ -872,8 +872,18 @@ dialog.export-html-dialog > div.final button {
 dialog.psettings {
     border-radius: 0.7rem;
     width: min(34rem, 90vw);
-    background: var(--main-bg-color);
+    background: var(--settings-bg-color);
     color: var(--pluto-output-color);
+}
+dialog.psettings::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 7.1em;
+    background: var(--settings-header-bg-color);
+    z-index: -1;
 }
 
 .psettings label {
@@ -925,7 +935,7 @@ dialog.psettings {
     font-size: 2rem;
 }
 .psettings .description-2 {
-    color: var(--pluto-output-color);
+    color: var(--settings-p2-color);
     margin-top: 0.7em;
 }
 
@@ -3471,10 +3481,11 @@ footer a {
 
 footer a.footer-button {
     text-decoration: none;
-    background: black;
+    background: var(--white);
     padding: 0.4em 0.9em;
     border-radius: 0.4em;
     color: var(--pluto-output-color);
+    font-family: var(--system-ui-font-stack);
 }
 
 footer input {
