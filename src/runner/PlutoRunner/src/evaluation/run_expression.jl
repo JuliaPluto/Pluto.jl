@@ -163,6 +163,22 @@ so we re-derive the binding from the (pre-macroexpansion) expression. See JuliaL
 and Pluto issue #3449.
 """
 function doc_macrocall_binding_name(@nospecialize(expr))
+    # Peel off the `:toplevel`/`:block` wrapper that Pluto's Parse.jl always builds, ignoring
+    # `LineNumberNode`s, until we either reach the macrocall or something else.
+    while expr isa Expr && (expr.head === :toplevel || expr.head === :block)
+        inner = nothing
+        for arg in expr.args
+            arg isa LineNumberNode && continue
+            if inner === nothing
+                inner = arg
+            else
+                # more than one non-LineNumberNode arg: not a `@doc` wrapper shape
+                return nothing
+            end
+        end
+        inner === nothing && return nothing
+        expr = inner
+    end
     Meta.isexpr(expr, :macrocall) || return nothing
     name = expr.args[1]
     is_doc_macro =
