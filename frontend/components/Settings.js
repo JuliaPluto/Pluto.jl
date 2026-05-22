@@ -6,8 +6,8 @@ import { useDialog } from "../common/useDialog.js"
 import { useEventListener } from "../common/useEventListener.js"
 import { t, th } from "../common/lang.js"
 import { LanguagePicker } from "./LanguagePicker.js"
-import { cl } from "../common/ClassTable.js"
 import { PlutoActionsContext } from "../common/PlutoContext.js"
+import { and, ctrl_or_cmd_name } from "../common/KeyboardShortcuts.js"
 
 export const Settings = ({}) => useMemo(() => html`<${_Settings} />`, [])
 
@@ -31,20 +31,16 @@ const _Settings = ({}) => {
     require_reload_ref.current = require_reload
 
     useEffect(() => {
-        // If the dialog gets closed (e.g. by the user pressing Esc)
-        // if (!currently_open && typeof on_result === "function") {
-        //     on_result(false)
-        // }
-        // TODO
         if (currently_open) {
             set_require_reload(false)
         } else {
             if (require_reload_ref.current) {
-                requestAnimationFrame(() => {
+                // Need a timeout so that the Esc to close the settings dialog does not dismiss the confirm.
+                setTimeout(() => {
                     if (confirm(t("t_settings_reload_to_apply_changes_confirm"))) {
                         window.location.reload()
                     }
-                })
+                }, 1000)
             }
         }
     }, [currently_open])
@@ -165,16 +161,19 @@ const _Settings = ({}) => {
             title: "Tab key behavior",
             description: html`Use <kbd>TAB</kbd> for indentation and autocompletion. Disable this setting if you prefer to use <kbd>TAB</kbd> for moving focus
                 between elements on the page.`,
+            description_2: html`You can always indent with <kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>]</kbd> and
+                <kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>[</kbd>.`,
             // TODO
             component: make_checkbox("CM_TAB_KEY_FOR_INDENT"),
         },
     ]
 
-    const render_setting = ({ title, description, component, style }) => {
+    const render_setting = ({ title, description, component, style, description_2 }) => {
         return html`
             <label style=${style}>
                 <setting-label>
                     ${title ? html`<h4>${t(title)}</h4>` : null} ${typeof description === "string" ? html`<p>${t(description)}</p>` : description}
+                    ${typeof description_2 === "string" ? html`<p>${t(description_2)}</p>` : description_2}
                 </setting-label>
                 ${component}
             </label>
