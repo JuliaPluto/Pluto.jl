@@ -12,9 +12,9 @@ import {
     autocomplete,
     drawSelection,
 } from "../imports/CodemirrorPlutoSetup.js"
-import { guess_notebook_location } from "../common/NotebookLocationFromURL.js"
 import { tab_help_plugin } from "./CellInput/tab_help_plugin.js"
 import _ from "../imports/lodash-es.js"
+import { get_settings } from "./Settings.js"
 
 let { autocompletion, completionKeymap } = autocomplete
 
@@ -203,19 +203,23 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
                             mac: "Cmd-Shift-Enter",
                             run: keyMapSubmit,
                         },
-                        {
-                            key: "Tab",
-                            run: (cm) => {
-                                // If there is autocomplete open, accept that
-                                if (assert_not_null(accept_autocomplete_command).run(cm)) {
-                                    // and request the next ones
-                                    request_path_completions()
-                                    return true
-                                }
-                                // Else, activate it (possibly)
-                                return request_path_completions()
-                            },
-                        },
+                        ...(get_settings().CM_TAB_KEY_FOR_INDENT
+                            ? []
+                            : [
+                                  {
+                                      key: "Tab",
+                                      run: (cm) => {
+                                          // If there is autocomplete open, accept that
+                                          if (assert_not_null(accept_autocomplete_command).run(cm)) {
+                                              // and request the next ones
+                                              request_path_completions()
+                                              return true
+                                          }
+                                          // Else, activate it (possibly)
+                                          return request_path_completions()
+                                      },
+                                  },
+                              ]),
                     ]),
                     keymap.of(completionKeymap),
 

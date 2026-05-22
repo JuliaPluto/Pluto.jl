@@ -84,19 +84,18 @@ const _Settings = ({}) => {
             component: html`<${LanguagePicker} />`,
         },
         {
-            title: "Motivational stickers",
-            description: "Show motivational stickers on error messages",
+            title: "t_settings_motivational_stickers_title",
+            description: "t_settings_motivational_stickers_description",
             component: make_checkbox("MOTIVATIONAL_STICKERS"),
         },
         {
-            title: "Always notify",
-            description: "Always send a browser notification when the notebook completes after having been busy for a long time",
+            title: "t_settings_always_notify_title",
+            description: "t_settings_always_notify_description",
             component: make_checkbox("ALWAYS_NOTIFY_LONG_BUSY"),
         },
         {
-            title: "Confirm long runtimes",
-            description: html`Pluto will ask for confirmation before running cells if the estimated runtime is very long. You can set the threshold here in
-                seconds. <em>Setting it to a very high value disables the confirmation.</em>`,
+            title: "t_settings_confirm_long_runtimes_title",
+            description: th("t_settings_confirm_long_runtimes_description"),
             component: html`<input
                 type="number"
                 min="0"
@@ -109,15 +108,14 @@ const _Settings = ({}) => {
             ? []
             : [
                   {
-                      title: "AI features",
-                      description: html`Enable educational AI features
-                          <a href="https://plutojl.org/en/docs/ai-editor-features/" target="_blank">(learn more)</a>`,
+                      title: "t_settings_ai_features_title",
+                      description: th("t_settings_ai_features_description"),
                       component: make_checkbox("AI_EDITOR_FEATURES"),
                   },
               ]),
         {
-            title: "Dark mode",
-            description: "Pluto will automatically adapt to your system theme (light/dark). Change your system theme to see the effect.",
+            title: "t_settings_dark_mode_title",
+            description: "t_settings_dark_mode_description",
             component: null,
             style: "cursor: unset;",
         },
@@ -125,44 +123,43 @@ const _Settings = ({}) => {
 
     const settings_codemirror = [
         {
-            title: "Default indentation unit",
-            description:
-                "When writing new code, should spaces or tabs be used for indentation? For existing code, Pluto will automatically detect and match the existing indentation style.",
+            title: "t_settings_indent_unit_title",
+            description: "t_settings_indent_unit_description",
             component: html`<select onChange=${(e) => set("CM_INDENT_UNIT", e.target.value)}>
-                <option value="4" selected=${settings.CM_INDENT_UNIT === "4"}>4 spaces</option>
-                <option value="tab" selected=${settings.CM_INDENT_UNIT === "tab"}>Tab</option>
+                <option value="4" selected=${settings.CM_INDENT_UNIT === "4"}>${t("t_settings_indent_unit_4_spaces")}</option>
+                <option value="tab" selected=${settings.CM_INDENT_UNIT === "tab"}>${t("t_settings_indent_unit_tab")}</option>
             </select>`,
         },
         {
-            title: "Code typeface",
-            description:
-                "Enter the name of a locally installed font to use for code editing. Note that other people will still read your notebook in the default font.",
+            title: "t_settings_code_typeface_title",
+            description: "t_settings_code_typeface_description",
             component: make_textfield("CUSTOM_CODE_FONT_STACK", "JuliaMono"),
         },
         {
-            title: "Nested syntax highlighting",
-            description: "Supported nested syntax highlighting for Markdown, HTML, Python, SQL (experimental)",
+            title: "t_settings_nested_syntax_title",
+            description: "t_settings_nested_syntax_description",
             component: make_checkbox("CM_MIXED_PARSER"),
         },
         {
-            title: "Spell checking",
-            description: "Allow browser-based spell checking inside Markdown",
+            title: "t_settings_spellcheck_title",
+            description: "t_settings_spellcheck_description",
             component: make_checkbox("CM_SPELLCHECK"),
         },
         {
-            title: "Autocomplete",
-            description: "Show autocomplete suggestions automatically while you type. You can always trigger autocomplete manually with Ctrl+Space.",
+            title: "t_settings_autocomplete_title",
+            description: "t_settings_autocomplete_description",
             component: make_checkbox("CM_AUTOCOMPLETE_ON_TYPE"),
         },
     ]
 
     const settings_accessibility = [
         {
-            title: "Tab key behavior",
-            description: html`Use <kbd>TAB</kbd> for indentation and autocompletion. Disable this setting if you prefer to use <kbd>TAB</kbd> for moving focus
-                between elements on the page.`,
-            description_2: html`You can always indent with <kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>]</kbd> and
-                <kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>[</kbd>.`,
+            title: "t_settings_tab_key_title",
+            description: th("t_settings_tab_key_description"),
+            description_2: th("t_settings_tab_key_indent", {
+                ctrl_close: html`<kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>]</kbd>`,
+                ctrl_open: html`<kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>[</kbd>`,
+            }),
             // TODO
             component: make_checkbox("CM_TAB_KEY_FOR_INDENT"),
         },
@@ -182,11 +179,11 @@ const _Settings = ({}) => {
 
     return html`<dialog ref=${dialog_ref} class="pluto-modal psettings">
         <h1>${t("t_settings_title")}</h1>
-        <h2>User Interface</h2>
+        <h2>${t("t_settings_section_ui")}</h2>
         <div class="big-list-of-settings">${settings_ui.map(render_setting)}</div>
-        <h2>Code Editing</h2>
+        <h2>${t("t_settings_section_code_editing")}</h2>
         <div class="big-list-of-settings">${settings_codemirror.map(render_setting)}</div>
-        <h2>Accessibility</h2>
+        <h2>${t("t_settings_section_accessibility")}</h2>
         <div class="big-list-of-settings">${settings_accessibility.map(render_setting)}</div>
         <div class="final">
             <button
@@ -247,7 +244,7 @@ export const get_settings = () =>
     )
 
 /**
- * @template {keyof typeof DEFAULT_SETTINGS} K
+ * @template {string & keyof typeof DEFAULT_SETTINGS} K
  * @param {K} key
  * @param {(typeof DEFAULT_SETTINGS)[K]} value
  */

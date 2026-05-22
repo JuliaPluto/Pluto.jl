@@ -529,7 +529,7 @@ export const CellInput = ({
             { key: "Shift-Enter", run: keyMapSubmit },
             { key: "Ctrl-Enter", mac: "Cmd-Enter", run: keyMapRun },
             { key: "Ctrl-Enter", run: keyMapRun },
-            { key: "Tab", run: keyMapTab, shift: indentLess },
+            ...(get_settings().CM_TAB_KEY_FOR_INDENT ? [] : [{ key: "Tab", run: keyMapTab, shift: indentLess }]),
             { key: "Ctrl-m", mac: "Cmd-m", run: keyMapMD },
             { key: "Ctrl-m", run: keyMapMD },
             // Codemirror6 doesn't like capslock
