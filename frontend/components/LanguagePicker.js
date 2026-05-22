@@ -5,7 +5,7 @@ import { getCurrentLanguage, getAvailableLanguages, changeLanguage, t } from "..
 /**
  * Language picker component for the footer
  */
-export const LanguagePicker = () => {
+export const LanguagePicker = (onChanged = () => {}) => {
     const [currentLanguage, setCurrentLanguage] = preact.useState(getCurrentLanguage())
     const availableLanguages = getAvailableLanguages()
 
@@ -20,11 +20,7 @@ export const LanguagePicker = () => {
         await changeLanguage(selectedLanguage)
 
         // Offer to refresh the page to see the language change
-        requestAnimationFrame(() => {
-            if (confirm(t("t_refresh_to_see_language_change_confirm"))) {
-                window.location.reload()
-            }
-        })
+        onChanged()
     }
 
     return html`

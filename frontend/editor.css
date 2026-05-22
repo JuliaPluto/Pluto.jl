@@ -905,6 +905,10 @@ dialog.psettings {
     margin-block-end: 1rem;
     font-size: 2rem;
 }
+.psettings .description-2 {
+    color: var(--pluto-output-color);
+    margin-top: 0.7em;
+}
 
 dialog.confirm-before-long-runtime {
     color: var(--pluto-output-color);

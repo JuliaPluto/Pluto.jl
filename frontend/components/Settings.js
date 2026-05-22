@@ -79,23 +79,24 @@ const _Settings = ({}) => {
 
     const settings_ui = [
         {
-            title: "t_settings_lang_title",
-            description: "t_settings_lang_description",
-            component: html`<${LanguagePicker} />`,
+            title: th("t_settings_lang_title"),
+            description: th("t_settings_lang_description"),
+            component: html`<${LanguagePicker} onChanged=${() => set_require_reload(true)} />`,
         },
         {
-            title: "t_settings_motivational_stickers_title",
-            description: "t_settings_motivational_stickers_description",
+            title: th("t_settings_motivational_stickers_title"),
+            description: th("t_settings_motivational_stickers_description"),
             component: make_checkbox("MOTIVATIONAL_STICKERS"),
         },
         {
-            title: "t_settings_always_notify_title",
-            description: "t_settings_always_notify_description",
+            title: th("t_settings_always_notify_title"),
+            description: th("t_settings_always_notify_description"),
             component: make_checkbox("ALWAYS_NOTIFY_LONG_BUSY"),
         },
         {
-            title: "t_settings_confirm_long_runtimes_title",
+            title: th("t_settings_confirm_long_runtimes_title"),
             description: th("t_settings_confirm_long_runtimes_description"),
+            description_2: th("t_settings_confirm_long_runtimes_description_2"),
             component: html`<input
                 type="number"
                 min="0"
@@ -108,14 +109,19 @@ const _Settings = ({}) => {
             ? []
             : [
                   {
-                      title: "t_settings_ai_features_title",
-                      description: th("t_settings_ai_features_description"),
+                      title: th("t_settings_ai_features_title"),
+                      description: th("t_settings_ai_features_description", {
+                          learn_more: html`<a href="https://plutojl.org/en/docs/ai-editor-features/" target="_blank"
+                              >${t("t_settings_ai_features_learn_more")}</a
+                          >`,
+                      }),
                       component: make_checkbox("AI_EDITOR_FEATURES"),
                   },
               ]),
         {
-            title: "t_settings_dark_mode_title",
-            description: "t_settings_dark_mode_description",
+            title: th("t_settings_dark_mode_title"),
+            description: th("t_settings_dark_mode_description"),
+            description_2: th("t_settings_dark_mode_description_2"),
             component: null,
             style: "cursor: unset;",
         },
@@ -123,38 +129,39 @@ const _Settings = ({}) => {
 
     const settings_codemirror = [
         {
-            title: "t_settings_indent_unit_title",
-            description: "t_settings_indent_unit_description",
+            title: th("t_settings_indent_unit_title"),
+            description: th("t_settings_indent_unit_description"),
+            description_2: th("t_settings_indent_unit_description_2"),
             component: html`<select onChange=${(e) => set("CM_INDENT_UNIT", e.target.value)}>
                 <option value="4" selected=${settings.CM_INDENT_UNIT === "4"}>${t("t_settings_indent_unit_4_spaces")}</option>
                 <option value="tab" selected=${settings.CM_INDENT_UNIT === "tab"}>${t("t_settings_indent_unit_tab")}</option>
             </select>`,
         },
         {
-            title: "t_settings_code_typeface_title",
-            description: "t_settings_code_typeface_description",
+            title: th("t_settings_code_typeface_title"),
+            description: th("t_settings_code_typeface_description"),
             component: make_textfield("CUSTOM_CODE_FONT_STACK", "JuliaMono"),
         },
         {
-            title: "t_settings_nested_syntax_title",
-            description: "t_settings_nested_syntax_description",
+            title: th("t_settings_nested_syntax_title"),
+            description: th("t_settings_nested_syntax_description"),
             component: make_checkbox("CM_MIXED_PARSER"),
         },
         {
-            title: "t_settings_spellcheck_title",
-            description: "t_settings_spellcheck_description",
+            title: th("t_settings_spellcheck_title"),
+            description: th("t_settings_spellcheck_description"),
             component: make_checkbox("CM_SPELLCHECK"),
         },
         {
-            title: "t_settings_autocomplete_title",
-            description: "t_settings_autocomplete_description",
+            title: th("t_settings_autocomplete_title"),
+            description: th("t_settings_autocomplete_description"),
             component: make_checkbox("CM_AUTOCOMPLETE_ON_TYPE"),
         },
     ]
 
     const settings_accessibility = [
         {
-            title: "t_settings_tab_key_title",
+            title: th("t_settings_tab_key_title"),
             description: th("t_settings_tab_key_description"),
             description_2: th("t_settings_tab_key_indent", {
                 ctrl_close: html`<kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>]</kbd>`,
@@ -169,8 +176,8 @@ const _Settings = ({}) => {
         return html`
             <label style=${style}>
                 <setting-label>
-                    ${title ? html`<h4>${t(title)}</h4>` : null} ${typeof description === "string" ? html`<p>${t(description)}</p>` : description}
-                    ${typeof description_2 === "string" ? html`<p>${t(description_2)}</p>` : description_2}
+                    ${title ? html`<h4>${title}</h4>` : null} ${description ? html`<p>${description}</p>` : description}
+                    ${description_2 ? html`<p class="description-2">${description_2}</p>` : description_2}
                 </setting-label>
                 ${component}
             </label>
