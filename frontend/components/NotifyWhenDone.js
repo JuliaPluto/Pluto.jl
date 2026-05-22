@@ -5,17 +5,19 @@ import { is_finished, total_done } from "./StatusTab.js"
 import { useDelayedTruth } from "./BottomRightPanel.js"
 import { url_logo_small } from "./Editor.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
-import { t, th } from "../common/lang.js"
+import { getCurrentLanguage, t, th } from "../common/lang.js"
 import { get_settings } from "./Settings.js"
 
 const VERY_LONG_BUSY_THRESHOLD_SEC = 50
 
 /**
  * @param {{
- * status: import("./Editor.js").StatusEntryData,
+ * status: import("./Editor.js").StatusEntryData | null,
  * }} props
  */
 export let NotifyWhenDone = ({ status }) => {
+    if (!status) return null
+
     const all_done = Object.values(status.subtasks).every(is_finished)
 
     const [enabled, setEnabled] = useState(false)
@@ -38,11 +40,11 @@ export let NotifyWhenDone = ({ status }) => {
                 notification = new Notification(t("t_ready_notif_title"), {
                     tag: "notebook ready",
                     body: t("t_ready_notif_body", { count }),
-                    lang: "en-US",
-                    dir: "ltr",
+                    lang: getCurrentLanguage(),
+                    dir: t("t_language_direction") === "rtl" ? "rtl" : "ltr",
                     icon: url_logo_small,
                 })
-                notification.onclick = (e) => {
+                notification.onclick = () => {
                     parent.focus()
                     window.focus()
                     notification?.close()

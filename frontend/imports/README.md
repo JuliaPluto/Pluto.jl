@@ -73,7 +73,7 @@ We mix three CDNs depending on what each package ships:
 - **`highlightjs.js`** — three URLs (core + julia + julia-repl). Bump all three together. Also exposes `window.hljs` for user notebooks (see PR #2244).
 - **`immer.js`** — pinned export shape is load-bearing: the `immer` default export is actually `produce`, kept that way for backwards compat (PR #3372). `setAutoFreeze(false)` is required for mixed mutable/immutable `setState` paths.
 - **`lang_imports.js`** — not a CDN dep. It just bulk-imports the JSON files in `frontend/lang/` with import attributes (`with { type: "json" }`). Separate file because Prettier can't parse `with`. When you add a new locale, add it here and to `frontend/lang/lang.js`.
-- **`lodash.js` / `semver-es.js`** — `.d.ts` re-exports the npm package's own types; keep `frontend/package.json` `devDependencies` in sync so editor tooltips work.
+- **`lodash-es.js` / `semver-es.js`** — `.d.ts` re-exports the npm package's own types; keep `frontend/package.json` `devDependencies` in sync so editor tooltips work.
 - **`Preact.js`** — three coordinated imports (`preact`, `preact/hooks`, `htm`) all pinned via `pin=v113&target=es2020`. Bumping preact usually means bumping all three URLs and possibly the pin.
 - **`PreactCustomElement.js`** — **vendored source**, not a CDN import. Copied from [preactjs/preact-custom-element](https://github.com/preactjs/preact-custom-element) with local modifications (e.g. the 500ms reconnect grace period in `disconnectedCallback`). To "update" it, re-diff against upstream and re-apply our changes by hand. Don't replace blindly.
 
