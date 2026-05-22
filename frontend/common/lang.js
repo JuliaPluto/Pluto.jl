@@ -27,6 +27,10 @@ import {
     czech,
 } from "../imports/lang_imports.js"
 
+/**
+ * @typedef {string & keyof typeof english} TranslationKey
+ */
+
 const without_empty_keys = (obj) => {
     return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== ""))
 }
@@ -52,9 +56,9 @@ const resources = {
 }
 
 /**
- * @overload @param {string} key @param {{ returnObjects: true, [k: string]: any }} options @returns {string | Record<string, any> | string[]}
- * @overload @param {string} key @param {{ returnObjects?: false, [k: string]: any }=} options @returns {string}
- * @param {string} key @param {{ returnObjects?: boolean, [k: string]: any }=} options @returns {string | Record<string, any> | string[]}
+ * @overload @param {TranslationKey} key @param {{ returnObjects: true, [k: string]: any }} options @returns {string | Record<string, any> | string[]}
+ * @overload @param {TranslationKey} key @param {{ returnObjects?: false, [k: string]: any }=} options @returns {string}
+ * @param {TranslationKey} key @param {{ returnObjects?: boolean, [k: string]: any }=} options @returns {string | Record<string, any> | string[]}
  **/
 export const t = (key, options = {}) => {
     const { count, interpolation = {}, returnObjects = false, defaultValue = key, fallbackLng = true, lng, ...extra_options } = options
@@ -63,7 +67,7 @@ export const t = (key, options = {}) => {
     const lang = lng ?? getCurrentLanguage()
 
     const find_entry = (search_lang) => {
-        let keys_to_search = [key]
+        let keys_to_search = /** @type {string[]} */ ([key])
         if (count != null && typeof count === "number") {
             keys_to_search = [`${key}_${new Intl.PluralRules(lang).select(count)}`, key]
             if (count === 0) keys_to_search.unshift(`${key}_zero`)
@@ -164,7 +168,7 @@ const getLanguage = _.memoize((to_search) => {
 
 /**
  * Like t, but you can interpolate Preact elements.
- * @param {string} key
+ * @param {TranslationKey} key
  * @param {Record<string, any>=} insertions
  * @returns {string | import("../imports/Preact.js").ReactElement}
  */
