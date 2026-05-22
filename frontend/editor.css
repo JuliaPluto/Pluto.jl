@@ -47,6 +47,8 @@
     --system-ui-font-stack:
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", system-ui,
         sans-serif;
+    --system-fonts-mono: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
     color-scheme: light dark;
 
     --custom-code-font-stack: "";
@@ -1517,12 +1519,13 @@ main > preamble {
     padding: 5px 8px;
     border: 3px solid var(--overlay-button-border);
     border-radius: 12px;
-    height: 35px;
+    height: 2.4rem;
     font-family: var(--roboto-mono-font-stack);
     font-size: 0.75rem;
     pointer-events: all;
     /* break-inside: avoid; */
     white-space: nowrap;
+    display: flex;
 }
 .overlay-button button:not(.asdfdsf) {
     color: var(--overlay-button-color);
