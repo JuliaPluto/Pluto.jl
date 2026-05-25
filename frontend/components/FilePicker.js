@@ -204,8 +204,7 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
                             run: keyMapSubmit,
                         },
                         ...(get_settings().CM_TAB_KEY_FOR_INDENT
-                            ? []
-                            : [
+                            ? [
                                   {
                                       key: "Tab",
                                       run: (cm) => {
@@ -219,7 +218,8 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
                                           return request_path_completions()
                                       },
                                   },
-                              ]),
+                              ]
+                            : []),
                     ]),
                     keymap.of(completionKeymap),
 

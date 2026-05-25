@@ -54,7 +54,7 @@ let open_docs_if_autocomplete_is_open_command = (cm) => {
 }
 
 const pluto_autocomplete_keymap = [
-    ...(get_settings().CM_TAB_KEY_FOR_INDENT ? [] : [{ key: "Tab", run: tab_completion_command }]),
+    ...(get_settings().CM_TAB_KEY_FOR_INDENT ? [{ key: "Tab", run: tab_completion_command }] : []),
     { key: "?", run: open_docs_if_autocomplete_is_open_command },
 ]
 

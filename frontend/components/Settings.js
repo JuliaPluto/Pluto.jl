@@ -166,7 +166,6 @@ const _Settings = ({}) => {
                 ctrl_close: html`<kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>]</kbd>`,
                 ctrl_open: html`<kbd>${ctrl_or_cmd_name}</kbd>${and}<kbd>[</kbd>`,
             }),
-            // TODO
             component: make_checkbox("CM_TAB_KEY_FOR_INDENT"),
         },
     ]

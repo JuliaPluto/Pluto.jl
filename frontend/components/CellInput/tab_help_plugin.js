@@ -34,8 +34,7 @@ const LastFocusWasForced = StateField.define({
 })
 
 export const tab_help_plugin = get_settings().CM_TAB_KEY_FOR_INDENT
-    ? []
-    : ViewPlugin.define(
+    ? ViewPlugin.define(
           (view) => ({
               setready: (x) =>
                   requestIdleCallback(() => {
@@ -80,3 +79,4 @@ export const tab_help_plugin = get_settings().CM_TAB_KEY_FOR_INDENT
               },
           }
       )
+    : []
