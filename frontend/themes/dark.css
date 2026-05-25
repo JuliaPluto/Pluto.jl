@@ -46,7 +46,7 @@
         --plutoland-or-bg-color: #323334;
 
         /*Pluto output styling */
-        --pluto-schema-types-color: rgba(30, 19, 19, 0.6);
+        --pluto-schema-types-color: hsl(0deg 0% 63%);
         --pluto-schema-types-border-color: rgba(255, 255, 255, 0.2);
         --pluto-dim-output-color: hsl(0, 0, 70%);
         --pluto-output-color: hsl(0deg 0% 77%);
@@ -134,6 +134,7 @@
         /* ai features */
         --ai-gradient-bg: linear-gradient(20deg, #371d43, #613c35);
         --ai-prompt-bg: #3a3a3a;
+
         /*Pkg status*/
         --pkg-popup-bg: #3d2f44;
         --pkg-popup-border-color: #574f56;
