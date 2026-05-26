@@ -19,5 +19,5 @@ function Base.show(io::IO, ::MIME"application/vnd.pluto.reactdomelement+object",
 end
 
 function Base.show(io::IO, m::MIME"text/html", e::DivElement)
-    Base.show(io, m, embed_display(e))
+    Base.show(io, m, EmbeddableDisplay(e, Text(rand('a':'z',16) |> join)))
 end

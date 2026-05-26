@@ -289,7 +289,7 @@ let execute_dynamic_function = async ({ environment, code }) => {
 /**
  * It is possible for `execute_scripttags` to run during the execution of `execute_scripttags`, and this variable counts the depth of this nesting.
  *
- * One case where nesting occurs is when using PlutoRunner.embed_display. In its HTML render, it outputs a `<script>`, which will render a `<pluto-display>` element with content. If that content contains a `<script>` tag, then it will be executed during the execution of the original script, etc.
+ * One case where nesting occurs is when using AbstractPlutoDingetjes.Display.@embed. In its HTML render, it outputs a `<script>`, which will render a `<pluto-display>` element with content. If that content contains a `<script>` tag, then it will be executed during the execution of the original script, etc.
  *
  * See https://github.com/fonsp/Pluto.jl/pull/2329
  */
