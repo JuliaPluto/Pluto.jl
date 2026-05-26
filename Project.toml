@@ -1,7 +1,7 @@
 name = "Pluto"
 uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 license = "MIT"
-version = "0.20.28"
+version = "1.0.0"
 authors = ["Fons van der Plas <fons@plutojl.org>", "Mikołaj Bochenski <github.com/malyvsen>", "Michiel Dral <m.c.dral@gmail.com>", "Παναγιώτης Γεωργακόπουλος <panagiotis@plutojl.org>", "Paul Berg <paul@plutojl.org>"]
 
 [deps]

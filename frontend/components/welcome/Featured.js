@@ -138,7 +138,7 @@ export const Featured = ({ sources, direct_html_links }) => {
 
                         const data = await (await fetch(new Request(url, { integrity: integrity ?? undefined }))).json()
 
-                        if (data.format_version !== "1") {
+                        if (data.format_version !== "2") {
                             throw new Error(`Invalid format version: ${data.format_version}`)
                         }
 
