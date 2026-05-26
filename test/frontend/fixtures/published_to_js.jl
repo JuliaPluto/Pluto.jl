@@ -65,7 +65,7 @@ return html`<div id='to_cell_log'>\${a}</div>`
 Display.ReactDOMElement(tag="div", children=[
 	@htl("one"),
 	@htl("two"),
-	[3,4],
+	[33,44],
 	Display.ReactDOMElement(tag="marquee", children=[
 		@htl("cool"),
 		@htl("beanz"),

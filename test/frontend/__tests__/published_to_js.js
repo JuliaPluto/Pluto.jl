@@ -44,5 +44,39 @@ describe("published_to_js", () => {
         })
         // This test is currently broken, due to https://github.com/fonsp/Pluto.jl/issues/2092
         expect(log_of_published).toBe("[4,5,6] MAGIC!")
+
+        // @embed of an array: text should contain "Hello" and the array value "999"
+        const array_embed_text = await page.evaluate(() => {
+            return /** @type {HTMLElement?} */ (document.querySelector("#array_embedded_here"))?.innerText
+        })
+        expect(array_embed_text).toContain("Hello")
+        expect(array_embed_text).toContain("999")
+
+        // The embedded array should render through Pluto's display pipeline:
+        // a <pluto-display> wraps the embedded content, and a <pluto-tree> renders the array.
+        const array_embed_has_components = await page.evaluate(() => {
+            const host = document.querySelector("#array_embedded_here")
+            return {
+                hasDisplay: host?.querySelector("pluto-display") != null,
+                hasTree: host?.querySelector("pluto-tree") != null,
+            }
+        })
+        expect(array_embed_has_components.hasDisplay).toBe(true)
+        expect(array_embed_has_components.hasTree).toBe(true)
+
+        // @embed of an @htl HTML snippet
+        const html_embed_text = await page.evaluate(() => {
+            return /** @type {HTMLElement?} */ (document.querySelector("#html_embedded_here"))?.innerText
+        })
+        expect(html_embed_text).toBe("Hello Yay")
+
+        // ReactDOMElement with mixed children (HTML, array, nested ReactDOMElement)
+        const reactdom_text = await page.evaluate(() => {
+            return /** @type {HTMLElement?} */ (document.querySelector(`pluto-cell[id="564ac630-e026-414f-aa63-52bda74769f0"] pluto-output`))?.innerText
+        })
+        expect(reactdom_text).toContain("onetwo")
+        expect(reactdom_text).toContain("33")
+        expect(reactdom_text).not.toContain("3344") // without whitespace
+        expect(reactdom_text).toContain("coolbeanz")
     })
 })
