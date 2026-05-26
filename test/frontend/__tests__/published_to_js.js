@@ -45,9 +45,11 @@ describe("published_to_js", () => {
         // This test is currently broken, due to https://github.com/fonsp/Pluto.jl/issues/2092
         expect(log_of_published).toBe("[4,5,6] MAGIC!")
 
-        // @embed of an array: text should contain "Hello" and the array value "999"
+        // @embed of an array: cell output text should contain "Hello" and the array value "999"
         const array_embed_text = await page.evaluate(() => {
-            return /** @type {HTMLElement?} */ (document.querySelector("#array_embedded_here"))?.innerText
+            return /** @type {HTMLElement?} */ (
+                document.querySelector(`pluto-cell[id="83162255-9579-46c3-9fb7-f6e2cfc1b4bf"] pluto-output`)
+            )?.innerText
         })
         expect(array_embed_text).toContain("Hello")
         expect(array_embed_text).toContain("999")
