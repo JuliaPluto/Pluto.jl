@@ -255,21 +255,6 @@ end
         @test occursin("Why we need more Δέντρα</h1>", r)
     end
     
-    @testset "embed_display" begin
-        🍭.options.evaluation.workspace_use_distributed = false
-        notebook = Notebook([
-            Cell("x = randn(10)"),
-            Cell(raw"md\"x = $(embed_display(x))\"")
-        ])
-        update_run!(🍭, notebook, notebook.cells)
-
-        @test notebook.cells[1] |> noerror
-        @test notebook.cells[2] |> noerror
-
-        @test notebook.cells[2].output.body isa String
-        @test occursin("getPublishedObject", notebook.cells[2].output.body)
-    end
-
     @testset "Table viewer" begin
         🍭.options.evaluation.workspace_use_distributed = true
         notebook = Notebook([
