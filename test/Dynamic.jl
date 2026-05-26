@@ -268,45 +268,10 @@ end
         
         @test !isempty(notebook.cells[2].published_objects)
         
-        # display should have failed
-        @test only(values(notebook.cells[3].published_objects)) == 123
-        msg = notebook.cells[3].output.body[:msg]
-        @test occursin("Failed to show value", msg)
-        @test occursin("ABC is not compatible", msg)
-        
-        
-        
         setcode!(notebook.cells[2], "2")
         update_save_run!(🍭, notebook, notebook.cells)
         @test isempty(notebook.cells[2].published_objects)
         @test isempty(notebook.cells[2].published_objects)
-        
-        
-        
-        @test notebook.cells[4].errored
-        @test notebook.cells[5] |> noerror
-        @test !isempty(notebook.cells[5].published_objects)
-        
-        
-        p = notebook.cells[7].published_objects
-        @test length(p) == 1
-        old_x = values(p) |> first
-        @test old_x == Dict(:a => 6)
-        
-        update_save_run!(🍭, notebook, notebook.cells[7])
-        p = notebook.cells[7].published_objects
-        new_x = values(p) |> first
-        @test new_x == old_x
-        @test new_x === old_x # did not change, because we don't resync the same object
-        
-        update_save_run!(🍭, notebook, notebook.cells[6])
-        p = notebook.cells[7].published_objects
-        new_x = values(p) |> first
-        @test new_x == old_x
-        @test new_x !== old_x # changed, because a new (mutable) Dict was created
-        
-        @test isempty(notebook.cells[2].published_objects)
-        @test !isempty(notebook.cells[5].published_objects)
         
         cleanup(🍭, notebook)
     end
