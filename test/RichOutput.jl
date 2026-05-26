@@ -240,7 +240,6 @@ end
             @test notebook.cells[4] |> noerror
         end
     end
-    
         
     @testset "Markdown" begin
         notebook = Notebook([
