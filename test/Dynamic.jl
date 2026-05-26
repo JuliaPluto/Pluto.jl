@@ -235,11 +235,6 @@ end
                 )
             end
             """),
-            # This is the deprecated API:
-            Cell("PlutoRunner.publish_to_js(Ref(4))"),
-            Cell("PlutoRunner.publish_to_js((ref=5,))"),
-            Cell("x = Dict(:a => 6)"),
-            Cell("PlutoRunner.publish_to_js(x)"),
         ])
 
         update_save_run!(🍭, notebook, notebook.cells)

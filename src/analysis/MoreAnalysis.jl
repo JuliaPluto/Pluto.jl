@@ -13,7 +13,6 @@ function is_referenced_anywhere(topology::NotebookTopology, sym::Symbol)::Bool
 		sym ∈ topology.nodes[cell].references
 	end
 end
-@deprecate is_referenced_anywhere(notebook::Notebook, topology::NotebookTopology, sym::Symbol) is_referenced_anywhere(topology, sym)
 
 "Return whether any cell defines the given symbol. Used for the @bind mechanism."
 function is_assigned_anywhere(topology::NotebookTopology, sym::Symbol)::Bool
@@ -21,7 +20,6 @@ function is_assigned_anywhere(topology::NotebookTopology, sym::Symbol)::Bool
 		sym ∈ topology.nodes[cell].definitions
 	end
 end
-@deprecate is_assigned_anywhere(notebook::Notebook, topology::NotebookTopology, sym::Symbol) is_assigned_anywhere(topology, sym)
 
 
 "Find all subexpressions of the form `@bind symbol something`, and extract the `symbol`s."
@@ -58,14 +56,6 @@ function downstream_recursive(
     _downstream_recursive!(found, topology, from)
     found
 end
-@deprecate downstream_recursive(
-    notebook::Notebook,
-    topology::NotebookTopology,
-    from::Union{Vector{Cell},Set{Cell}},
-) downstream_recursive(
-    topology,
-    from,
-)
 
 function _downstream_recursive!(
     found::Set{Cell},
@@ -95,14 +85,6 @@ function upstream_recursive(
     _upstream_recursive!(found, topology, from)
     found
 end
-@deprecate upstream_recursive(
-    notebook::Notebook,
-    topology::NotebookTopology,
-    from::Union{Vector{Cell},Set{Cell}},
-) upstream_recursive(
-    topology,
-    from,
-)
 
 function _upstream_recursive!(
     found::Set{Cell},
@@ -130,7 +112,6 @@ function codependents(topology::NotebookTopology, var::Symbol)::Set{Cell}
 
     downupstream = union!(upstream_recursive(topology, downstream), assigned_in)
 end
-@deprecate codependents(notebook::Notebook, topology::NotebookTopology, var::Symbol) codependents(topology, var)
 
 "Return a `Dict{Symbol,Vector{Symbol}}` where the _keys_ are the bound variables of the notebook.
 
@@ -149,6 +130,5 @@ function bound_variable_connections_graph(topology::NotebookTopology)::Dict{Symb
         for var in bound_variables
     )
 end
-@deprecate bound_variable_connections_graph(notebook::Notebook) bound_variable_connections_graph(notebook.topology)
 
 end

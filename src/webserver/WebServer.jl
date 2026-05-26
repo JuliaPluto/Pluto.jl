@@ -63,28 +63,6 @@ function run(options::Configuration.Options)
     run(session)
 end
 
-# Deprecation errors
-
-function run(host::String, port::Union{Nothing,Integer} = nothing; kwargs...)
-    @error """run(host, port) is deprecated in favor of:
-
-        run(;host="$host", port=$port)  
-
-    """
-end
-
-function run(port::Integer; kwargs...)
-    @error "Oopsie! This is the old command to launch Pluto. The new command is:
-
-        Pluto.run()
-
-    without the port as argument - it will choose one automatically. If you need to specify the port, use:
-
-        Pluto.run(port=$port)
-    "
-end
-
-
 const is_first_run = Ref(true)
 
 "Return a port and serversocket to use while taking into account the `favourite_port`."

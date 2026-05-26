@@ -197,8 +197,8 @@ export const OutputBody = ({ mime, body, cell_id, persist_js_state = false, last
             return ReactDOMElement({ cell_id, ...body, persist_js_state, sanitize_html })
             break
         case "application/vnd.pluto.divelement+object": {
-            // TODO: remove me in the future. @deprecate Does not need to be a breaking Pluto release, just sometime after July 2026
             // Backwards-compat: statefiles produced by older Pluto versions still contain DivElement, see https://github.com/JuliaPluto/Pluto.jl/pull/3544
+            // TODO: remove me in the future. @deprecate Does not need to be a breaking Pluto release, just sometime after July 2026. You also need to generate a new featured notebooks GitHub release with latest versions of everything and use it in featured_sources.js
             const attributes = {}
             if (body?.style) attributes.style = body.style
             if (body?.classname) attributes.class = body.classname
