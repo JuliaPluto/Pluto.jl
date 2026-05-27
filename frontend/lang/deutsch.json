@@ -88,7 +88,7 @@
     "t_package_could_not_load": "<p>Das Paket <strong>{{package}}.jl</strong> konnte nicht geladen werden, da es nicht initialisiert werden konnte.</p><p>Das ist nicht schön! Was du versuchen könntest:</p>",
     "t_package_could_not_load_things_you_could_try": "<ul><li>Das Notebook neu starten.</li><li>Eine andere Julia-Version ausprobieren.</li><li>Die Entwickler:innen von {{package}}.jl bezüglich dieses Fehlers kontaktieren.</li></ul>",
     "t_might_find_info_in_pkg_log": "Du kannst nützliche Informationen im Paketinstallationsprotokoll finden:",
-    "t_package_not_found_manual_pkg_activate_hint": "Du hast manuell eine Paket-Umgebung in diesem Notebook mit `Pkg.activate` aktiviert. Bitte überprüfe, dass diese Umgebung die Pakete enthält, die du benötigst. Führe diese Zelle erneut aus, nachdem du die Umgebung aktualisiert hast.",
+    "t_package_not_found_manual_pkg_activate_hint": "– Du hast manuell eine Paket-Umgebung in diesem Notebook mit `Pkg.activate` aktiviert. Bitte überprüfe, dass diese Umgebung die Pakete enthält, die du benötigst. Führe diese Zelle erneut aus, nachdem du die Umgebung aktualisiert hast.",
 
     "t_edit_frontmatter": "Frontmatter bearbeiten",
     "t_start_presentation": "Präsentation starten",

@@ -41,9 +41,11 @@
     "t_cell_indirectly_disabled_in_file_explanation": "Denne cellen er lagret i notebookfilen som en Julia <em>kommentar</em>, i stedet for <em>kode</em>.<br />Dette gjør at den ikke vil kjøre når notebooken kjøres som et skript utenfor Pluto.<br />En oppstrøms celle <em>deaktiverer denne filen</em> <b>indirekte</b>; aktiver {{upstreamLink}} for å påvirke denne cellen.",
     "t_cell_upstreamLink": "den forrige cellen",
     "t_language_picker_description": "Endre språket til grensesnittet",
+
+
     "t_anonymous_function_abbr": "En (mini-)funksjon som er definert uten 'function'-nøkkelordet, men med -> eller 'do'.",
     "t_display_complete_type_information_of_this_function_call": "Vis dette funksjonskallets fullstendige typeinformasjon",
-    "t_show_types": "",
+    "t_show_types": "...vis typer...",
     "t_multiple_expressions_in_one_cell": "Flere uttrykk i én celle",
     "t_how_would_you_like_to_fix_it": "Hvordan vil du løse dette?",
     "t_split_this_cell_into_cells": "Splitt denne cellen inn i {{count}} celler",
@@ -87,9 +89,11 @@
     "t_package_could_not_load_things_you_could_try": "<ul><li>Restart notebooken.</li><li>Prøv en annen Julia-versjon.</li><li>Kontakt utviklerne av {{package}}.jl angående denne feilen.</li></ul>",
     "t_might_find_info_in_pkg_log": "Du kan kanskje finne nyttig informasjon i pakkeinstallasjonsloggen:",
     "t_package_not_found_manual_pkg_activate_hint": "",
+
     "t_edit_frontmatter": "Rediger frontmatter",
     "t_start_presentation": "Begynn presentasjon",
     "t_close": "Lukk",
+
     "t_settings_title": "",
     "t_settings_section_ui": "",
     "t_settings_section_code_editing": "",
@@ -126,9 +130,12 @@
     "t_settings_tab_key_title": "",
     "t_settings_tab_key_description": "",
     "t_settings_tab_key_indent": "",
+
     "t_settings_reload_to_apply_changes_confirm": "",
     "t_settings_reset": "",
     "t_settings_save": "",
+
+
     "t_export_action_ellipsis": "Eksporter...",
     "t_export_category_export": "eksporter",
     "t_export_category_record": "ta opp",
@@ -141,9 +148,11 @@
     "t_export_card_record": "Ta opp",
     "t_export_card_record_description": "<em>(forhåndsvisning)</em> Fang hele notebooken og alle endringer du gjør.",
     "t_export_card_pride_month_message": "Fremtiden er <strong>skeiv</strong>!",
+
     "t_save_notebook_ellipsis": "Lagre notebook...",
     "t_save_notebook_button_label_when_currently_not_saved": "Velg",
     "t_save_notebook_button_label_when_currently_saved": "Flytt",
+
     "t_process_status_loading_binder": "Laster binder...",
     "t_process_status_reconnecting": "Kobler til på nytt...",
     "t_process_status_loading": "Laster...",
@@ -173,7 +182,8 @@
     "t_instant_feedback_send": "Send",
     "t_how_can_we_improve": "🙋 Hvordan kan vi gjøre {{pluto}} bedre?",
     "t_footer_button_settings": "",
-    "t_footer_button_FAQ": "",
+    "t_footer_button_FAQ": "{{icon}} FAQ",
+
     "t_loading_cells": "Laster celler...",
     "t_reading_hidden_code": "👀 Leser gjemt kode",
     "t_enable_and_run_cell": "Aktiver og kjør cellen",
@@ -196,6 +206,7 @@
     "t_jump_cell": "Denne cellen avhenger av en deaktivert celle",
     "t_run_cell": "Kjør celle (Shift + Enter)",
     "t_help_about_tab_navigation_inside_cell": "Trykk Esc og deretter Tab for å fortsette navigasjonen.",
+
     "t_cell_is_disabled": "Denne cellen er deaktivert. {{link}} for å kjøre koden.",
     "t_cell_is_disabled_link": "Aktiver denne cellen",
     "t_ask_ai_action": "Spør AI",
@@ -213,9 +224,9 @@
     "t_ai_permission_prompt_body_2": "Innsendt kode kan brukes (anonymt) av Pluto-utviklere for å forbedre AI-tjenesten.",
     "t_dont_ask_again": "Ikke spør igjen",
     "t_no": "Nei",
-    "t_no_key": "",
+    "t_no_key": "Nei {{key}}",
     "t_yes": "Ja",
-    "t_yes_key": "",
+    "t_yes_key": "Ja {{key}}",
     "t_ai_accept_and_close": "Godta AI-syntaksfiksen og lukk",
     "t_ai_decline_and_close": "Avslå AI-syntaksfiksen og lukk",
     "t_ai_accept_and_run": "Godta og kjør",
@@ -226,13 +237,17 @@
     "t_ai_syntax_fix_failed": "Klarte ikke å fikse syntaksfeil: {{error}}",
     "t_ai_fix_syntax_with_ai": "Fiks syntaks med AI",
     "t_ai_fix_syntax_with_ai_description": "Forsøk å fikse denne syntaksfeilen ved hjelp av en LLM-tjeneste",
+
     "t_confirm_run_many_cells_single_root_other": "",
     "t_confirm_run_many_cells_single_root_one": "",
     "t_confirm_run_many_cells_single_root_zero": "",
+
     "t_confirm_run_many_cells_multiple_roots_other": "",
     "t_confirm_run_many_cells_multiple_roots_zero": "",
+
     "t_confirm_run_many_cells_bonus_a": "",
     "t_confirm_run_many_cells_bonus_b": "",
+
     "t_confirm_delete_multiple_cells": "Slett {{count}} celler?",
     "t_confirm_delete_multiple_interrupt_notebook": "Denne cellen kjører fortsatt - vil du avbryte notebooken?",
     "t_confirm_move_file": "Er du sikker? Vil flytte fra\n\n{{old_path}}\n\ntil\n\n{{new_path}}?",
