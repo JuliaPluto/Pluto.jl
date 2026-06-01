@@ -146,7 +146,7 @@
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Eine statische <b>.pdf</b>-Datei zum Drucken oder Verschicken per E-Mail.",
     "t_export_card_record": "Aufzeichnen",
-    "t_export_card_record_description": "<em>(Vorschau)</em> Das gesamte Notebook und alle Änderungen, die du vornimmst, erfassen.",
+    "t_export_card_record_description": "Das gesamte Notebook und alle Änderungen, die du vornimmst, erfassen.",
     "t_export_card_pride_month_message": "Die Zukunft ist <strong>queer</strong>!",
 
     "t_save_notebook_ellipsis": "Notebook speichern...",
