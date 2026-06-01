@@ -120,12 +120,15 @@ export const ConfirmBeforeLongRuntime = ({}) => {
 
     const _has_deps = (num_dependencies ?? 0) > 0
     const _has_single_root = cell_ids?.length === 1
-    const possible_hints = Object.entries({
-        t_confirm_run_many_cells_bonus_a: _has_single_root && _has_deps,
-        t_confirm_run_many_cells_bonus_b: _has_deps,
-    })
-        .filter(([_, condition]) => condition)
-        .map(([key]) => key)
+
+    const possible_hints = /** @type {("t_confirm_run_many_cells_bonus_a" | "t_confirm_run_many_cells_bonus_b")[]} */ (
+        Object.entries({
+            t_confirm_run_many_cells_bonus_a: _has_single_root && _has_deps,
+            t_confirm_run_many_cells_bonus_b: _has_deps,
+        })
+            .filter(([_, condition]) => condition)
+            .map(([key]) => key)
+    )
 
     const current_hint = useMemo(() => pickrandom(possible_hints), [open_event_detail])
 
@@ -135,7 +138,7 @@ export const ConfirmBeforeLongRuntime = ({}) => {
                 ${th(cell_ids?.length === 1 ? "t_confirm_run_many_cells_single_root" : "t_confirm_run_many_cells_multiple_roots", {
                     roots: cell_ids?.length ?? 0,
                     count: num_dependencies ?? 0,
-                    time: html`<strong>${pretty_long_time(time ?? 0)}</strong>`,
+                    time: html`<strong style="white-space: nowrap">${pretty_long_time(time ?? 0)}</strong>`,
                 })}
             </p>
             ${possible_hints.length > 0

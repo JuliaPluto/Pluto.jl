@@ -13,6 +13,7 @@ import {
     deutsch,
     ellinika,
     english,
+    english_generated_bases,
     español,
     french,
     italiano,
@@ -28,7 +29,7 @@ import {
 } from "../imports/lang_imports.js"
 
 /**
- * @typedef {string & keyof typeof english} TranslationKey
+ * @typedef {string & keyof typeof english | string & keyof typeof english_generated_bases} TranslationKey
  */
 
 const without_empty_keys = (obj) => {

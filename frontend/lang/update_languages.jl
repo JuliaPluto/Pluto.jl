@@ -93,5 +93,20 @@ end
 
 
 
-
+## For TypeScript checking, we want to know statically what the list of allowed keys is. This should also include things like `t_example` if `t_example_other` and `t_example_one` are defined. We add these here:
+let
+    d = OrderedCollections.OrderedDict{String,String}(
+        "NOTE: this file is generated automatically with update_languages.jl." => "Do not edit by hand.",
+    )
+    for key in keys(english)
+        base = base_plural(key)
+        if base !== nothing
+            d[base] = ""
+        end
+    end
+    
+    write_json("english_generated_bases.json", d)
+    @info "✅ Wrote base file" lang_file
+end
+    
 

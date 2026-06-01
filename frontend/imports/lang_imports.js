@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // Separate file because Prettier cannot handle the `with` syntax.
 // These imports require quite modern browsers (https://caniuse.com/mdn-javascript_statements_import_import_attributes) but it will be bundled so it doesn't matter for Pluto releases.
 
@@ -11,6 +9,7 @@ export { default as dansk } from "../lang/dansk.json" with { type: "json" }
 export { default as deutsch } from "../lang/deutsch.json" with { type: "json" }
 export { default as ellinika } from "../lang/ellinika.json" with { type: "json" }
 export { default as english } from "../lang/english.json" with { type: "json" }
+export { default as english_generated_bases } from "../lang/english_generated_bases.json" with { type: "json" }
 export { default as español } from "../lang/espannol.json" with { type: "json" }
 export { default as french } from "../lang/french.json" with { type: "json" }
 export { default as italiano } from "../lang/italiano.json" with { type: "json" }
