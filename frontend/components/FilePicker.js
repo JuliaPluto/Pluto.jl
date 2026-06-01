@@ -15,6 +15,7 @@ import {
 import { tab_help_plugin } from "./CellInput/tab_help_plugin.js"
 import _ from "../imports/lodash-es.js"
 import { get_settings } from "./Settings.js"
+import { cl } from "../common/ClassTable.js"
 
 let { autocompletion, completionKeymap } = autocomplete
 
@@ -60,7 +61,8 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
     const cm = useRef(/** @type {EditorView?} */ (null))
 
     const is_button_disabled = current_value.length === 0 || current_value === forced_value.current
-    const suggest_button = current_value !== forced_value.current && current_value.endsWith(".jl")
+    const value_different = current_value !== forced_value.current
+    const suggest_button = current_value !== forced_value.current && /\.\w*$/.test(current_value)
 
     const suggest_not_tmp = () => {
         const current_cm = cm.current
@@ -116,6 +118,10 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
         const usesDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         const keyMapSubmit = () => {
             onSubmit()
+            return true
+        }
+        const keyMapClear = () => {
+            set_cm_value(current_cm, forced_value.current, true)
             return true
         }
         cm.current = new EditorView({
@@ -194,6 +200,17 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
                             run: keyMapSubmit,
                         },
                         {
+                            key: "Escape",
+                            run: (cm) => {
+                                // If there is autocomplete open, close that. It will return `true`
+                                return assert_not_null(close_autocomplete_command).run(cm)
+                            },
+                        },
+                        {
+                            key: "Escape",
+                            run: keyMapClear,
+                        },
+                        {
                             key: "Ctrl-Enter",
                             mac: "Cmd-Enter",
                             run: keyMapSubmit,
@@ -247,7 +264,7 @@ export const FilePicker = ({ value, suggest_new_file, button_label, placeholder,
     })
 
     return html`
-        <pluto-filepicker class=${suggest_button ? "suggest_button" : ""} ref=${base} onfocusout=${onBlur}>
+        <pluto-filepicker class=${cl({ suggest_button, value_different })} ref=${base} onfocusout=${onBlur}>
             <button onClick=${onSubmit} disabled=${is_button_disabled}>${button_label}</button>
         </pluto-filepicker>
     `

@@ -1700,7 +1700,7 @@ ${t("t_key_autosave_description")}`
                                           value=${notebook.in_temp_dir ? "" : notebook.path}
                                           on_submit=${this.submit_file_change}
                                           on_desktop_submit=${this.desktop_submit_file_change}
-                                          clear_on_blur=${true}
+                                          clear_on_blur=${false}
                                           suggest_new_file=${{
                                               base: this.client.session_options?.server?.notebook_path_suggestion ?? "",
                                           }}
