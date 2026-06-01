@@ -412,7 +412,7 @@ jlerror li .frame-line-preview pre:not(.asdfdsaf) {
 }
 
 jlerror li:not(.from_this_cell) .frame-line-preview pre::after {
-    content: "cell preview";
+    content: var(--after-content);
     display: block;
     position: absolute;
     bottom: 0;

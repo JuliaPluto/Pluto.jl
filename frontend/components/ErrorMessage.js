@@ -197,6 +197,7 @@ const LinePreview = ({ frame, num_context_lines = 2 }) => {
                 }}
                 href=${`#${cell_id}`}
                 class="frame-line-preview"
+                style=${`--after-content: "${t("t_code_snippet_cell_preview_label")}";`}
                 ><div>
                     <pre>
 ${lines.map((line, i) =>
