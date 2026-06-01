@@ -1880,7 +1880,7 @@ ${t("t_key_autosave_description")}`
                             })}</a>
                             <span class="footer-spacer" style="flex: 1 1 0%; min-width: 5ch;"></span>
                             <form id="feedback" action="#" method="post">
-                                <label for="opinion">${th("t_how_can_we_improve", {
+                                <label for="opinion">${th("t_feedback_about_pluto", {
                                     pluto: html`<a href="https://plutojl.org/" target="_blank">Pluto.jl</a>`,
                                 })}</label>
                                 <input type="text" name="opinion" id="opinion" autocomplete="off" placeholder=${t("t_instant_feedback_ellipsis")} />

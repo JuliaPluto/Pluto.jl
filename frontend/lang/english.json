@@ -180,7 +180,7 @@
     "t_export_safe_preview_warning": "This notebook is still in Safe Preview, and cells are not executed. You might want to run the notebook first. Are you sure you want to export it?",
     "t_instant_feedback_ellipsis": "Instant feedback...",
     "t_instant_feedback_send": "Send",
-    "t_how_can_we_improve": "🙋 How can we make {{pluto}} better?",
+    "t_feedback_about_pluto": "🙋 What do you think about {{pluto}}?",
     "t_footer_button_settings": "{{icon}} Settings",
     "t_footer_button_FAQ": "{{icon}} FAQ",
 
