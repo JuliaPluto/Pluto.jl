@@ -1,8 +1,12 @@
 {
     "NOTE: this file is generated automatically with update_languages.jl.": "Do not edit by hand.",
+    "t_split_this_cell_into_cells": "",
     "t_confirm_run_many_cells_single_root": "",
     "t_confirm_run_many_cells_multiple_roots": "",
+    "t_confirm_delete_multiple_cells": "",
     "t_time_minutes": "",
     "t_time_seconds": "",
+    "t_logs_truncated": "",
+    "t_ready_notif_body": "",
     "t_undo_delete": ""
 }
