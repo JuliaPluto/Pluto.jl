@@ -97,7 +97,7 @@
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Um ficheiro <b>.pdf</b> estático para impressão ou envio por email.",
     "t_export_card_record": "Gravar",
-    "t_export_card_record_description": "<em>(pré-visualização)</em> Captura o notebook completo e todas as alterações que fizeres.",
+    "t_export_card_record_description": "Captura o notebook completo e todas as alterações que fizeres.",
     "t_export_card_pride_month_message": "O futuro é <strong>queer</strong>!",
     "t_save_notebook_ellipsis": "Guardar notebook...",
     "t_save_notebook_button_label_when_currently_not_saved": "Escolher",

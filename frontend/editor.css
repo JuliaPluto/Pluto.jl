@@ -562,6 +562,10 @@ header#pluto-nav.show_export {
     transform: translateY(var(--header-height));
 }
 
+#pluto-nav:not(.show_export) dialog#export {
+    translate: 0 -2px;
+}
+
 dialog#export {
     position: absolute;
     display: block;
@@ -658,7 +662,7 @@ header.show_export dialog#export div#container {
 a.export_card {
     margin: 20px 5px;
     flex: 0 0 auto;
-    width: var(--size, 24ch);
+    width: var(--size, 14.5em);
     border: 5px solid transparent;
     background: var(--export-card-bg-color);
     border-radius: 8px;

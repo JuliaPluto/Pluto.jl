@@ -734,6 +734,7 @@ export const generateCopyHeaderIdButton = (/** @type {HTMLHeadingElement} */ hea
             !is_localhost_hostname(root.hostname)
         ) {
             url_to_copy = `${root.href}${url_to_copy}`
+            history.pushState(null, "", `#${id}`)
         }
 
         navigator.clipboard.writeText(url_to_copy)

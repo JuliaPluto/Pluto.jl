@@ -97,7 +97,7 @@
     "t_export_card_pdf": "PDF",
     "t_export_card_pdf_description": "Ένα στατικό <b>.pdf</b> αρχείο για εκτύπωση ή αποστολή με email.",
     "t_export_card_record": "Εγγραφή",
-    "t_export_card_record_description": "<em>(προεπισκόπηση)</em> Καταγράψτε ολόκληρο το σημειωματάριο και τυχόν αλλαγές που κάνετε.",
+    "t_export_card_record_description": "Καταγράψτε ολόκληρο το σημειωματάριο και τυχόν αλλαγές που κάνετε.",
     "t_export_card_pride_month_message": "Το μέλλον είναι <strong>queer</strong>!",
     "t_save_notebook_ellipsis": "Αποθήκευση σημειωματαρίου...",
     "t_save_notebook_button_label_when_currently_not_saved": "Επιλογή",
