@@ -55,7 +55,7 @@ const resources = {
     "nb": without_empty_keys(norsk_bokmål),
     "pt-PT": without_empty_keys(portugues_pt),
     "pl": without_empty_keys(polski),
-    "ru": without_empty_keys(russian),
+    "ru-RU": without_empty_keys(russian),
 }
 
 /**
