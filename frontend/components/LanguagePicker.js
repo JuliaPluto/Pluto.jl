@@ -11,7 +11,7 @@ export const LanguagePicker = ({ onChanged = () => {} }) => {
 
     const handleLanguageChange = async (event) => {
         if (event.target.value === "contribute") {
-            window.open("https://github.com/JuliaPluto/Pluto.jl/tree/main/frontend/lang", "_blank")
+            window.open("https://github.com/JuliaPluto/Pluto.jl/tree/main/frontend/lang#readme", "_blank")
             return
         }
 

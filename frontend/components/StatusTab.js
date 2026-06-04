@@ -6,7 +6,7 @@ import { DiscreteProgressBar } from "./DiscreteProgressBar.js"
 import { PkgTerminalView } from "./PkgTerminalView.js"
 import { NotifyWhenDone } from "./NotifyWhenDone.js"
 import { scroll_to_busy_cell } from "./ProgressBar.js"
-import { t } from "../common/lang.js"
+import { getCurrentLanguage, t } from "../common/lang.js"
 
 /**
  * @param {{
@@ -78,6 +78,7 @@ export const friendly_name = (/** @type {string} */ task_name) => {
 }
 
 const to_ns = (x) => x * 1e9
+const format_number = new Intl.NumberFormat(getCurrentLanguage()).format
 
 /**
  * @param {{
@@ -182,7 +183,7 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
         let d = total_done(mystatus)
 
         if (t > 1) {
-            inner_progress = html`<span class="subprogress-counter">${" "}(${d}/${t})</span>`
+            inner_progress = html`<span class="subprogress-counter">${" "}<bdi>(${format_number(d)}/${format_number(t)})</bdi></span>`
         }
     }
 

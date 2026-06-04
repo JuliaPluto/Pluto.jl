@@ -715,7 +715,7 @@ dialog#export .export_small_btns {
 dialog#export .pride_message {
     flex: 1 0 auto;
     align-self: center;
-    margin-left: 32ch;
+    margin-inline-start: 32ch;
 }
 dialog#export .pride_message p {
     margin: 0;

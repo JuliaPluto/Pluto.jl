@@ -101,9 +101,11 @@ export const t = (key, options = {}) => {
 
     return Object.keys(options).reduce((str, interp) => {
         // Interpolate
-        return str.replaceAll(`{{${interp}}}`, options[interp])
+        return str.replaceAll(`{{${interp}}}`, format_value(lang, options[interp]))
     }, String(found))
 }
+
+const format_value = (lang, value) => (typeof value === "number" ? new Intl.NumberFormat(lang).format(value) : value)
 
 /**
  * Get available languages with their display names and translation completeness
@@ -138,13 +140,13 @@ export const changeLanguage = async (language) => {
  * Get current language
  * @returns {string}
  */
-export const getCurrentLanguage = () => {
+export const getCurrentLanguage = _.memoize(() => {
     const from_local_storage = localStorage.getItem("i18nextLng")
     const from_navigator = navigator.languages
 
     const to_search = [from_local_storage, ...from_navigator]
     return getLanguage(to_search)
-}
+})
 
 export const getWritingDirection = () => {
     return t("t_language_direction") === "rtl" ? "rtl" : "ltr"

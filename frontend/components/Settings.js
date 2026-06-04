@@ -101,6 +101,8 @@ const _Settings = ({}) => {
                 value=${settings.CONFIRM_LONG_RUNTIMES_SECONDS}
                 onChange=${(e) => set("CONFIRM_LONG_RUNTIMES_SECONDS", e.target.valueAsNumber)}
                 max="99999"
+                step="any"
+                style="width: 11ch;"
             />`,
         },
         ...(ai_disabled_from_backend
