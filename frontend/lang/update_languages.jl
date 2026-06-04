@@ -30,7 +30,7 @@ const plural_suffixes = ["zero", "one", "two", "few", "many", "other"]
 const plural_regex = Regex("^(.*)_(" * join(plural_suffixes, "|") * ")\$")
 
 # Return the base key if it ends with an i18next plural suffix.
-# For example "t_time_minutes_other" -> "t_time_minutes".
+# For example "t_undo_delete_other" -> "t_undo_delete".
 base_plural(key) = begin
     m = match(plural_regex, key)
     m === nothing ? nothing : m.captures[1]

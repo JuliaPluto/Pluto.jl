@@ -2,7 +2,7 @@ import _ from "../imports/lodash-es.js"
 import { html, useEffect, useState, useRef } from "../imports/Preact.js"
 
 import { useDialog } from "../common/useDialog.js"
-import { t, th } from "../common/lang.js"
+import { getCurrentLanguage, t, th } from "../common/lang.js"
 
 export const RunLocalButton = ({ show, start_local }) => {
     //@ts-ignore
@@ -161,8 +161,8 @@ export const pretty_long_time = (/** @type {number} */ sec) => {
     const min_r = Math.round(min)
 
     if (sec < 60) {
-        return t("t_time_seconds", { count: sec_r })
+        return new Intl.NumberFormat(getCurrentLanguage(), { style: "unit", unit: "second", unitDisplay: "long" }).format(sec_r)
     } else {
-        return t("t_time_minutes", { count: min_r })
+        return new Intl.NumberFormat(getCurrentLanguage(), { style: "unit", unit: "minute", unitDisplay: "long" }).format(min_r)
     }
 }
