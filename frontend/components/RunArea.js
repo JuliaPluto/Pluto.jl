@@ -4,7 +4,7 @@ import { html, useContext, useEffect, useMemo, useState } from "../imports/Preac
 import { in_textarea_or_input } from "../common/KeyboardShortcuts.js"
 import { PlutoActionsContext } from "../common/PlutoContext.js"
 import { open_pluto_popup } from "../common/open_pluto_popup.js"
-import { t, th } from "../common/lang.js"
+import { getCurrentLanguage, t, th } from "../common/lang.js"
 
 export const RunArea = ({
     runtime,
@@ -75,16 +75,35 @@ export const prettytime = (time_ns) => {
     if (time_ns == null) {
         return "---"
     }
+
+    const units = ["nanosecond", "microsecond", "millisecond", "second"]
+    const units_latin = ["ns", "μs", "ms", "sec"]
+
+    // Find the right prefix
     let result = time_ns
-    const prefices = ["n", "μ", "m", ""]
     let i = 0
-    while (i < prefices.length - 1 && result >= 1000.0) {
+    while (i < units.length - 1 && result >= 1000.0) {
         i += 1
         result /= 1000
     }
-    const roundedtime = result.toFixed(time_ns < 100 || result >= 100.0 ? 0 : 1)
 
-    return roundedtime + "\xa0" + prefices[i] + "s"
+    // Display the string
+    const unit = units[i]
+    return t("t_time_format_unit_override") === "latin"
+        ? // Force latin unit (ms, ns)
+          new Intl.NumberFormat(getCurrentLanguage(), {
+              maximumFractionDigits: unit === "nanosecond" ? 0 : result < 100 ? 1 : 0,
+          }).format(result) +
+              "\xa0" +
+              units_latin[i]
+        : // Use localized unit
+          new Intl.NumberFormat(getCurrentLanguage(), {
+              style: "unit",
+              unit,
+              maximumFractionDigits: unit === "nanosecond" ? 0 : result < 100 ? 1 : 0,
+          })
+              .format(result)
+              .replaceAll(" ", "\xa0")
 }
 
 const update_interval = 50
