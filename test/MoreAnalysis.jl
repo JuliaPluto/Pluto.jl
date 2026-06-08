@@ -21,30 +21,30 @@ using Test
     
     @testset "Recursive stuff" begin
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[1:1])) == 3:7
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[1:1])) == []
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[1:1])) == 3:7
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[1:1])) == []
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[6:6])) == [7]
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[6:6])) == [1,2,3,4]
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[6:6])) == [7]
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[6:6])) == [1,2,3,4]
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[7:7])) == []
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[7:7])) == 1:6
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[7:7])) == []
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[7:7])) == 1:6
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[4:5])) == 6:7
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[4:5])) == 1:3
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[4:5])) == 6:7
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[4:5])) == 1:3
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[1:2])) == 3:7
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[1:2])) == []
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[1:2])) == 3:7
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[1:2])) == []
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[1:7])) == 3:7
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[1:7])) == 1:6
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[1:7])) == 3:7
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[1:7])) == 1:6
         
         
-        @test cell_indices(MoreAnalysis.downstream_recursive(notebook, notebook.topology, notebook.cells[[1,3]])) == 3:7
-        @test cell_indices(MoreAnalysis.upstream_recursive(notebook, notebook.topology, notebook.cells[[1,3]])) == [1]
+        @test cell_indices(MoreAnalysis.downstream_recursive(notebook.topology, notebook.cells[[1,3]])) == 3:7
+        @test cell_indices(MoreAnalysis.upstream_recursive(notebook.topology, notebook.cells[[1,3]])) == [1]
         
-        @test MoreAnalysis.upstream_recursive(notebook, notebook.topology, Cell[]) == Set{Cell}()
-        @test MoreAnalysis.downstream_recursive(notebook, notebook.topology, Cell[]) == Set{Cell}()
+        @test MoreAnalysis.upstream_recursive(notebook.topology, Cell[]) == Set{Cell}()
+        @test MoreAnalysis.downstream_recursive(notebook.topology, Cell[]) == Set{Cell}()
     end
     
     @testset "Bond connections" begin
@@ -53,7 +53,7 @@ using Test
         #     MoreAnalysis.find_bound_variables(cell.parsedcode)
         # end)
 
-        connections = MoreAnalysis.bound_variable_connections_graph(notebook)
+        connections = MoreAnalysis.bound_variable_connections_graph(notebook.topology)
 
         @test !isempty(connections)
         wanted_connections = Dict(
