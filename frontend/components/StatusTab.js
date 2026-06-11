@@ -179,7 +179,7 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
 
     let inner_progress = null
     if (started) {
-        let t = total_tasks(mystatus) + 4
+        let t = total_tasks(mystatus)
         let d = total_done(mystatus)
 
         if (t > 1) {
