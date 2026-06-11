@@ -210,7 +210,7 @@ const StatusItem = ({ status_tree, path, my_clock_is_ahead_by, nbpkg, backend_la
               >
                   <span class="status-icon"></span>
                   <span class="status-name">${friendly_name(mystatus.name)}${inner_progress}</span>
-                  <span class="status-time">${finished ? prettytime(to_ns(end - start)) : busy ? prettytime(to_ns(busy_time)) : null}</span>
+                  <span class="status-time"><bdi>${finished ? prettytime(to_ns(end - start)) : busy ? prettytime(to_ns(busy_time)) : null}</bdi></span>
               </div>
               ${inner}
               ${is_open && mystatus.name === "pkg"
