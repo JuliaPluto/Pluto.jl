@@ -186,7 +186,6 @@
         --footer-filepicker-button-color: black;
         --footer-filepicker-focus-color: #c1c1c1;
         --footnote-border-color: rgba(114, 225, 231, 0.15);
-
         --settings-bg-color: rgb(30 34 31);
         --settings-p2-color: #898989;
         --settings-header-bg-color: #f9dadf;
@@ -210,6 +209,8 @@
         --cm-color-editor-text: oklch(90% 3% 0deg);
         --cm-color-comment: oklch(80% 30% 0deg);
         --cm-color-keyword: oklch(70% 40% 30deg);
+        --cm-color-definition: oklch(72.266% 0.04982 26.319);
+        --cm-color-control-operator: oklch(0.72 0.19 353.17);
         --cm-color-symbol: oklch(80% 30% 60deg);
         --cm-color-macro: oklch(80% 30% 150deg);
         --cm-color-command: oklch(80% 10% 120deg);

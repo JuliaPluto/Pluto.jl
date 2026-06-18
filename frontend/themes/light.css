@@ -209,6 +209,8 @@
         --cm-color-editor-text: oklch(30% 0% 0deg);
         --cm-color-comment: oklch(45% 60% 0deg);
         --cm-color-keyword: oklch(45% 80% 30deg);
+        --cm-color-definition: oklch(28.455% 0.11677 29.223);
+        --cm-color-control-operator: oklch(56.456% 0.23502 350.694);
         --cm-color-symbol: oklch(45% 80% 90deg);
         --cm-color-command: oklch(35% 100% 120deg);
         --cm-color-macro: oklch(45% 80% 150deg);

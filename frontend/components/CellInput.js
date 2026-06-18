@@ -68,6 +68,7 @@ import { AiSuggestionPlugin } from "./CellInput/ai_suggestion.js"
 import { detect_indent_unit } from "./CellInput/detect_indent_unit.js"
 import { t } from "../common/lang.js"
 import { get_settings } from "./Settings.js"
+import { highlightKwargsPlugin } from "./CellInput/highlight_kwargs.js"
 
 // @ts-ignore
 window.PLUTO_TOGGLE_CM_MIXED_PARSER = () => console.error("Use the Settings menu instead.")
@@ -78,6 +79,7 @@ window.PLUTO_TOGGLE_CM_AUTOCOMPLETE_ON_TYPE = () => console.error("Use the Setti
 
 const common_style_tags = [
     { tag: tags.comment, color: "var(--cm-color-comment)", fontStyle: "italic", filter: "none" },
+
     { tag: tags.variableName, color: "var(--cm-color-variable)", fontWeight: 700 },
     { tag: tags.propertyName, color: "var(--cm-color-symbol)", fontWeight: 700 },
     { tag: tags.macroName, color: "var(--cm-color-macro)", fontWeight: 700 },
@@ -88,10 +90,11 @@ const common_style_tags = [
     { tag: tags.character, color: "var(--cm-color-literal)" },
     { tag: tags.literal, color: "var(--cm-color-literal)" },
     { tag: tags.keyword, color: "var(--cm-color-keyword)" },
-    // TODO: normal operators
-    { tag: tags.definitionOperator, color: "var(--cm-color-keyword)" },
+    { tag: tags.definitionOperator, color: "var(--cm-color-definition)" },
     { tag: tags.logicOperator, color: "var(--cm-color-keyword)" },
-    { tag: tags.controlOperator, color: "var(--cm-color-keyword)" },
+    { tag: [tags.controlKeyword, tags.controlOperator], color: "var(--cm-color-control-operator)" },
+    { tag: tags.attributeName, color: `pink`, fontStyle: "italic" },
+
     { tag: tags.bracket, color: "var(--cm-color-bracket)" },
     { tag: tags.self, color: "var(--cm-color-keyword)" },
     { tag: tags.null, color: "var(--cm-color-literal)" },
@@ -610,6 +613,7 @@ export const CellInput = ({
                     syntaxHighlighting(pluto_syntax_colors_css),
                     lineNumbers(),
                     highlightSpecialChars(),
+                    highlightKwargsPlugin(),
                     history(),
                     drawSelection(),
                     EditorState.allowMultipleSelections.of(true),

@@ -4267,6 +4267,9 @@ pluto-input:focus-within .cm-editor .cm-matchingBracket {
     vertical-align: top;
     margin-left: -1px;
 }
+.cm-julia-kwarg {
+    font-style: italic;
+}
 
 /* PLUTO HOOKS - special styling for cell that runs hook */
 /* New feature, new section in the css! */
