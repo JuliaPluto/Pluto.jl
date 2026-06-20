@@ -21,7 +21,7 @@ jobs:
         runs-on: macOS-latest
         timeout-minutes: 20
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
               # We use that PAT token instead of GITHUB_TOKEN because we are triggering another github action on the 'release' event.
               # Triggering a workflow from a workflow is only allowed if the relaying event is signed with a PAT.
               # See https://docs.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
@@ -43,7 +43,7 @@ jobs:
                   git reset --hard $GITHUB_SHA
 
             # if this is a PR. then just checkout without fanciness
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
               if: github.event_name == 'pull_request'
 
             # Do the actual bundling
