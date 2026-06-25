@@ -155,6 +155,85 @@ contains_macrocall(other) = false
 
 
 """
+Detect a top-level `@doc str def` expression and return the bound name (e.g. `:f`) if found.
+
+The Julia 1.13 release (JuliaLang/julia#59882) changed `@doc` so it returns the value of `def`
+rather than a `Docs.Binding`. That breaks `format_output(::Base.Docs.Binding)` cell rendering,
+so we re-derive the binding from the (pre-macroexpansion) expression. See JuliaLang/julia#60681
+and Pluto issue #3449.
+"""
+function doc_macrocall_binding_name(@nospecialize(expr))
+    # Peel off the `:toplevel`/`:block` wrapper that Pluto's Parse.jl always builds, ignoring
+    # `LineNumberNode`s, until we either reach the macrocall or something else.
+    while expr isa Expr && (expr.head === :toplevel || expr.head === :block)
+        inner = nothing
+        for arg in expr.args
+            arg isa LineNumberNode && continue
+            if inner === nothing
+                inner = arg
+            else
+                # more than one non-LineNumberNode arg: not a `@doc` wrapper shape
+                return nothing
+            end
+        end
+        inner === nothing && return nothing
+        expr = inner
+    end
+    Meta.isexpr(expr, :macrocall) || return nothing
+    name = expr.args[1]
+    is_doc_macro =
+        name === GlobalRef(Core, Symbol("@doc")) ||
+        name === GlobalRef(Base, Symbol("@doc")) ||
+        name === Symbol("@doc") ||
+        name == :(Core.var"@doc") ||
+        name == :(Base.var"@doc")
+    is_doc_macro || return nothing
+    # Layout: @doc <LineNumberNode> <docstring> <def>
+    length(expr.args) >= 4 || return nothing
+    return doc_target_name(expr.args[end])
+end
+
+doc_target_name(s::Symbol) = s
+function doc_target_name(@nospecialize(e))
+    e isa Expr || return nothing
+    if e.head === :(=) || e.head === :function || e.head === :macro || e.head === :(->) ||
+       e.head === :where || e.head === :call || e.head === :(::) || e.head === :curly
+        return isempty(e.args) ? nothing : doc_target_name(e.args[1])
+    elseif e.head === :.
+        # qualified name like `Base.conj` — pick the rightmost symbol; `Docs.Binding`
+        # in any workspace resolves to the same docs via Docs.aliasof.
+        return length(e.args) == 2 && e.args[2] isa QuoteNode && e.args[2].value isa Symbol ?
+            e.args[2].value::Symbol : nothing
+    elseif e.head === :struct
+        return length(e.args) >= 2 ? doc_target_name(e.args[2]) : nothing
+    elseif e.head === :module
+        return length(e.args) >= 2 && e.args[2] isa Symbol ? e.args[2] : nothing
+    elseif e.head === :const && length(e.args) >= 1
+        return doc_target_name(e.args[1])
+    end
+    return nothing
+end
+
+"""
+On Julia 1.13+, re-wrap the result of a `@doc` cell as a `Docs.Binding` so the cell renders as
+documentation rather than as a generic function summary. No-op on earlier versions, where `@doc`
+already returns a `Docs.Binding`.
+"""
+function maybe_rewrap_as_doc_binding(@nospecialize(ans), @nospecialize(original_expr), m::Module)
+    @static if VERSION < v"1.13.0-DEV"
+        return ans
+    else
+        ans isa Docs.Binding && return ans
+        ans isa CapturedException && return ans
+        name = doc_macrocall_binding_name(original_expr)
+        name === nothing && return ans
+        isdefined(m, name) || return ans
+        return Docs.Binding(m, name)
+    end
+end
+
+
+"""
 Run the given expression in the current workspace module. If the third argument is `nothing`, then the expression will be `Core.eval`ed. The result and runtime are stored inside [`cell_results`](@ref) and [`cell_runtimes`](@ref).
 
 If the third argument is a `Tuple{Set{Symbol}, Set{Symbol}}` containing the referenced and assigned variables of the expression (computed by the ExpressionExplorer), then the expression will be **wrapped inside a function**, with the references as inputs, and the assignments as outputs. Instead of running the expression directly, Pluto will call this function, with the right globals as inputs.
@@ -281,7 +360,9 @@ function run_expression(
     if (result isa CapturedException) && (result.ex isa InterruptException)
         throw(result.ex)
     end
-    
+
+    result = maybe_rewrap_as_doc_binding(result, original_expr, m)
+
     cell_results[cell_id], cell_runtimes[cell_id] = result, runtime
 end
 precompile(run_expression, (Module, Expr, UUID, UUID, Nothing, Nothing))
