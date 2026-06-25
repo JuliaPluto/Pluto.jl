@@ -101,7 +101,7 @@ function auth_middleware(handler)
         if !required || is_authenticated(session, request)
             response = handler(request)
             if !required
-                filter!(p -> p[1] != "Access-Control-Allow-Origin", response.headers)
+                # setheader replaces any existing values for this key.
                 HTTP.setheader(response, "Access-Control-Allow-Origin" => "*")
             end
             if required || HTTP.URI(request.target).path ∈ ("", "/")

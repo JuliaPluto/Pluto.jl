@@ -32,6 +32,16 @@ function swallow_exception(f, exception_type::Type{T}) where {T}
 end
 
 """
+The raw bytes of an in-memory response body. Pluto's handlers build responses
+from strings or byte vectors, so depending on the constructor the body ends up
+as an `HTTP.BytesBody`, a `Vector{UInt8}`, a `String`, or `HTTP.EmptyBody`.
+"""
+response_body_bytes(body::HTTP.BytesBody) = body.data
+response_body_bytes(body::AbstractVector{UInt8}) = body
+response_body_bytes(body::AbstractString) = codeunits(body)
+response_body_bytes(::HTTP.EmptyBody) = UInt8[]
+
+"""
     Pluto.run()
 
 Start Pluto!
@@ -67,26 +77,40 @@ const is_first_run = Ref(true)
 
 "Return a port and serversocket to use while taking into account the `favourite_port`."
 function port_serversocket(hostIP::Sockets.IPAddr, favourite_port, port_hint)
-    local port, serversocket
+    listen_on(port) = HTTP.TCP.listen("tcp", HTTP.HostResolvers.join_host_port(string(hostIP), Int(port)))
     if favourite_port === nothing
-        port, serversocket = Sockets.listenany(hostIP, UInt16(port_hint))
+        port = UInt16(port_hint)
+        while true
+            serversocket = try
+                listen_on(port)
+            catch e
+                port == typemax(UInt16) && rethrow()
+                port += UInt16(1)
+                continue
+            end
+            return port, serversocket
+        end
     else
         port = UInt16(favourite_port)
-        try
-            serversocket = Sockets.listen(hostIP, port)
+        serversocket = try
+            listen_on(port)
         catch e
             error("Cannot listen on port $port. It may already be in use, or you may not have sufficient permissions. Use Pluto.run() to automatically select an available port.")
         end
+        return port, serversocket
     end
-    return port, serversocket
 end
 
 struct RunningPlutoServer
     http_server
+    on_shutdown::Function
     initial_registry_update_task::Task
 end
 
 function Base.close(ssc::RunningPlutoServer)
+    # Close client connections and shut down notebooks first: the graceful
+    # `close(::HTTP.Server)` waits for active (WebSocket) connections to finish.
+    ssc.on_shutdown()
     close(ssc.http_server)
     wait(ssc.http_server)
     wait(ssc.initial_registry_update_task)
@@ -101,10 +125,11 @@ function Base.wait(ssc::RunningPlutoServer)
     catch e
         println()
         println()
-        Base.close(ssc)
         (e isa InterruptException) || rethrow(e)
+    finally
+        Base.close(ssc)
     end
-    
+
     nothing
 end
 
@@ -149,12 +174,10 @@ function run!(session::ServerSession)
     local port, serversocket = port_serversocket(hostIP, favourite_port, port_hint)
 
     on_shutdown() = @sync begin
-        # Triggered by HTTP.jl
         @info("\nClosing Pluto... Restart Julia for a fresh session. \n\nHave a nice day! 🎈\n\n")
-        # TODO: put do_work tokens back 
-        @async swallow_exception(() -> close(serversocket), Base.IOError)
+        # TODO: put do_work tokens back
         for client in values(session.connected_clients)
-            @async swallow_exception(() -> close(client.stream), Base.IOError)
+            @async swallow_exception(() -> close(client.stream), Exception)
         end
         empty!(session.connected_clients)
         for nb in values(session.notebooks)
@@ -162,7 +185,7 @@ function run!(session::ServerSession)
         end
     end
 
-    server = HTTP.listen!(hostIP, port; stream=true, server=serversocket, on_shutdown, verbose=-1) do http::HTTP.Stream
+    server = HTTP.listen!(serversocket) do http::HTTP.Stream
         # the if statement below asks if the current request is a "websocket upgrade" request: the start of a websocket connection.
         if HTTP.WebSockets.isupgrade(http.message)
             secret_required = let
@@ -182,7 +205,8 @@ function run!(session::ServerSession)
             if !secret_required || is_authenticated(session, http.message)
                 try
                     # "upgrade" means accept and start the websocket connection that the client requested
-                    HTTP.WebSockets.upgrade(http) do clientstream
+                    # Origin checking is disabled (like HTTP.jl 1.x) because it breaks proxied setups (Binder, JupyterHub); Pluto's own secret provides the authentication.
+                    HTTP.WebSockets.upgrade(http; check_origin=(request, origin) -> true) do clientstream
                         if HTTP.WebSockets.isclosed(clientstream)
                             return
                         end
@@ -248,7 +272,7 @@ function run!(session::ServerSession)
                     end
                 finally
                     # if we never wrote a response, then do it now
-                    if isopen(http) && !iswritable(http)
+                    if isopen(http)
                         finish()
                     end
                 end
@@ -258,9 +282,19 @@ function run!(session::ServerSession)
         else
             # then it's a regular HTTP request, not a WS upgrade
 
-            request::HTTP.Request = http.message
-            request.body = read(http)
-            # HTTP.closeread(http)
+            # `http.message` only carries the request metadata; rebuild a request that includes the body for the handlers.
+            request::HTTP.Request = let m = http.message
+                HTTP.Request(
+                    m.method,
+                    m.target;
+                    headers=m.headers,
+                    body=read(http),
+                    host=m.host,
+                    proto_major=Int(m.proto_major),
+                    proto_minor=Int(m.proto_minor),
+                    close=m.close,
+                )
+            end
 
             # If a "token" url parameter is passed in from binder, then we store it to add to every URL (so that you can share the URL to collaborate).
             let
@@ -271,23 +305,27 @@ function run!(session::ServerSession)
             end
 
             ###
-            response_body = app(request)
+            response::HTTP.Response = app(request)
             ###
 
-            request.response::HTTP.Response = response_body
-            request.response.request = request
+            response.request = request
             try
-                HTTP.setheader(http, "Content-Length" => string(length(request.response.body)))
+                # The stream writes the status, headers and Content-Length from its `response` when `startwrite` is called.
+                http.response = response
                 # https://github.com/fonsp/Pluto.jl/pull/722
                 HTTP.setheader(http, "Referrer-Policy" => "same-origin")
                 # https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#:~:text=is%202%20minutes.-,14.38%20Server
                 HTTP.setheader(http, "Server" => "Pluto.jl/$(PLUTO_VERSION_STR[2:end]) Julia/$(JULIA_VERSION_STR[2:end])")
                 HTTP.startwrite(http)
-                write(http, request.response.body)
+                write(http, response_body_bytes(response.body))
+                # Finish the response here (rather than letting the server loop do
+                # it) so that a client that disconnects mid-response is handled by
+                # the catch below instead of aborting the connection in the loop.
+                HTTP.closewrite(http)
             catch e
-                if isa(e, Base.IOError) || isa(e, ArgumentError)
-                    # @warn "Attempted to write to a closed stream at $(request.target)"
-                else
+                # The client hung up before we finished writing; nothing to do.
+                # Reseau surfaces a disconnect as SystemError (e.g. broken pipe).
+                if !(e isa Base.IOError || e isa ArgumentError || e isa Base.SystemError)
                     rethrow(e)
                 end
             end
@@ -296,7 +334,7 @@ function run!(session::ServerSession)
 
     server_running() =
         try
-            HTTP.get("http://$(hostIP):$(port)$(session.options.server.base_url)ping"; status_exception=false, retry=false, connect_timeout=10, readtimeout=10).status == 200
+            HTTP.get("http://$(hostIP):$(port)$(session.options.server.base_url)ping"; status_exception=false, retry=false, connect_timeout=10, read_idle_timeout=10).status == 200
         catch
             false
         end
@@ -325,7 +363,7 @@ function run!(session::ServerSession)
         will_update && println("    Updating registry done ✓")
     end
 
-    return RunningPlutoServer(server, initial_registry_update_task)
+    return RunningPlutoServer(server, on_shutdown, initial_registry_update_task)
 end
 precompile(run, (ServerSession, HTTP.Handlers.Router{Symbol("##001")}))
 

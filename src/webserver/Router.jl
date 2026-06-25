@@ -197,7 +197,7 @@ function http_router_for(session::ServerSession)
         uri = HTTP.URI(request.target)
         query = HTTP.queryparams(uri)
         
-        save_path = SessionActions.save_upload(request.body; filename_base=get(query, "name", nothing))
+        save_path = SessionActions.save_upload(String(request.body); filename_base=get(query, "name", nothing))
         
         try_launch_notebook_response(
             SessionActions.open,
