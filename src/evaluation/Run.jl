@@ -215,28 +215,34 @@ function run_reactive_core!(
         end
 
         implicit_usings = collect_implicit_usings(new_topology, cell)
-        if !PlutoDependencyExplorer.is_resolved(new_topology) && can_help_resolve_cells(new_topology, cell)
-            notebook.topology = new_new_topology = resolve_topology(session, notebook, new_topology, old_workspace_name)
+        needs_resolve = !PlutoDependencyExplorer.is_resolved(new_topology) && can_help_resolve_cells(new_topology, cell)
+        has_implicit_usings = !isempty(implicit_usings)
 
-            if !isempty(implicit_usings)
+        if needs_resolve || has_implicit_usings
+            resolved_topology = needs_resolve ? resolve_topology(session, notebook, new_topology, old_workspace_name) : new_topology
+
+            if has_implicit_usings
                 new_soft_definitions = WorkspaceManager.collect_soft_definitions((session, notebook), implicit_usings)
-                notebook.topology = new_new_topology = with_new_soft_definitions(new_new_topology, cell, new_soft_definitions)
+                resolved_topology = with_new_soft_definitions(resolved_topology, cell, new_soft_definitions)
             end
 
-            # update cache and save notebook because the dependencies might have changed after expanding macros
-            update_dependency_cache!(notebook)
-            save && save_notebook(session, notebook)
-
-            return run_reactive_core!(session, notebook, new_topology, new_new_topology, to_run; save, deletion_hook, user_requested_run, already_run = to_run[1:i])
-        elseif !isempty(implicit_usings)
-            new_soft_definitions = WorkspaceManager.collect_soft_definitions((session, notebook), implicit_usings)
-            notebook.topology = new_new_topology = with_new_soft_definitions(new_topology, cell, new_soft_definitions)
+            notebook.topology = resolved_topology
 
             # update cache and save notebook because the dependencies might have changed after expanding macros
             update_dependency_cache!(notebook)
             save && save_notebook(session, notebook)
 
-            return run_reactive_core!(session, notebook, new_topology, new_new_topology, to_run; save, deletion_hook, user_requested_run, already_run = to_run[1:i])
+            # Cells that are now newly downstream via soft_definitions may have already run (and errored)
+            # before the using cell. Remove errored ones from already_run so they get re-executed.
+            already_run_for_restart = if has_implicit_usings
+                new_soft_defs = resolved_topology.nodes[cell].soft_definitions
+                newly_downstream = Set{Cell}(PlutoDependencyExplorer.where_referenced(resolved_topology, new_soft_defs))
+                filter(c -> !(c ∈ newly_downstream && c.errored), to_run[1:i])
+            else
+                to_run[1:i]
+            end
+
+            return run_reactive_core!(session, notebook, new_topology, resolved_topology, to_run; save, deletion_hook, user_requested_run, already_run = already_run_for_restart)
         end
     end
 
