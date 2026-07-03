@@ -132,7 +132,7 @@ export const ExportBanner = ({
             <div id="container">
                 <div class="export_title">${t("t_export_category_export")}</div>
                 <!-- no "download" attribute here: we want the jl contents to be shown in a new tab -->
-                <a href=${notebookfile_url} target="_blank" class="export_card" onClick=${(e) => exportNotebookDesktop(e, 0, notebook_id)}>
+                <a href=${notebookfile_url} target="_blank" class="export_card" onClick=${(e) => exportNotebookDesktop(e, "file", notebook_id)}>
                     <header role="none"><${Triangle} fill="#a270ba" /> ${t("t_export_card_notebook_file")}</header>
                     <section>${th("t_export_card_notebook_file_description")}</section>
                 </a>

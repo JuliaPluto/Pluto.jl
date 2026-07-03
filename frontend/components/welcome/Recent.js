@@ -6,6 +6,8 @@ import { cl } from "../../common/ClassTable.js"
 import { link_edit, link_open_path } from "./Open.js"
 import { ProcessStatus } from "../../common/ProcessStatus.js"
 import { t, th } from "../../common/lang.js"
+import { has_ctrl_or_cmd_pressed } from "../../common/KeyboardShortcuts.js"
+import { is_desktop, open_from_path_in_new_window } from "../DesktopInterface.js"
 
 /**
  * @typedef CombinedNotebook
@@ -217,7 +219,14 @@ export const Recent = ({ client, connected, remote_notebooks, CustomRecent, on_s
                           href=${running ? link_edit(nb.entry?.notebook_id) : link_open_path(nb.path)}
                           title=${nb.path}
                           onClick=${(e) => {
-                              if (!running) {
+                              const open_in_new_context = has_ctrl_or_cmd_pressed(e) || e.shiftKey || e.button === 1
+                              if (is_desktop() && open_in_new_context) {
+                                  e.preventDefault()
+                                  open_from_path_in_new_window(nb.path)
+                                  return
+                              }
+
+                              if (!running && !open_in_new_context) {
                                   on_start_navigation(shortest_path(nb.path, all_paths))
                                   set_notebook_state(nb.path, {
                                       transitioning: true,

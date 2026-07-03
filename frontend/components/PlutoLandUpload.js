@@ -98,7 +98,7 @@ export const PlutoLandUpload = ({ notebook_id }) => {
                     target="_blank"
                     download=${download_filename ?? ""}
                     onClick=${(e) => {
-                        exportNotebookDesktop(e, 1, notebook_id)
+                        exportNotebookDesktop(e, "html", notebook_id)
                         close()
                     }}
                 >

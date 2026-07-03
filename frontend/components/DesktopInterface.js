@@ -3,10 +3,20 @@ export const open_from_path = () => {
     // @ts-ignore
     window.plutoDesktop.fileSystem.openNotebook("path")
 }
+export const open_from_path_in_new_window = (/** @type string */ path) => {
+    console.log("Calling plutoDesktop -> open_from_path_in_new_window")
+    // @ts-ignore
+    window.plutoDesktop.fileSystem.openNotebook("path", path, { newWindow: true })
+}
 export const open_from_url = (/** @type string */ url) => {
     console.log("Calling plutoDesktop -> open_from_url")
     // @ts-ignore
     window.plutoDesktop.fileSystem.openNotebook("url", url)
+}
+export const open_main_menu = () => {
+    console.log("Calling plutoDesktop -> open_main_menu")
+    // @ts-ignore
+    window.plutoDesktop.openMainMenu()
 }
 
 export const move_notebook = () => {
@@ -15,7 +25,10 @@ export const move_notebook = () => {
     window.plutoDesktop.fileSystem.moveNotebook()
 }
 
-export const export_notebook = (notebook_id, type) => {
+export const export_notebook = (
+    /** @type {string} */ notebook_id,
+    /** @type {Desktop.PlutoExport} */ type
+) => {
     console.log("Calling plutoDesktop -> export_notebook")
     // @ts-ignore
     window.plutoDesktop.fileSystem.exportNotebook(notebook_id, type)
