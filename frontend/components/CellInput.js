@@ -80,7 +80,9 @@ window.PLUTO_TOGGLE_CM_AUTOCOMPLETE_ON_TYPE = () => console.error("Use the Setti
 const common_style_tags = [
     { tag: tags.comment, color: "var(--cm-color-comment)", fontStyle: "italic", filter: "none" },
 
+    { tag: tags.definition(tags.typeName), color: "var(--cm-color-variable)", fontWeight: 700, textShadow: "1px 1px var(--cm-color-typedef-shadow)" },
     { tag: tags.variableName, color: "var(--cm-color-variable)", fontWeight: 700 },
+    { tag: tags.name, color: "var(--cm-color-variable)", fontWeight: 700 },
     { tag: tags.propertyName, color: "var(--cm-color-symbol)", fontWeight: 700 },
     { tag: tags.macroName, color: "var(--cm-color-macro)", fontWeight: 700 },
     { tag: tags.typeName, filter: "var(--cm-filter-type)", fontWeight: "lighter" },

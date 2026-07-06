@@ -216,6 +216,7 @@
         --cm-color-macro: oklch(45% 80% 150deg);
         --cm-color-string: oklch(35% 100% 180deg);
         --cm-color-variable: oklch(45% 40% 270deg);
+        --cm-color-typedef-shadow: oklch(0.91 0.09 72.03);
         --cm-color-literal: oklch(45% 60% 330deg);
         --cm-filter-type: brightness(150%) saturate(50%);
         --cm-color-builtin: #5e7ad3;
