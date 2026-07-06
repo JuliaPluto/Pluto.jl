@@ -25,10 +25,7 @@ export const move_notebook = () => {
     window.plutoDesktop.fileSystem.moveNotebook()
 }
 
-export const export_notebook = (
-    /** @type {string} */ notebook_id,
-    /** @type {Desktop.PlutoExport} */ type
-) => {
+export const export_notebook = (/** @type {string} */ notebook_id, /** @type {Desktop.PlutoExport} */ type) => {
     console.log("Calling plutoDesktop -> export_notebook")
     // @ts-ignore
     window.plutoDesktop.fileSystem.exportNotebook(notebook_id, type)
@@ -56,6 +53,7 @@ export const wait_for_file_move = () =>
     })
 
 export const is_desktop = () => !!window.plutoDesktop
+export const desktop_version = window.plutoDesktop?.desktopVersion
 
 export const add_block_screen_text_listener = (listener) => {
     window.plutoDesktop?.ipcRenderer.on("set-block-screen-text", listener)

@@ -15,6 +15,7 @@ declare global {
                 on(channel: string, func: (...args: unknown[]) => void): (() => void) | undefined
                 once(channel: string, func: (...args: unknown[]) => void): void
             }
+            desktopVersion: string
             isBackendLoaded(): Promise<boolean>
             openMainMenu(): void
             fileSystem: {

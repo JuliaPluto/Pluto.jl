@@ -50,7 +50,7 @@ import { ProjectTomlEditor } from "./ProjectTomlEditor.js"
 import { getCurrentLanguage, getWritingDirection, t, th } from "../common/lang.js"
 import { InlineIonicon, PlutoLandUpload } from "./PlutoLandUpload.js"
 import { BigPkgTerminal } from "./PkgTerminalView.js"
-import { is_desktop, move_notebook, open_main_menu, wait_for_file_move } from "./DesktopInterface.js"
+import { desktop_version, is_desktop, move_notebook, open_main_menu, wait_for_file_move } from "./DesktopInterface.js"
 import { with_query_params } from "../common/URLTools.js"
 import semver from "../imports/semver-es.js"
 import { ConfirmBeforeLongRuntime, maybe_abort_long_runtime } from "./ConfirmBeforeLongRuntime.js"
@@ -1053,7 +1053,7 @@ all patches: ${JSON.stringify(patches, null, 1)}
                 if (!this.state.static_preview && document.visibilityState === "visible") {
                     // view stats on https://stats.plutojl.org/
                     //@ts-ignore
-                    count_stat(`editing/${window?.version_info?.pluto ?? this.state.notebook.pluto_version ?? "unknown"}${is_desktop() ? "-desktop" : ""}`)
+                    count_stat(`editing/${desktop_version ?? window?.version_info?.pluto ?? this.state.notebook.pluto_version ?? "unknown"}`)
                 }
             },
             1000 * 15 * 60
