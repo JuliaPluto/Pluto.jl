@@ -66,6 +66,11 @@ export const start_local = async ({ setStatePromise, connect, launch_params }) =
 
         if (!is_desktop()) {
             window.history.replaceState({}, "", edit_url)
+        } else {
+            let desktop_url = new URL(window.location.href) // file://asdf/sdf/sdf/df/editor.html?statefile=...&...
+            desktop_url.search = ""
+            desktop_url.searchParams.set("id", new_notebook_id)
+            window.history.replaceState({}, "", desktop_url)
         }
 
         await setStatePromise(
