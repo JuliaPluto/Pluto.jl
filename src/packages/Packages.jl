@@ -100,7 +100,7 @@ function sync_nbpkg_core(
         new_packages = String.(external_package_names(new_topology)) # search all cells for imports and usings
         
         removed = setdiff(old_packages, new_packages)
-        added = setdiff(new_packages, old_packages)
+        added = setdiff(new_packages, old_packages, PkgCompat.sysimage_module_names())  # Avoid adding the modules of the sysimage
         can_skip = isempty(removed) && isempty(added) && notebook.nbpkg_ctx_instantiated
 
         iolistener = let
