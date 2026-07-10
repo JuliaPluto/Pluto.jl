@@ -8,7 +8,7 @@
     --ansi-blue: rgb(0, 0, 187);
     --ansi-magenta: rgb(187, 0, 187);
     --ansi-cyan: rgb(0, 187, 187);
-    --ansi-white: rgb(255, 255, 255);
+    --ansi-white: rgb(190, 190, 190);
     --ansi-bright-black: rgb(85, 85, 85);
     --ansi-bright-red: rgb(255, 85, 85);
     --ansi-bright-green: rgb(0, 255, 0);
@@ -16,7 +16,7 @@
     --ansi-bright-blue: rgb(85, 85, 255);
     --ansi-bright-magenta: rgb(255, 85, 255);
     --ansi-bright-cyan: rgb(85, 255, 255);
-    --ansi-bright-white: rgb(255, 255, 255);
+    --ansi-bright-white: rgb(240, 240, 240);
 }
 
 /* Foreground colors */
@@ -126,11 +126,10 @@ pluto-log-dot.Stdout {
     --ansi-red: rgb(220, 0, 0);
     --ansi-magenta: rgb(200, 0, 200);
     --ansi-white: rgb(220, 220, 220);
-    --ansi-bright-black: rgb(50, 50, 50);
     --ansi-bright-yellow: rgb(240, 240, 50);
     --ansi-bright-blue: rgb(110, 110, 255);
     --ansi-bright-white: rgb(240, 240, 240);
-    --ansi-bright-black: rgb(183 183 183);
+    --ansi-bright-black: rgb(183, 183, 183);
 }
 
 pluto-log-dot.Stdout .ansi-bright-black-fg:is(.ansi-white-bg, .ansi-bright-white-bg) {
