@@ -196,16 +196,24 @@ end
 doc_target_name(s::Symbol) = s
 function doc_target_name(@nospecialize(e))
     e isa Expr || return nothing
-    if e.head === :(=) || e.head === :function || e.head === :macro || e.head === :(->) ||
-       e.head === :where || e.head === :call || e.head === :(::) || e.head === :curly
+    if e.head === :(=) || e.head === :function || e.head === :(->) ||
+       e.head === :where || e.head === :call || e.head === :(::) || e.head === :curly ||
+       e.head === :(<:)
+        # `:(<:)` shows up in `struct Foo <: Bar` and `abstract type Foo <: Bar end` signatures.
         return isempty(e.args) ? nothing : doc_target_name(e.args[1])
     elseif e.head === :.
         # qualified name like `Base.conj` — pick the rightmost symbol; `Docs.Binding`
         # in any workspace resolves to the same docs via Docs.aliasof.
         return length(e.args) == 2 && e.args[2] isa QuoteNode && e.args[2].value isa Symbol ?
             e.args[2].value::Symbol : nothing
+    elseif e.head === :macro
+        # Macros are bound under `var"@name"`, not `name`, so prefix the extracted name.
+        inner = isempty(e.args) ? nothing : doc_target_name(e.args[1])
+        return inner === nothing ? nothing : Symbol("@", inner)
     elseif e.head === :struct
         return length(e.args) >= 2 ? doc_target_name(e.args[2]) : nothing
+    elseif e.head === :abstract || e.head === :primitive
+        return length(e.args) >= 1 ? doc_target_name(e.args[1]) : nothing
     elseif e.head === :module
         return length(e.args) >= 2 && e.args[2] isa Symbol ? e.args[2] : nothing
     elseif e.head === :const && length(e.args) >= 1
