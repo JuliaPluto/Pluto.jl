@@ -918,7 +918,7 @@ import Memoize: @memoize
         cleanup(🍭, notebook)
     end
 
-    @testset "Doc strings on macros, abstract/primitive types and subtyped structs" begin
+    @testset "Doc strings on macros types structs" begin
         notebook = Notebook(Cell.([
             raw"""
             "struct with supertype doc"
