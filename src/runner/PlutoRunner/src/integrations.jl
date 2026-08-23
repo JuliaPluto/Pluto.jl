@@ -204,6 +204,46 @@ const integrations = Integration[
             preprocess_log_msg(ps::ProgressLogging.ProgressString) = ps.progress.name
         end,
     ),
+    Integration(
+        id = Base.PkgId(UUID("85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"), "Dictionaries"),
+        code = quote
+            pluto_showable(::MIME"application/vnd.pluto.tree+object", ::Dictionaries.AbstractDictionary) = true
+            function tree_data(@nospecialize(x::Dictionaries.AbstractDictionary{<:Any,<:Any}), context::Context)
+                if Base.show_circular(context, x)
+                    return circular(x)
+                else
+                    depth = get(context, :tree_viewer_depth, 0)
+                    recur_io = IOContext(context, Pair{Symbol,Any}(:SHOWN_SET, x), Pair{Symbol,Any}(:tree_viewer_depth, depth + 1))
+
+                    elements = []
+
+                    my_limit = get_my_display_limit(x, 1, depth, context, tree_display_limit, tree_display_limit_increase)
+                    row_index = 1
+
+                    k=keys(x)
+                    v=values(x)
+                    for pair in zip(k,v)
+                        k, v = pair
+                        if row_index <= my_limit
+                            push!(elements, (format_output_default(k, recur_io), format_output_default(v, recur_io)))
+                        else
+                            push!(elements, "more")
+                            break
+                        end
+                        row_index += 1
+                    end
+                    
+                    Dict{Symbol,Any}(
+                        :prefix => string(typeof(x)),
+                        :prefix_short => string(typeof(x) |> trynameof),
+                        :objectid => objectid2str(x),
+                        :type => :Dict,
+                        :elements => elements
+                    )
+                end
+            end
+        end,
+    ),
 ]
 
 function load_integration_if_needed(integration::Integration)
