@@ -65,10 +65,18 @@ export interface UiHandlers {
     state: () => BootState
     julia_info: () => Promise<unknown>
     on_launch: (opts: BootOptions & { remember?: boolean }) => Promise<void>
+    /** Fired once, on the first request from the window. main.ts uses it as proof of life: a webview
+     *  that never came up never asks for a page, and the shell must not sit there pretending. */
+    on_first_request?: () => void
 }
 
-export const serve_ui = ({ state, julia_info, on_launch }: UiHandlers) =>
-    Deno.serve(async (req) => {
+export const serve_ui = ({ state, julia_info, on_launch, on_first_request }: UiHandlers) => {
+    let announced = false
+    return Deno.serve(async (req) => {
+        if (!announced) {
+            announced = true
+            on_first_request?.()
+        }
         const path = new URL(req.url).pathname
         const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { "content-type": "application/json" } })
         const page = (html: string) => new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } })
@@ -91,3 +99,4 @@ export const serve_ui = ({ state, julia_info, on_launch }: UiHandlers) =>
         // "/": the Launch Station until a boot begins; the live splash while one is under way
         return page(state().phase === "idle" ? launch_html : splash_html)
     })
+}

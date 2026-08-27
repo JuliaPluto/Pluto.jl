@@ -10,7 +10,7 @@
         "build": "deno task buildinfo && deno task vendor && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor -o dist/SpaceStation.app main.ts && deno task buildinfo:restore",
         "build:dmg": "deno task buildinfo && deno task vendor && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor -o dist/SpaceStation.dmg main.ts && deno task buildinfo:restore",
         "build:mac-intel": "deno task buildinfo && deno task vendor x86_64-apple-darwin && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor --target x86_64-apple-darwin -o dist/SpaceStation-mac-intel.app main.ts && deno task buildinfo:restore",
-        "build:win": "deno task buildinfo && deno task vendor x86_64-pc-windows-msvc && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor --target x86_64-pc-windows-msvc -o dist/SpaceStation-win-x64 main.ts && deno task buildinfo:restore",
+        "build:win": "deno task buildinfo && deno task vendor x86_64-pc-windows-msvc && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor --icon icons/spacestation.ico --target x86_64-pc-windows-msvc -o dist/SpaceStation-win-x64 main.ts && deno task buildinfo:restore",
         "build:linux": "deno task buildinfo && deno task vendor x86_64-unknown-linux-gnu && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor --target x86_64-unknown-linux-gnu -o dist/SpaceStation.AppImage main.ts && deno task buildinfo:restore",
         "vendor": "deno run --allow-net --allow-read --allow-write --allow-run vendor_juliaup.ts",
         "build:dmg-intel": "deno task buildinfo && deno task vendor x86_64-apple-darwin && deno desktop --allow-run --allow-net --allow-read --allow-write --allow-env --allow-ffi --include vendor --target x86_64-apple-darwin -o dist/SpaceStation.dmg main.ts && deno task buildinfo:restore",
@@ -22,7 +22,8 @@
             "identifier": "org.grouptherapyorg.spacestation",
             "icons": {
                 "macos": "./icons/spacestation.icns",
-                "linux": "./icons/spacestation-1024.png"
+                "linux": "./icons/spacestation-1024.png",
+                "windows": "./icons/spacestation.ico"
             }
         },
         "backend": "webview"

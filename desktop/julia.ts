@@ -2,7 +2,12 @@
 // the user prefers, and where settings live. juliaup state is read from its own metadata file
 // (~/.julia/juliaup/juliaup.json) — structured and stable, no CLI output parsing.
 
-export const home_dir = () => Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "."
+// Windows has no HOME by convention, but Git Bash / MSYS2 set one — and it points somewhere Julia's
+// own homedir() never looks (that resolves the user profile). The two MUST agree: the server writes
+// its connection file under homedir(), and boot.ts reads the access secret back out of it. So
+// USERPROFILE wins on Windows, HOME everywhere else.
+export const home_dir = () =>
+    (Deno.build.os === "windows" ? (Deno.env.get("USERPROFILE") ?? Deno.env.get("HOME")) : (Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE"))) ?? "."
 
 export const data_dir = () =>
     Deno.build.os === "darwin"
@@ -82,7 +87,10 @@ export type JuliaupInfo = { default: string | null; channels: Array<{ name: stri
 /** Installed channels + default, from juliaup's own metadata. Null when juliaup isn't set up. */
 export const juliaup_info = (): JuliaupInfo | null => {
     try {
-        const depot = Deno.env.get("JULIAUP_DEPOT_PATH") ?? Deno.env.get("JULIA_DEPOT_PATH")?.split(":")[0] ?? `${home_dir()}/.julia`
+        // JULIA_DEPOT_PATH is a LIST, separated the way the platform separates path lists — ';' on
+        // Windows, ':' elsewhere. Splitting on ':' everywhere truncated "C:\Users\me\.julia" to "C".
+        const depot_sep = Deno.build.os === "windows" ? ";" : ":"
+        const depot = Deno.env.get("JULIAUP_DEPOT_PATH") ?? Deno.env.get("JULIA_DEPOT_PATH")?.split(depot_sep)[0] ?? `${home_dir()}/.julia`
         const meta = JSON.parse(Deno.readTextFileSync(`${depot}/juliaup/juliaup.json`))
         const channels = Object.entries(meta.InstalledChannels ?? {})
             .map(([name, v]: [string, any]) => ({ name, version: String(v?.Version ?? "").split("+")[0] }))

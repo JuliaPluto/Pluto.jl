@@ -1,15 +1,23 @@
 # The desktop shell, tested and packaged across macOS / Windows / Linux.
 #
-# test: the headless smoke test (desktop/smoke.ts) boots the REAL stack on every OS — finds
-#   Julia, starts the SpaceStation server, waits for /ping, reads the connection-file secret,
-#   fetches the authenticated hub, checks desktop mode, shuts down cleanly. Trust comes from
-#   booting the whole thing, not from unit stubs.
+# test: two smokes, because one of them used to be the whole story and that is how issue #55 shipped.
+#   - headless (desktop/smoke.ts), every OS: finds Julia, starts the SpaceStation server, waits for
+#     /ping, reads the connection-file secret, fetches the authenticated hub, checks desktop mode,
+#     shuts down cleanly. It covers everything EXCEPT the window.
+#   - headed (desktop/window_smoke.ts), macOS + Windows: opens a REAL window and makes the webview
+#     prove it rendered by fetching a beacon URL. The window layer had never once been executed in
+#     CI, which is why "the app opens nothing on Windows" stayed green all the way to a release.
+#     Linux is deliberately not in this one: the runner has no display or WebKitGTK stack, and a
+#     check that is allowed to fail is exactly how #55 stayed invisible.
 # build: packages the per-OS installers (.dmg for both Mac architectures, .msi, .AppImage) with
 #   juliaup's portable build vendored inside (no Julia required on the target machine); uploads
 #   them as CI artifacts, and on a published release attaches them to the release and appends the
 #   install guide (incl. the unsigned-build workarounds) to the release notes.
 #   macOS signing + notarization activate when the repo has the signing secrets (see
 #   desktop/README.md); bundles ship ad-hoc-signed otherwise.
+#   On Windows it then INSTALLS the .msi it just built and launches the installed app — nothing did
+#   that before #55, so a build that could not open a window shipped as a release asset. That step
+#   revokes its own write access to Program Files first; see the comment there for why.
 
 name: Desktop
 
@@ -62,13 +70,42 @@ jobs:
         run: julia --project=. -e 'import Pkg; Pkg.instantiate()'
       - name: Typecheck the shell
         working-directory: desktop
-        run: deno check main.ts boot.ts splash.ts deck.ts launch.ts julia.ts theme.ts macos_titlebar.ts smoke.ts
+        run: deno check main.ts boot.ts splash.ts deck.ts launch.ts julia.ts theme.ts macos_titlebar.ts smoke.ts webview2.ts window_smoke.ts
       - name: Headless smoke test (boots the full stack)
         working-directory: desktop
         env:
           # setup-julia installs plain julia (no juliaup); the smoke finds it on PATH
           SPACESTATION_PROJECT: ${{ github.workspace }}
         run: deno task smoke
+
+      # The two steps below are the coverage whose absence let #55 ship: they open a REAL window.
+      - name: Headed window smoke · macOS
+        if: runner.os == 'macOS'
+        working-directory: desktop
+        run: |
+          deno desktop -o dist/WindowSmoke.app --allow-net --allow-env --allow-read --allow-write window_smoke.ts
+          # `deno desktop <script>` builds a GUI bundle and does not stream its output, so run the
+          # built binary directly — that inherits stdout and, more importantly, the exit code.
+          ./dist/WindowSmoke.app/Contents/MacOS/laufey_webview
+
+      - name: Headed window smoke · Windows
+        if: runner.os == 'Windows'
+        working-directory: desktop
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $log = "$env:RUNNER_TEMP\window-smoke.log"
+          $env:SPACESTATION_SMOKE_LOG = $log
+          # --icon is required, and not cosmetically: deno decodes desktop.app.icons.macos (.icns)
+          # even when the target is Windows and fails the build outright. Overriding with the .ico
+          # sidesteps that. (deno 2.9.5 embeds neither, but it still insists on decoding them.)
+          deno desktop --icon icons/spacestation.ico -o dist/WindowSmoke.exe --allow-net --allow-env --allow-read --allow-write window_smoke.ts
+          $exe = "dist\WindowSmoke\WindowSmoke.exe"
+          if (-not (Test-Path $exe)) { throw "the smoke build produced no executable at $exe" }
+          # A GUI-subsystem binary writes nothing to this console, hence SPACESTATION_SMOKE_LOG.
+          $p = Start-Process $exe -PassThru -Wait
+          if (Test-Path $log) { Get-Content $log }
+          if ($p.ExitCode -ne 0) { throw "the window smoke failed (exit code $($p.ExitCode))" }
 
   build:
     name: bundle · ${{ matrix.name }}
@@ -116,6 +153,69 @@ jobs:
         shell: bash
         working-directory: desktop
         run: mv "dist/${{ matrix.built }}" "dist/${{ matrix.file }}"
+      # The regression test for issue #55: install the .msi we just built to its REAL destination and
+      # launch the installed app. Before this, the MSI was built, uploaded and attached to releases
+      # without anything ever running it — so a build whose window could never open shipped.
+      - name: Install the MSI and launch it (regression test for #55)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        working-directory: desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $msi = (Resolve-Path "dist/${{ matrix.file }}").Path
+          $log = "$env:RUNNER_TEMP\msi-install.log"
+          Start-Process msiexec -ArgumentList "/i","`"$msi`"","/qn","/l*v","`"$log`"" -Wait
+          $dir = "C:\Program Files\SpaceStation"
+          $exe = Join-Path $dir "SpaceStation.exe"
+          if (-not (Test-Path $exe)) {
+              if (Test-Path $log) { Get-Content $log -Tail 60 }
+              throw "the MSI did not install $exe"
+          }
+          Write-Host "installed to $exe"
+
+          # GitHub's Windows runners run as administrators with UAC disabled, so Program Files is
+          # writable for THIS account — meaning #55 would not reproduce here on its own and a naive
+          # install-and-launch test would go green against the very bug it exists to catch. Revoke
+          # our own write access first, so the launch below meets what a normal user meets.
+          icacls $dir /deny "$($env:USERNAME):(OI)(CI)(W)" /T /C | Out-Null
+
+          $profileRoot = Join-Path $env:LOCALAPPDATA "SpaceStation\WebView2"
+          $profileDir = Join-Path $profileRoot "EBWebView"
+          Remove-Item -Recurse -Force $profileRoot -ErrorAction SilentlyContinue
+
+          $ok = $true
+          $p = Start-Process $exe -PassThru
+          $deadline = (Get-Date).AddSeconds(180)
+          while ((Get-Date) -lt $deadline -and -not (Test-Path $profileDir)) {
+              if ($p.HasExited) { break }
+              Start-Sleep -Seconds 3
+          }
+
+          # WebView2 only materializes a profile once its environment is really created there, so
+          # this directory existing is proof the webview came up — and proof of WHERE it came up.
+          if (-not (Test-Path $profileDir)) {
+              Write-Host "::error::WebView2 never initialized: nothing at $profileDir after 180s. The app is running with no window — this is issue #55."
+              $ok = $false
+          } else {
+              Write-Host "WebView2 initialized at $profileDir"
+          }
+          if (Test-Path "$exe.WebView2") {
+              Write-Host "::error::WebView2 fell back to $exe.WebView2 — beside the binary, in a directory a normal user cannot write. This is issue #55."
+              $ok = $false
+          }
+          if ($p.HasExited -and $ok) {
+              Write-Host "::error::the installed app exited on its own (code $($p.ExitCode)) instead of staying up."
+              $ok = $false
+          }
+
+          # Leave the runner as we found it whether or not the assertions passed.
+          if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue }
+          icacls $dir /remove:d "$env:USERNAME" /T /C | Out-Null
+          Start-Process msiexec -ArgumentList "/x","`"$msi`"","/qn" -Wait
+
+          if (-not $ok) { throw "the installed Windows app failed the #55 regression test" }
+          Write-Host "the installed app opened its webview from a writable profile directory"
+
       - name: Sign + notarize (macOS, when credentials exist)
         # NOTE: signing a finished .dmg requires the .app INSIDE to be signed at build time —
         # once enrolled, set desktop.macos.codesignIdentity in deno.json so `deno desktop` signs
@@ -198,6 +298,12 @@ jobs:
 
           **Windows** — double-click `SpaceStation-win-x64.msi`. If SmartScreen shows *"Windows
           protected your PC"*, click **More info → Run anyway**.
+
+          > **Upgrading from an earlier version? Uninstall it first.** Every build currently declares
+          > the same installer identity (product version `1.0.0`), so Windows treats a newer `.msi` as
+          > the version it already has and can skip the upgrade, leaving the old app in place. Remove
+          > **SpaceStation** from *Settings → Apps → Installed apps*, then run the new `.msi`. This is
+          > a limitation of the installer we generate, not of the app; it is tracked separately.
 
           **Linux** — mark the AppImage executable and run it:
 

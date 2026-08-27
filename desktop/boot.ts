@@ -51,7 +51,7 @@ export class SpaceStationServer {
     /** Locate a runnable `julia`. A compiled .app launched from Finder has a minimal PATH, so the
      *  well-known install locations are checked explicitly, juliaup first. */
     async find_julia(): Promise<string | null> {
-        const home = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? ""
+        const home = home_dir()
         const exe = Deno.build.os === "windows" ? "julia.exe" : "julia"
         const vendored = vendored_bin_dir()
         const candidates = [
@@ -128,7 +128,7 @@ export class SpaceStationServer {
     /** SpaceStation writes a connection file per server (port + access secret) exactly so external
      *  tools can find it — flat JSON in the state dir, keyed `<node>-<port>.json`. */
     read_secret(port: number): string | null {
-        const home = Deno.env.get("HOME") ?? Deno.env.get("USERPROFILE") ?? "."
+        const home = home_dir()
         const dir = `${Deno.env.get("XDG_STATE_HOME") ?? `${home}/.local/state`}/pluto/servers`
         try {
             for (const entry of Deno.readDirSync(dir)) {
