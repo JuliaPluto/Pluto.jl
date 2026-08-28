@@ -236,25 +236,15 @@ register(OutputBody, "pluto-display", ["mime", "body", "cell_id", "persist_js_st
 let IframeContainer = ({ body }) => {
     let iframeref = useRef()
     useLayoutEffect(() => {
-        let url = URL.createObjectURL(new Blob([body], { type: "text/html" }))
+        // The iframe is sandboxed without `allow-same-origin`, so the host cannot reach into its document.
+        // The iframe-resizer content script is therefore appended to the HTML itself, and the two sides talk over postMessage.
+        let resizer_script = /** @type {HTMLScriptElement} */ (document.querySelector("#iframe-resizer-content-window-script"))
+        let resizer_tag = resizer_script == null ? "" : `<script src="${resizer_script.src}" crossorigin="anonymous"></script>`
+        let url = URL.createObjectURL(new Blob([body, resizer_tag], { type: "text/html" }))
         iframeref.current.src = url
 
         run(async () => {
             await new Promise((resolve) => iframeref.current.addEventListener("load", () => resolve(null)))
-
-            /** @type {Document} */
-            let iframeDocument = iframeref.current.contentWindow.document
-            /** Grab the <script> tag for the iframe content window resizer */
-            let original_script_element = /** @type {HTMLScriptElement} */ (document.querySelector("#iframe-resizer-content-window-script"))
-
-            // Insert iframe resizer inside the iframe
-            let iframe_resizer_content_script = iframeDocument.createElement("script")
-            iframe_resizer_content_script.src = original_script_element.src
-            iframe_resizer_content_script.crossOrigin = "anonymous"
-            iframeDocument.head.appendChild(iframe_resizer_content_script)
-
-            // Apply iframe resizer from the host side
-            new Promise((resolve) => iframe_resizer_content_script.addEventListener("load", () => resolve(null)))
             // @ts-ignore
             window.iFrameResize({ checkOrigin: false }, iframeref.current)
         })
@@ -267,6 +257,7 @@ let IframeContainer = ({ body }) => {
         src=""
         ref=${iframeref}
         frameborder="0"
+        sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads"
         allow="accelerometer; ambient-light-sensor; autoplay; battery; camera; display-capture; document-domain; encrypted-media; execution-while-not-rendered; execution-while-out-of-viewport; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; navigation-override; oversized-images; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; wake-lock; screen-wake-lock; vr; web-share; xr-spatial-tracking"
         allowfullscreen
     ></iframe>`
