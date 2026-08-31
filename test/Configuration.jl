@@ -162,20 +162,20 @@ end
         # Effectful paths should not work without a secret.
         @testset "simple & effect w/o auth 1 $suffix $method" for (suffix, method) in effect_routes
             url = local_url(suffix)
-            r = request(url, method; cookies=true, jar)
+            r = request(url, method; cookies=true, cookiejar=jar)
             @test r.status == 403
             @test !shares_secret(r)
         end
         
         # With this config, the / path should work and share the secret, even when requested without a secret.
-        r = request(local_url(""), "GET"; cookies=true, jar)
+        r = request(local_url(""), "GET"; cookies=true, cookiejar=jar)
         @test r.status == 200
         @test shares_secret(r)
         
         # Now, the other effectful paths should work bc of the secret.
         @testset "simple w/o auth 2 $suffix $method" for (suffix, method) in simple_routes
             url = local_url(suffix)
-            r = request(url, method; cookies=true, jar)
+            r = request(url, method; cookies=true, cookiejar=jar)
             @test r.status ∈ 200:299 # 2xx is OK
             @test shares_secret(r)
         end
@@ -185,13 +185,13 @@ end
     
     jar = HTTP.Cookies.CookieJar()
     
-    @test shares_secret(request(local_url("") |> withsecret, "GET"; cookies=true, jar))
+    @test shares_secret(request(local_url("") |> withsecret, "GET"; cookies=true, cookiejar=jar))
     
 
     @testset "simple w/ auth $suffix $method" for (suffix, method) in simple_routes
         # should work because of cookie
         url = local_url(suffix)
-        r = request(url, method; cookies=true, jar)
+        r = request(url, method; cookies=true, cookiejar=jar)
         @test r.status ∈ 200:299 # 2xx is OK
         @test shares_secret(r) # see reasoning in of https://github.com/fonsp/Pluto.jl/commit/20515dd46678a49ca90e042fcfa3eab1e5c8e162
 

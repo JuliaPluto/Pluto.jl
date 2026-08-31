@@ -49,6 +49,94 @@ using Pluto.WorkspaceManager: WorkspaceManager, poll
     close(server)
 end
 
+@testset "HTTP.jl $(pkgversion(HTTP).major).x" begin
+    # Pluto supports both HTTP.jl 1.x and 2.x, see src/webserver/HTTPCompat.jl. The two
+    # differ in the parts exercised below: response framing, reading a request body, the
+    # WebSocket upgrade, and closing a server that still has a WebSocket connected.
+    @test Pluto.HTTP_IS_V2 == (pkgversion(HTTP) ≥ v"2")
+    # CI runs this file against both supported major versions, see .github/workflows/Test.yml
+    let pinned = get(ENV, "PLUTO_TEST_HTTP_VERSION", "")
+        isempty(pinned) || @test string(pkgversion(HTTP).major) == pinned
+    end
+
+    port = 13434
+    local_url(suffix) = "http://localhost:$port/$suffix"
+    ws_url(suffix) = "ws://localhost:$port/$suffix"
+
+    options = Pluto.Configuration.from_flat_kwargs(;
+        port, launch_browser=false,
+        workspace_use_distributed=true,
+        require_secret_for_access=false,
+        require_secret_for_open_links=false,
+    )
+    🍭 = Pluto.ServerSession(; options)
+    server = Pluto.run!(🍭)
+
+    try
+        @testset "responses" begin
+            r = HTTP.get(local_url("ping"))
+            @test r.status == 200
+            @test String(r.body) == "OK!"
+            # Pluto sends every response as one non-chunked body, and adds its own headers.
+            @test HTTP.header(r, "Content-Length") == "3"
+            @test !HTTP.hasheader(r, "Transfer-Encoding")
+            @test HTTP.header(r, "Referrer-Policy") == "same-origin"
+            @test startswith(HTTP.header(r, "Server"), "Pluto.jl/")
+
+            r = HTTP.get(local_url("edit"))
+            @test r.status == 200
+            @test HTTP.header(r, "Content-Length") == string(length(r.body))
+            @test startswith(HTTP.header(r, "Content-Type"), "text/html")
+
+            r = HTTP.get(local_url("nonexistent-path-🌡"); status_exception=false)
+            @test r.status == 404
+        end
+
+        @testset "request body" begin
+            # `POST /notebookupload` is the only route that reads the request body.
+            codes = ["x = 1 + 1", "y = x * 3 # 🐧"]
+            contents = sprint(Pluto.save_notebook, Pluto.Notebook(Pluto.Cell.(codes)))
+            r = HTTP.post(local_url("notebookupload?name=uploaded"); body=contents)
+            @test r.status == 200
+
+            @test poll(20) do
+                length(🍭.notebooks) == 1
+            end
+            notebook = only(values(🍭.notebooks))
+            # `numbered_until_new` appends a number if `uploaded.jl` already exists
+            @test startswith(basename(notebook.path), "uploaded")
+            @test [c.code for c in notebook.cells] == codes
+        end
+
+        @testset "websocket" begin
+            notebook = only(values(🍭.notebooks))
+            reply = Ref{Any}(nothing)
+            # A cross-site `Origin`: Pluto has to accept it, because reverse proxies
+            # (Binder, JupyterHub, JuliaHub) rewrite the scheme and host of a request.
+            HTTP.WebSockets.open(ws_url(""); headers=["Origin" => "https://proxy.example.com"]) do ws
+                HTTP.WebSockets.send(ws, Pluto.pack(Dict(
+                    "type" => "connect",
+                    "client_id" => "test_client",
+                    "request_id" => "test_request",
+                    "notebook_id" => string(notebook.notebook_id),
+                    "body" => Dict(),
+                )))
+                reply[] = Pluto.unpack(HTTP.WebSockets.receive(ws))
+            end
+
+            @test reply[]["type"] == "👋"
+            @test reply[]["message"]["notebook_exists"]
+            @test reply[]["message"]["version_info"]["pluto"] == Pluto.PLUTO_VERSION_STR
+            @test reply[]["initiator_id"] == "test_client"
+        end
+    finally
+        close(server)
+    end
+
+    # closing the server shuts down the notebooks it was running
+    @test isempty(🍭.notebooks)
+end
+
 @testset "pretty_address" begin
     make_session(; kwargs...) = Pluto.ServerSession(;
         options=Pluto.Configuration.from_flat_kwargs(;
