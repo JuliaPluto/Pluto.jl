@@ -67,26 +67,37 @@ const is_first_run = Ref(true)
 
 "Return a port and serversocket to use while taking into account the `favourite_port`."
 function port_serversocket(hostIP::Sockets.IPAddr, favourite_port, port_hint)
-    local port, serversocket
     if favourite_port === nothing
-        port, serversocket = Sockets.listenany(hostIP, UInt16(port_hint))
+        port = UInt16(port_hint)
+        while true
+            try
+                return port, listen_socket(hostIP, port)
+            catch e
+                port == typemax(UInt16) && rethrow(e)
+                port += UInt16(1)
+            end
+        end
     else
         port = UInt16(favourite_port)
-        try
-            serversocket = Sockets.listen(hostIP, port)
+        serversocket = try
+            listen_socket(hostIP, port)
         catch e
             error("Cannot listen on port $port. It may already be in use, or you may not have sufficient permissions. Use Pluto.run() to automatically select an available port.")
         end
+        return port, serversocket
     end
-    return port, serversocket
 end
 
 struct RunningPlutoServer
     http_server
+    on_shutdown::Function
     initial_registry_update_task::Task
 end
 
 function Base.close(ssc::RunningPlutoServer)
+    # Disconnect clients and shut down notebooks first: closing the HTTP server
+    # is graceful, i.e. it waits for the open (WebSocket) connections to finish.
+    ssc.on_shutdown()
     close(ssc.http_server)
     wait(ssc.http_server)
     wait(ssc.initial_registry_update_task)
@@ -101,10 +112,11 @@ function Base.wait(ssc::RunningPlutoServer)
     catch e
         println()
         println()
-        Base.close(ssc)
         (e isa InterruptException) || rethrow(e)
+    finally
+        Base.close(ssc)
     end
-    
+
     nothing
 end
 
@@ -115,6 +127,36 @@ Specifiy the [`Pluto.ServerSession`](@ref) to run the web server on, which inclu
 """
 function run(session::ServerSession)
     Base.wait(run!(session))
+end
+
+"""
+Generate a middleware that records the `token` url parameter passed in by Binder,
+so that it can be added to every URL that Pluto prints (and you can share that URL
+to collaborate).
+"""
+function create_binder_token_middleware(session::ServerSession)
+    function binder_token_middleware(handler)
+        function (request::HTTP.Request)
+            params = HTTP.queryparams(HTTP.URI(request.target))
+            if haskey(params, "token") && params["token"] ∉ ("null", "undefined", "") && session.binder_token === nothing
+                session.binder_token = params["token"]
+            end
+            handler(request)
+        end
+    end
+end
+
+"Middleware that adds the headers that Pluto sets on every HTTP response."
+function default_headers_middleware(handler)
+    function (request::HTTP.Request)
+        response = handler(request)
+        set_content_length!(response)
+        # https://github.com/fonsp/Pluto.jl/pull/722
+        HTTP.setheader(response, "Referrer-Policy" => "same-origin")
+        # https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#:~:text=is%202%20minutes.-,14.38%20Server
+        HTTP.setheader(response, "Server" => "Pluto.jl/$(PLUTO_VERSION_STR[2:end]) Julia/$(JULIA_VERSION_STR[2:end])")
+        response
+    end
 end
 
 function run!(session::ServerSession)
@@ -130,7 +172,10 @@ function run!(session::ServerSession)
 
     pluto_router = http_router_for(session)
     store_session_middleware = create_session_context_middleware(session)
-    app = pluto_router |> auth_middleware |> store_session_middleware
+    store_binder_token_middleware = create_binder_token_middleware(session)
+    app = pluto_router |> auth_middleware |> store_session_middleware |> store_binder_token_middleware |> default_headers_middleware
+    # `HTTP.streamhandler` reads the request body, calls `app`, and writes the response.
+    streamed_app = HTTP.streamhandler(app)
 
     let n = session.options.server.notebook
         SessionActions.open.((session,), 
@@ -149,12 +194,12 @@ function run!(session::ServerSession)
     local port, serversocket = port_serversocket(hostIP, favourite_port, port_hint)
 
     on_shutdown() = @sync begin
-        # Triggered by HTTP.jl
+        # Called by `Base.close(::RunningPlutoServer)`, before the HTTP server is closed.
         @info("\nClosing Pluto... Restart Julia for a fresh session. \n\nHave a nice day! 🎈\n\n")
-        # TODO: put do_work tokens back 
-        @async swallow_exception(() -> close(serversocket), Base.IOError)
+        # TODO: put do_work tokens back
+        @async swallow_exception(() -> close(serversocket), Exception)
         for client in values(session.connected_clients)
-            @async swallow_exception(() -> close(client.stream), Base.IOError)
+            @async swallow_exception(() -> close(client.stream), Exception)
         end
         empty!(session.connected_clients)
         for nb in values(session.notebooks)
@@ -162,7 +207,7 @@ function run!(session::ServerSession)
         end
     end
 
-    server = HTTP.listen!(hostIP, port; stream=true, server=serversocket, on_shutdown, verbose=-1) do http::HTTP.Stream
+    server = http_listen!(serversocket) do http::HTTP.Stream
         # the if statement below asks if the current request is a "websocket upgrade" request: the start of a websocket connection.
         if HTTP.WebSockets.isupgrade(http.message)
             secret_required = let
@@ -175,14 +220,16 @@ function run!(session::ServerSession)
                 write(http, "Forbidden")
                 HTTP.closewrite(http)
             catch e
-                if !(e isa Base.IOError)
+                if !is_disconnection_exception(e)
                     rethrow(e)
                 end
             end
             if !secret_required || is_authenticated(session, http.message)
+                upgraded = Ref(false)
                 try
                     # "upgrade" means accept and start the websocket connection that the client requested
-                    HTTP.WebSockets.upgrade(http) do clientstream
+                    HTTP.WebSockets.upgrade(http; WEBSOCKET_UPGRADE_KWARGS...) do clientstream
+                        upgraded[] = true
                         if HTTP.WebSockets.isclosed(clientstream)
                             return
                         end
@@ -222,7 +269,7 @@ function run!(session::ServerSession)
                                 end
                             end
                         catch ex
-                            if ex isa InterruptException || ex isa HTTP.WebSockets.WebSocketError || ex isa EOFError || (ex isa Base.IOError && occursin("connection reset", ex.msg))
+                            if ex isa InterruptException || ex isa HTTP.WebSockets.WebSocketError || is_disconnection_exception(ex)
                                 # that's fine!
                             else
                                 bt = stacktrace(catch_backtrace())
@@ -236,11 +283,7 @@ function run!(session::ServerSession)
                         end
                     end
                 catch ex
-                    if ex isa InterruptException
-                        # that's fine!
-                    elseif ex isa Base.IOError
-                        # that's fine!
-                    elseif ex isa ArgumentError && occursin("stream is closed", ex.msg)
+                    if ex isa InterruptException || is_disconnection_exception(ex)
                         # that's fine!
                     else
                         bt = stacktrace(catch_backtrace())
@@ -248,7 +291,7 @@ function run!(session::ServerSession)
                     end
                 finally
                     # if we never wrote a response, then do it now
-                    if isopen(http) && !iswritable(http)
+                    if !upgraded[] && isopen(http)
                         finish()
                     end
                 end
@@ -257,46 +300,18 @@ function run!(session::ServerSession)
             end
         else
             # then it's a regular HTTP request, not a WS upgrade
-
-            request::HTTP.Request = http.message
-            request.body = read(http)
-            # HTTP.closeread(http)
-
-            # If a "token" url parameter is passed in from binder, then we store it to add to every URL (so that you can share the URL to collaborate).
-            let
-                params = HTTP.queryparams(HTTP.URI(request.target))
-                if haskey(params, "token") && params["token"] ∉ ("null", "undefined", "") && session.binder_token === nothing
-                    session.binder_token = params["token"]
-                end
-            end
-
-            ###
-            response_body = app(request)
-            ###
-
-            request.response::HTTP.Response = response_body
-            request.response.request = request
             try
-                HTTP.setheader(http, "Content-Length" => string(length(request.response.body)))
-                # https://github.com/fonsp/Pluto.jl/pull/722
-                HTTP.setheader(http, "Referrer-Policy" => "same-origin")
-                # https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#:~:text=is%202%20minutes.-,14.38%20Server
-                HTTP.setheader(http, "Server" => "Pluto.jl/$(PLUTO_VERSION_STR[2:end]) Julia/$(JULIA_VERSION_STR[2:end])")
-                HTTP.startwrite(http)
-                write(http, request.response.body)
+                streamed_app(http)
             catch e
-                if isa(e, Base.IOError) || isa(e, ArgumentError)
-                    # @warn "Attempted to write to a closed stream at $(request.target)"
-                else
-                    rethrow(e)
-                end
+                # @warn "Attempted to write to a closed stream at $(http.message.target)"
+                is_disconnection_exception(e) || rethrow(e)
             end
         end
     end
 
     server_running() =
         try
-            HTTP.get("http://$(hostIP):$(port)$(session.options.server.base_url)ping"; status_exception=false, retry=false, connect_timeout=10, readtimeout=10).status == 200
+            HTTP.get("http://$(hostIP):$(port)$(session.options.server.base_url)ping"; status_exception=false, retry=false, CLIENT_TIMEOUT_KWARGS...).status == 200
         catch
             false
         end
@@ -325,7 +340,7 @@ function run!(session::ServerSession)
         will_update && println("    Updating registry done ✓")
     end
 
-    return RunningPlutoServer(server, initial_registry_update_task)
+    return RunningPlutoServer(server, on_shutdown, initial_registry_update_task)
 end
 precompile(run, (ServerSession, HTTP.Handlers.Router{Symbol("##001")}))
 
