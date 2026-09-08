@@ -25,6 +25,7 @@ import {
     portugues_pt,
     russian,
     suomi,
+    ukrainian,
     corporate_english,
     czech,
     arabic,
@@ -58,6 +59,7 @@ const resources = {
     "pt-PT": without_empty_keys(portugues_pt),
     "pl": without_empty_keys(polski),
     "ru-RU": without_empty_keys(russian),
+    "uk": without_empty_keys(ukrainian),
 }
 
 /**
