@@ -220,10 +220,7 @@ const integrations = Integration[
                     my_limit = get_my_display_limit(x, 1, depth, context, tree_display_limit, tree_display_limit_increase)
                     row_index = 1
 
-                    k=keys(x)
-                    v=values(x)
-                    for pair in zip(k,v)
-                        k, v = pair
+                    for (k,v) in pairs(x)
                         if row_index <= my_limit
                             push!(elements, (format_output_default(k, recur_io), format_output_default(v, recur_io)))
                         else
