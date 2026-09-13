@@ -182,6 +182,7 @@
     "t_safe_preview_julia_version_change_before": "Do you want to convert this notebook from Julia {{version_old}} to {{version_new}}?",
     "t_safe_preview_julia_version_change_after": "Pluto will try to convert the package environment automatically, but this does not always work. You can also start Pluto on Julia {{version_install}} to run the notebook directly.",
     "t_safe_preview_body": "You are reading and editing this file without running Julia code.",
+    "t_aria_label_safe_preview_more_info": "More information about Safe preview",
     "t_safe_preview_run_this_notebook": "When you are ready, you can {{run_this_notebook}}.",
     "t_safe_preview_run_this_notebook_link": "run this notebook",
     "t_export_safe_preview_warning": "This notebook is still in Safe Preview, and cells are not executed. You might want to run the notebook first. Are you sure you want to export it?",

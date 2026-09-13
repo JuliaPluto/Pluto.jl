@@ -1684,6 +1684,7 @@ ${t("t_key_autosave_description")}`
                         <nav id="at_the_top">
                             <a
                                 href=${this.state.binder_session_url != null ? `${this.state.binder_session_url}?token=${this.state.binder_session_token}` : "./"}
+                                aria-label="Pluto.jl"
                                 onClick=${(e) => {
                                     if (is_desktop()) {
                                         e.preventDefault()
