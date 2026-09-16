@@ -36,7 +36,7 @@ jobs:
             fail-fast: false
             matrix:
                 # We test quite a lot of versions because we do some OS and version specific things unfortunately
-                julia-version: ["1.10", "1.12", "~1.13.0-0"] #, "nightly"] # "~1.14.0-0"]
+                julia-version: ["1.10", "1.13"] #, "nightly"] # "~1.14.0-0"]
                 os: [ubuntu-latest, macOS-latest, windows-latest]
 
         steps:
