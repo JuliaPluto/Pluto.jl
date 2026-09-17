@@ -38,6 +38,23 @@ jobs:
                 # We test quite a lot of versions because we do some OS and version specific things unfortunately
                 julia-version: ["1.10", "1.12", "~1.13.0-0"] #, "nightly"] # "~1.14.0-0"]
                 os: [ubuntu-latest, macOS-latest, windows-latest]
+                # By default, resolve HTTP.jl freely — that gives us the latest 2.x.
+                http-version: [""]
+                # Pluto supports both HTTP.jl 1.x and 2.x (see src/webserver/HTTPCompat.jl),
+                # so pin 1.x on a few of the combinations as well.
+                include:
+                    - julia-version: "1.10"
+                      os: ubuntu-latest
+                      http-version: "1"
+                    - julia-version: "1.12"
+                      os: ubuntu-latest
+                      http-version: "1"
+                    - julia-version: "1.12"
+                      os: windows-latest
+                      http-version: "1"
+                    - julia-version: "1.12"
+                      os: macOS-latest
+                      http-version: "1"
 
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -51,13 +68,20 @@ jobs:
 
             - uses: julia-actions/cache@v3
 
+            - name: Pin HTTP.jl to ${{ matrix.http-version }}.x
+              if: matrix.http-version != ''
+              run: julia --project=. -e 'import Pkg; Pkg.add(name="HTTP", version="${{ matrix.http-version }}"); Pkg.pin("HTTP"); Pkg.status("HTTP")'
+
             # 🚗
             - uses: julia-actions/julia-runtest@v1
+              env:
+                  # test/webserver.jl asserts that this is the version that actually got loaded
+                  PLUTO_TEST_HTTP_VERSION: ${{ matrix.http-version }}
               with:
                   coverage: false
 
             - uses: actions/upload-artifact@v7
               if: failure()
               with:
-                  name: test-snapshots-${{ matrix.julia-version }}-${{ matrix.os }}
+                  name: test-snapshots-${{ matrix.julia-version }}-${{ matrix.os }}-http${{ matrix.http-version || 'latest' }}
                   path: ${{ github.workspace }}/test/snapshots/*.html

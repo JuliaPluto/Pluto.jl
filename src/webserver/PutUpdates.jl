@@ -67,14 +67,14 @@ end
 # https://github.com/JuliaWeb/HTTP.jl/issues/382
 const flushtoken = Token()
 
-function send_message(stream::HTTP.WebSocket, msg)
-    HTTP.send(stream, serialize_message(msg))
+function send_message(stream::HTTP.WebSockets.WebSocket, msg)
+    HTTP.WebSockets.send(stream, serialize_message(msg))
 end
 function send_message(stream::IO, msg)
     write(stream, serialize_message(msg))
 end
 
-function is_stream_open(stream::HTTP.WebSocket)
+function is_stream_open(stream::HTTP.WebSockets.WebSocket)
     !HTTP.WebSockets.isclosed(stream)
 end
 function is_stream_open(io::IO)
