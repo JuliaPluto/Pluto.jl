@@ -89,7 +89,11 @@ const Main = ({ children }) => {
 /**
  * Map of status => Bool. In order of decreasing priority.
  */
-const statusmap = (/** @type {EditorState} */ state, /** @type {LaunchParameters} */ launch_params) => ({
+const statusmap = (
+    /** @type {EditorState} */ state,
+    /** @type {LaunchParameters} */ launch_params,
+    /** @type {boolean} */ notebook_content_comes_from_url_params
+) => ({
     disconnected: !(state.connected || state.initializing || state.static_preview),
     loading:
         (state.backend_launch_phase != null &&
@@ -124,7 +128,7 @@ const statusmap = (/** @type {EditorState} */ state, /** @type {LaunchParameters
     recording_waiting_to_start: state.recording_waiting_to_start,
     is_recording: state.is_recording,
     isolated_cell_view: launch_params.isolated_cell_ids != null && launch_params.isolated_cell_ids.length > 0,
-    sanitize_html: state.notebook.process_status === ProcessStatus.waiting_for_permission || state.static_preview,
+    sanitize_html: state.notebook.process_status === ProcessStatus.waiting_for_permission || (state.static_preview && notebook_content_comes_from_url_params),
 })
 
 const first_true_key = (obj) => {
@@ -292,6 +296,7 @@ export const url_logo_small = get_included_external_source("pluto-logo-small")?.
  * @typedef EditorProps
  * @type {{
  * launch_params: LaunchParameters,
+ * notebook_content_comes_from_url_params: boolean,
  * initial_notebook_state: NotebookData,
  * preamble_element: preact.ReactElement?,
  * pluto_editor_element: HTMLElement,
@@ -1554,7 +1559,7 @@ ${t("t_key_autosave_description")}`
     }
 
     componentWillUpdate(new_props, new_state) {
-        this.cached_status = statusmap(new_state, this.props.launch_params)
+        this.cached_status = statusmap(new_state, this.props.launch_params, this.props.notebook_content_comes_from_url_params)
 
         Object.entries(this.cached_status).forEach(([k, v]) => {
             new_props.pluto_editor_element.classList.toggle(k, v === true)
@@ -1565,7 +1570,7 @@ ${t("t_key_autosave_description")}`
         const { launch_params } = this.props
         let { export_menu_open, notebook } = this.state
 
-        const status = this.cached_status ?? statusmap(this.state, launch_params)
+        const status = this.cached_status ?? statusmap(this.state, launch_params, this.props.notebook_content_comes_from_url_params)
         const statusval = first_true_key(status)
 
         if (status.isolated_cell_view) {
