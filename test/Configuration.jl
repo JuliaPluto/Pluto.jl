@@ -78,12 +78,17 @@ end
         any(occursin(secret, y) for (x,y) in response.headers)
     end
     
+    # Asset filenames depend on `Pluto.frontend_directory()` (frontend-dist uses content-hashed names), so take them from the page served at `/`.
+    index_html = String(request(withsecret(local_url("")), "GET").body)
+    index_assets = unique(String(m[1]) for m in eachmatch(r"(?:href|src)=\"([^\":]+\.(?:css|js|png))\"", index_html))
+    for ext in (".css", ".js", ".png")
+        @test any(endswith(ext), index_assets)
+    end
+
     public_routes = [
         ("favicon.ico", "GET"),
         ("possible_binder_token_please", "GET"),
-        ("index.css", "GET"),
-        ("index.js", "GET"),
-        ("img/favicon-32x32.png", "GET"),
+        [(path, "GET") for path in index_assets]...,
     ]
     
     broken_routes = [
