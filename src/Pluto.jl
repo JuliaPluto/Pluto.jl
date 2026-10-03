@@ -101,15 +101,15 @@ include("./precompile.jl")
 const pluto_boot_environment_path = Ref{String}()
 
 function julia_compat_issue(short::String)
-    if short == "1.13"
-        "Check [https://github.com/fonsp/Pluto.jl/issues/3389](https://github.com/fonsp/Pluto.jl/issues/3389)"
+    if short == "1.14"
+        "Check [https://github.com/fonsp/Pluto.jl/issues/3444](https://github.com/fonsp/Pluto.jl/issues/3444)"
     else
         "Search [github.com/fonsp/Pluto.jl/issues](https://github.com/fonsp/Pluto.jl/issues) for `Julia $short`"
     end
 end
 
 function warn_julia_compat()
-    if VERSION > v"1.12.9999"
+    if VERSION > v"1.13.9999"
         short = "$(VERSION.major).$(VERSION.minor)"
         msg = "# WARNING: Unsupported Julia version\nPluto (`$(PLUTO_VERSION)`) is running on a new version of Julia (`$(VERSION)`). Support for Julia $short will be added in a later Pluto release.\n\nYou can try:\n$(
             "  1. Update Pluto using `Pkg.update(\"Pluto\")`.\n" *
