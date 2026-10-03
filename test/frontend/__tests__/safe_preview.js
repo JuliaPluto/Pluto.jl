@@ -247,4 +247,36 @@ Hello
 
         expect(await page.evaluate(() => getComputedStyle(document.querySelector(`.zo`)).color)).toBe("rgb(255, 0, 0)")
     })
+
+    it("Static preview is sanitized when the statefile comes from URL parameters", async () => {
+        await importNotebook(page, "safe_preview.jl", { permissionToRunCode: true })
+        await waitForPlutoToCalmDown(page)
+        expect(await page.evaluate(() => window.I_DID_SOMETHING_DANGEROUS)).toBe(true)
+
+        // @ts-ignore
+        const notebook_id = await page.evaluate(() => window.editor_state.notebook.notebook_id)
+        const statefile_url = `${getPlutoUrl()}/statefile?id=${notebook_id}`
+
+        const preview = await createPage(browser)
+        try {
+            await preview.goto(`${getPlutoUrl()}/edit?statefile=${encodeURIComponent(statefile_url)}`)
+            await preview.waitForSelector("pluto-editor.static_preview pluto-cell pluto-output .zo")
+            expect(await preview.evaluate(() => [...document.querySelector("pluto-editor").classList])).toContain("sanitize_html")
+            expect(await preview.evaluate(() => window.I_DID_SOMETHING_DANGEROUS)).toBeUndefined()
+            expect(await preview.evaluate(() => getComputedStyle(document.querySelector(`.zo`)).color)).not.toBe("rgb(255, 0, 0)")
+
+            // An exported HTML file sets its launch parameters as globals instead.
+            await preview.evaluateOnNewDocument((url) => {
+                // @ts-ignore
+                window.pluto_statefile = url
+            }, statefile_url)
+            await preview.goto(`${getPlutoUrl()}/edit`)
+            await preview.waitForSelector("pluto-editor.static_preview pluto-cell pluto-output .zo")
+            await preview.waitForFunction(() => window.I_DID_SOMETHING_DANGEROUS === true)
+            expect(await preview.evaluate(() => [...document.querySelector("pluto-editor").classList])).not.toContain("sanitize_html")
+            expect(await preview.evaluate(() => getComputedStyle(document.querySelector(`.zo`)).color)).toBe("rgb(255, 0, 0)")
+        } finally {
+            await preview.close()
+        }
+    })
 })

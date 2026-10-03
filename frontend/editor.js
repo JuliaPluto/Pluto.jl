@@ -43,6 +43,7 @@ const from_attribute = (element, name) => {
 }
 
 const preamble_html_comes_from_url_params = url_params.has("preamble_html")
+const notebook_content_comes_from_url_params = ["statefile", "slider_server_url", "recording_url"].some((name) => url_params.has(name))
 
 /**
  *
@@ -154,6 +155,7 @@ const EditorLoader = ({ launch_params, pluto_editor_element }) => {
           ? html`<${Editor}
                 initial_notebook_state=${initial_notebook_state_ref.current}
                 launch_params=${launch_params}
+                notebook_content_comes_from_url_params=${notebook_content_comes_from_url_params}
                 preamble_element=${preamble_element}
                 pluto_editor_element=${pluto_editor_element}
             />`
