@@ -108,6 +108,15 @@ end
             @test [c.code for c in notebook.cells] == codes
         end
 
+        @testset "handler error" begin
+            # The upload cannot be saved in a directory that does not exist, so the route handler throws.
+            r = HTTP.post(local_url("notebookupload?name=directory-that-does-not-exist/uploaded"); body="x = 1", status_exception=false)
+            @test r.status == 500
+            @test startswith(HTTP.header(r, "Content-Type"), "text/html")
+            @test HTTP.header(r, "Content-Length") == string(length(r.body))
+            @test length(🍭.notebooks) == 1
+        end
+
         @testset "websocket" begin
             notebook = only(values(🍭.notebooks))
             reply = Ref{Any}(nothing)
