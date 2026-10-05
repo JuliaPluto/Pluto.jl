@@ -54,9 +54,10 @@ end
     # differ in the parts exercised below: response framing, reading a request body, the
     # WebSocket upgrade, and closing a server that still has a WebSocket connected.
     @test Pluto.HTTP_IS_V2 == (pkgversion(HTTP) ≥ v"2")
-    # CI runs this file against both supported major versions, see .github/workflows/Test.yml
+    # CI runs this file against several HTTP.jl versions, see .github/workflows/Test.yml
     let pinned = get(ENV, "PLUTO_TEST_HTTP_VERSION", "")
-        isempty(pinned) || @test string(pkgversion(HTTP).major) == pinned
+        # `pinned` is a version prefix, like "1" or "2.7.0"
+        isempty(pinned) || @test startswith("$(pkgversion(HTTP)).", "$pinned.")
     end
 
     port = 13434

@@ -41,11 +41,15 @@ jobs:
                 # By default, resolve HTTP.jl freely — that gives us the latest 2.x.
                 http-version: [""]
                 # Pluto supports both HTTP.jl 1.x and 2.x (see src/webserver/HTTPCompat.jl),
-                # so pin 1.x on a few of the combinations as well.
+                # so pin the latest 1.x on a few of the combinations as well, and the lowest
+                # versions that the HTTP compat entry in Project.toml allows on the oldest Julia.
                 include:
                     - julia-version: "1.10"
                       os: ubuntu-latest
-                      http-version: "1"
+                      http-version: "1.10.19"
+                    - julia-version: "1.10"
+                      os: ubuntu-latest
+                      http-version: "2.7.0"
                     - julia-version: "1.12"
                       os: ubuntu-latest
                       http-version: "1"
@@ -68,7 +72,7 @@ jobs:
 
             - uses: julia-actions/cache@v3
 
-            - name: Pin HTTP.jl to ${{ matrix.http-version }}.x
+            - name: Pin HTTP.jl to ${{ matrix.http-version }}
               if: matrix.http-version != ''
               run: julia --project=. -e 'import Pkg; Pkg.add(name="HTTP", version="${{ matrix.http-version }}"); Pkg.pin("HTTP"); Pkg.status("HTTP")'
 
