@@ -146,6 +146,21 @@ function create_binder_token_middleware(session::ServerSession)
     end
 end
 
+"""
+Middleware that turns an exception thrown while handling a request into a `500` error page,
+and logs it. The details only go to the log, since the request might not be authenticated.
+"""
+function internal_error_middleware(handler)
+    function (request::HTTP.Request)
+        try
+            handler(request)
+        catch e
+            @error "Failed to handle request" request.method path = HTTP.URI(request.target).path exception = (e, catch_backtrace())
+            error_response(500, "Internal server error", "Pluto ran into an unexpected error while handling this request. The details are in the terminal where Pluto is running. Please <a href='https://github.com/JuliaPluto/Pluto.jl/issues'>report this error</a>!")
+        end
+    end
+end
+
 "Middleware that adds the headers that Pluto sets on every HTTP response."
 function default_headers_middleware(handler)
     function (request::HTTP.Request)
@@ -173,7 +188,7 @@ function run!(session::ServerSession)
     pluto_router = http_router_for(session)
     store_session_middleware = create_session_context_middleware(session)
     store_binder_token_middleware = create_binder_token_middleware(session)
-    app = pluto_router |> auth_middleware |> store_session_middleware |> store_binder_token_middleware |> default_headers_middleware
+    app = pluto_router |> auth_middleware |> store_session_middleware |> store_binder_token_middleware |> internal_error_middleware |> default_headers_middleware
     # `HTTP.streamhandler` reads the request body, calls `app`, and writes the response.
     streamed_app = HTTP.streamhandler(app)
 
