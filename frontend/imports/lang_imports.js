@@ -14,6 +14,7 @@ export { default as español } from "../lang/espannol.json" with { type: "json" 
 export { default as french } from "../lang/french.json" with { type: "json" }
 export { default as italiano } from "../lang/italiano.json" with { type: "json" }
 export { default as japanese } from "../lang/japanese.json" with { type: "json" }
+export { default as korean } from "../lang/korean.json" with { type: "json" }
 export { default as nederlands_nl } from "../lang/nederlands_nl.json" with { type: "json" }
 export { default as norsk_bokmål } from "../lang/norsk_bokmal.json" with { type: "json" }
 export { default as persian } from "../lang/persian.json" with { type: "json" }

@@ -1,0 +1,9 @@
+{
+    "t_language_name": "한국어",
+    "t_language_direction": "ltr",
+    "t_open_a_notebook_action": "노트북 열기",
+    "t_open_file_action": "파일 열기",
+    "t_open_action": "열기",
+    "t_language_picker_description": "인터페이스 언어 변경",
+    "t_settings_save": "저장하고 닫기"
+}
