@@ -113,7 +113,7 @@ export let BottomRightPanel = ({
 
     return html`
         <aside id="helpbox-wrapper" ref=${container_ref}>
-            <pluto-helpbox class=${cl({ hidden, [`helpbox-${open_tab ?? hidden}`]: true })}>
+            <pluto-helpbox id="pluto-helpbox" class=${cl({ hidden, [`helpbox-${open_tab ?? hidden}`]: true })}>
                 <header translate=${false}>
                     <button
                         title=${t("t_panel_docs_description")}
@@ -122,6 +122,8 @@ export let BottomRightPanel = ({
                             "helpbox-docs": true,
                             "active": open_tab === "docs",
                         })}
+                        aria-expanded=${open_tab === "docs"}
+                        aria-controls="pluto-helpbox"
                         onClick=${() => {
                             focus_docs_on_open_ref.current = true
                             set_open_tab(open_tab === "docs" ? null : "docs")
@@ -141,6 +143,8 @@ export let BottomRightPanel = ({
                             "something_is_happening": busy || !connected,
                         })}
                         id="process-status-tab-button"
+                        aria-expanded=${open_tab === "process"}
+                        aria-controls="pluto-helpbox"
                         onClick=${() => {
                             set_open_tab(open_tab === "process" ? null : "process")
                         }}
