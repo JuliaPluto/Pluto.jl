@@ -56,11 +56,11 @@
         --blockquote-color: inherit;
         --blockquote-bg: #2e2e2e;
         --admonition-title-color: black;
-        --jl-message-color: rgb(38 90 32);
+        --jl-message-color: rgb(35 82 29);
         --jl-message-accent-color: rgb(131 191 138);
         --jl-info-color: rgb(42 73 115);
         --jl-info-accent-color: rgb(92 140 205);
-        --jl-warn-color: rgb(96 90 34);
+        --jl-warn-color: rgb(81 76 29);
         --jl-warn-accent-color: rgb(221 212 100);
         --jl-danger-color: rgb(100 47 39);
         --jl-danger-accent-color: rgb(255, 117, 98);
