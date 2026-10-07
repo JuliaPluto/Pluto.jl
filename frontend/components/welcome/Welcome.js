@@ -119,6 +119,15 @@ export const Welcome = ({ launch_params }) => {
         }
     }
 
+    useEffect(() => {
+        // When you navigate back to this page, the browser might restore it from the back/forward cache, with the block screen still showing.
+        const on_pageshow = (/** @type {PageTransitionEvent} */ e) => {
+            if (e.persisted) set_block_screen_with_this_text(null)
+        }
+        window.addEventListener("pageshow", on_pageshow)
+        return () => window.removeEventListener("pageshow", on_pageshow)
+    }, [])
+
     /**
      * These are the sources from which we will download the featured notebook titles and metadata.
      * @type {import("./Featured.js").FeaturedSource[]}
