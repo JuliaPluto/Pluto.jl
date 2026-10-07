@@ -136,3 +136,38 @@ pluto-log-dot.Stdout .ansi-bright-black-fg:is(.ansi-white-bg, .ansi-bright-white
     text-shadow: none;
     color: black;
 }
+
+@media (prefers-color-scheme: light) {
+    :root {
+        /* Grayscale colors adapted for light backgrounds (similar to VS Code Light+ terminal) */
+        --ansi-black: rgb(0, 0, 0);
+        --ansi-bright-black: rgb(102, 102, 102);
+        --ansi-white: rgb(85, 85, 85);
+        --ansi-bright-white: rgb(165, 165, 165);
+
+        /* Adjust colors to be darker/more legible on light backgrounds */
+        --ansi-red: rgb(205, 49, 49);
+        --ansi-bright-red: rgb(205, 49, 49);
+        --ansi-green: rgb(0, 170, 0);
+        --ansi-bright-green: rgb(20, 206, 20);
+        --ansi-yellow: rgb(148, 152, 0);
+        --ansi-bright-yellow: rgb(181, 186, 0);
+        --ansi-blue: rgb(4, 81, 165);
+        --ansi-bright-blue: rgb(4, 81, 165);
+        --ansi-magenta: rgb(188, 5, 188);
+        --ansi-bright-magenta: rgb(188, 5, 188);
+        --ansi-cyan: rgb(5, 152, 188);
+        --ansi-bright-cyan: rgb(5, 152, 188);
+    }
+    
+    pluto-log-dot.Stdout {
+        /* Override Pluto's custom stdout dark-mode tweaks */
+        --ansi-red: rgb(205, 49, 49);
+        --ansi-magenta: rgb(188, 5, 188);
+        --ansi-white: rgb(85, 85, 85);
+        --ansi-bright-white: rgb(165, 165, 165);
+        --ansi-bright-black: rgb(102, 102, 102);
+        --ansi-bright-yellow: rgb(181, 186, 0);
+        --ansi-bright-blue: rgb(4, 81, 165);
+    }
+}
