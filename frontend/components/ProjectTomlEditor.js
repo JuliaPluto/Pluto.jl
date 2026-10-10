@@ -176,6 +176,7 @@ export const ProjectTomlEditor = ({ notebook, process_waiting_for_permission }) 
                     // syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
                     awesome_line_wrapping,
                     EditorView.lineWrapping,
+                    EditorView.contentAttributes.of({ "aria-label": t("t_aria_label_project_toml_editor") }),
 
                     EditorView.theme(
                         {

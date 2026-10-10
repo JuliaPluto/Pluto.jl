@@ -16,6 +16,7 @@ import { tab_help_plugin } from "./CellInput/tab_help_plugin.js"
 import _ from "../imports/lodash-es.js"
 import { get_settings } from "./Settings.js"
 import { cl } from "../common/ClassTable.js"
+import { t } from "../common/lang.js"
 
 let { autocompletion, completionKeymap } = autocomplete
 
@@ -252,6 +253,7 @@ export const FilePicker = ({ value, readonly, suggest_new_file, button_label, pl
                           ],
 
                     Placeholder(placeholder),
+                    EditorView.contentAttributes.of({ "aria-label": t("t_aria_label_filepicker") }),
                     tab_help_plugin,
                 ],
             }),
