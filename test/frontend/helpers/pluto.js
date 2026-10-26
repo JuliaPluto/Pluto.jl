@@ -211,10 +211,12 @@ const waitForPlutoBusy = async (page, iWantBusiness, options) => {
     await new Promise((resolve) => setTimeout(resolve, 1))
 }
 
-export const waitForPlutoToCalmDown = async (
-    /** @type {import("puppeteer").Page} */ page,
-    /** @type {{ polling: string | number; timeout?: number; }} */ options
-) => {
+/**
+ *
+ * @param {import("puppeteer").Page} page
+ * @param {{ polling: string | number; timeout?: number; }} [options]
+ */
+export const waitForPlutoToCalmDown = async (page, options) => {
     await waitForPlutoBusy(page, false, options)
 }
 
