@@ -127,13 +127,13 @@ end
 is_method_completions_results(results) = length(results) >= 1 && results[1] isa REPLCompletions.MethodCompletion
 
 """
-Like `REPLCompletions.completions`, but completing an empty name in `workspace` lists every name visible there, including those from `using` and `import`. The frontend sends the query without the identifier being typed and filters the results itself.
+Like `REPLCompletions.completions`, but it also works if the query is empty. 
 
-From Julia 1.13 on, REPLCompletions lists only the module's own names for an empty name.
+(This patch is needed since https://github.com/JuliaLang/julia/pull/59045.)
 """
 function workspace_completions(query::String, pos::Int, workspace::Module)
     results, loc, found = REPLCompletions.completions(query, pos, workspace)
-    @static if VERSION >= v"1.13.0-" && isdefined(REPLCompletions, :append_filtered_mod_names!)
+    @static if VERSION >= v"1.13.0-"
         is_own_name(c) = c isa ModuleCompletion && c.parent === workspace
         if isempty(loc) && any(is_own_name, results)
             filter!(!is_own_name, results)
