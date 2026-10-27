@@ -126,11 +126,31 @@ end
 
 is_method_completions_results(results) = length(results) >= 1 && results[1] isa REPLCompletions.MethodCompletion
 
+"""
+Like `REPLCompletions.completions`, but it also works if the query is empty. 
+
+(This patch is needed since https://github.com/JuliaLang/julia/pull/59045.)
+"""
+function workspace_completions(query::String, pos::Int, workspace::Module)
+    results, loc, found = REPLCompletions.completions(query, pos, workspace)
+    @static if VERSION >= v"1.13.0-"
+        is_own_name(c) = c isa ModuleCompletion && c.parent === workspace
+        if isempty(loc) && any(is_own_name, results)
+            filter!(!is_own_name, results)
+            REPLCompletions.append_filtered_mod_names!(results, workspace, "", false) do s::Symbol
+                !Base.isdeprecated(workspace, s) &&
+                    s !== nameof(workspace) &&
+                    !(workspace === Main && s === :MainInclude)
+            end
+            sort!(results; by=completion_contents)
+        end
+    end
+    results, loc, found
+end
+
 "You say Linear, I say Algebra!"
 function completion_fetcher(query::String, query_full::String, workspace::Module)
-    results, loc, found = REPLCompletions.completions(
-        query, lastindex(query), workspace
-    )
+    results, loc, found = workspace_completions(query, lastindex(query), workspace)
 
     ## METHODS & KWARGS
     if query != query_full && is_method_completions_results(results)
@@ -138,14 +158,12 @@ function completion_fetcher(query::String, query_full::String, workspace::Module
         # But because query != query_full, we know that we are actually typing something extra
         
         # Try if the full query gives a different result.
-        results, loc, found = REPLCompletions.completions(
-            query_full, lastindex(query_full), workspace
-        )
+        results, loc, found = workspace_completions(query_full, lastindex(query_full), workspace)
 
         # If they give a keywordargument completion, then we should use that.
         if !any(r -> r isa REPLCompletions.KeywordArgumentCompletion, results)
             # Otherwise, we are just completing a function argument. So let's just complete the empty string.
-            results, loc, found = REPLCompletions.completions("", 0, workspace)
+            results, loc, found = workspace_completions("", 0, workspace)
             # loc is wrong, because the empty string has a different offset.
             loc = (ncodeunits(query)+1):ncodeunits(query_full)
         end
@@ -153,9 +171,7 @@ function completion_fetcher(query::String, query_full::String, workspace::Module
 
     ## TOO MANY RESULTS
     if length(results) > 2000 && query != query_full
-        results, loc, found = REPLCompletions.completions(
-            query_full, lastindex(query_full), workspace
-        )
+        results, loc, found = workspace_completions(query_full, lastindex(query_full), workspace)
     end
     if (too_long = length(results) > 2000)
         results = results[1:2000]
