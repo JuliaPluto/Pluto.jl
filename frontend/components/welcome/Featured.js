@@ -11,6 +11,7 @@ import { t, th } from "../../common/lang.js"
  *   hash: String,
  *   html_path?: String,
  *   statefile_path?: String,
+ *   statefile_hash?: String,
  *   notebookfile_path?: String,
  *   frontmatter?: Record<string,any>,
  * }}
