@@ -42,6 +42,7 @@ export const FeaturedCard = ({ entry, source_manifest, direct_html_links, disabl
           ? u(entry.html_path)
           : with_query_params(`edit`, {
                 statefile: u(entry.statefile_path),
+                statefile_integrity: entry.statefile_hash == null ? null : `sha256-${base64url_to_base64(entry.statefile_hash)}`,
                 notebookfile: u(entry.notebookfile_path),
                 notebookfile_integrity: entry.hash == null ? null : `sha256-${base64url_to_base64(entry.hash)}`,
                 disable_ui: `true`,
