@@ -928,8 +928,6 @@ all patches: ${JSON.stringify(patches, null, 1)}
                 })
             } catch (e) {}
 
-            if (this.props.launch_params.disable_ui !== true) check_access(this.client)
-
             // @ts-ignore
             window.version_info = this.client.version_info // for debugging
             // @ts-ignore
@@ -1911,22 +1909,6 @@ ${t("t_key_autosave_description")}`
                 </${PlutoBondsContext.Provider}>
             </${PlutoActionsContext.Provider}>
         `
-    }
-}
-
-const check_access = (/** @type {import("../common/PlutoConnection.js").PlutoConnection} */ client) => {
-    // 2028 is the current domain expiry date for fonsp.com
-    if (new Date().getFullYear() < 2028 && window.location.hostname === "localhost") {
-        fetch("https://pluto-available.fonsp.com/", { priority: "low", headers: { "x-pluto-version": client.version_info.pluto } })
-            .then((res) => res.json())
-            .then(({ blocked, message }) => {
-                if (blocked) {
-                    document.body.innerHTML = ""
-                    client.kill(false)
-                }
-                if (message) alert(message)
-            })
-            .catch(() => {})
     }
 }
 
