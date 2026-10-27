@@ -1696,7 +1696,7 @@ ${t("t_key_autosave_description")}`
                                     }
                                 }}
                             >
-                                <h1><img id="logo-big" src=${url_logo_big} alt="Pluto.jl" /><img id="logo-small" src=${url_logo_small} aria-hidden="true" /></h1>
+                                <h1><img id="logo-big" src=${url_logo_big} alt="Pluto.jl" /><img id="logo-small" src=${url_logo_small} alt="Pluto.jl" /></h1>
                             </a>
                             ${
                                 this.state.extended_components.CustomHeader &&
@@ -1720,6 +1720,7 @@ ${t("t_key_autosave_description")}`
                                               base: this.client.session_options?.server?.notebook_path_suggestion ?? "",
                                           }}
                                           placeholder=${t("t_save_notebook_ellipsis")}
+                                          aria_label=${t("t_aria_label_filepicker_save")}
                                           button_label=${notebook.in_temp_dir
                                               ? t("t_save_notebook_button_label_when_currently_not_saved")
                                               : t("t_save_notebook_button_label_when_currently_saved")}

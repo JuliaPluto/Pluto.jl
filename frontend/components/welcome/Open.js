@@ -55,6 +55,7 @@ export const Open = ({ client, connected, CustomPicker, show_samples, on_start_n
                                   on_submit=${desktop.open_from_url}
                                   button_label=${"Open from URL"}
                                   placeholder=${"Enter a URL..."}
+                                  aria_label=${t("t_aria_label_filepicker_open_url")}
                                   client=${dummy_client}
                                   clear_on_blur=${false}
                               />
@@ -70,6 +71,7 @@ export const Open = ({ client, connected, CustomPicker, show_samples, on_start_n
                           clear_on_blur=${false}
                           button_label=${is_desktop() ? t("t_open_file_action") : t("t_open_action")}
                           placeholder=${picker.placeholder}
+                          aria_label=${t("t_aria_label_filepicker_open")}
                       />
                   `}
         </div>`

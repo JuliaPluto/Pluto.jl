@@ -12,6 +12,7 @@ export const SafePreviewUI = ({ process_waiting_for_permission, risky_file_sourc
                       <span
                           >${t("t_safe_preview")}
                           <button
+                              aria-label=${t("t_aria_label_safe_preview_more_info")}
                               onclick=${(e) => {
                                   open_pluto_popup({
                                       type: "info",

@@ -92,6 +92,7 @@ export class CellOutput extends Component {
         const allow_translate = !this.props.errored && rich_output
         return html`
             <pluto-output
+                role="group"
                 class=${cl({
                     rich_output,
                     scroll_y: this.props.mime === "application/vnd.pluto.table+object" || this.props.mime === "text/plain",
