@@ -57,13 +57,13 @@
         --blockquote-bg: #f2f2f2;
         --admonition-title-color: white;
         --jl-message-color: rgb(219 233 212);
-        --jl-message-accent-color: rgb(158, 200, 137);
+        --jl-message-accent-color: rgb(79, 122, 57);
         --jl-info-color: rgb(214 227 244);
-        --jl-info-accent-color: rgb(148, 182, 226);
+        --jl-info-accent-color: rgb(50, 109, 186);
         --jl-warn-color: rgb(236 234 213);
-        --jl-warn-accent-color: rgb(207, 199, 138);
+        --jl-warn-accent-color: rgb(118, 110, 48);
         --jl-danger-color: rgb(245 218 215);
-        --jl-danger-accent-color: rgb(226, 157, 148);
+        --jl-danger-accent-color: rgb(194, 69, 53);
         --jl-debug-color: rgb(245 218 215);
         --jl-debug-accent-color: rgb(226, 157, 148);
         --footnote-border-color: rgba(23, 115, 119, 0.15);
