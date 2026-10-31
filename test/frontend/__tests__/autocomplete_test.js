@@ -9,6 +9,7 @@ import {
     shutdownCurrentNotebook,
     setupPlutoBrowser,
     gotoPlutoMainMenu,
+    clearPlutoInput,
 } from "../helpers/pluto"
 
 describe("PlutoAutocomplete", () => {
@@ -50,43 +51,50 @@ describe("PlutoAutocomplete", () => {
         await new Promise((resolve) => setTimeout(resolve, 500))
 
         // Type the partial input
-        lastPlutoCellId = lastElement(await getCellIds(page))
-        await writeSingleLineInPlutoInput(page, `pluto-cell[id="${lastPlutoCellId}"] pluto-input`, "my_su")
-        await new Promise((resolve) => setTimeout(resolve, 500))
 
-        // Wait for the autocomplete suggestions to appear by itself
-        await page.waitForSelector(".cm-tooltip-autocomplete", { timeout: 10 * 1000 }).catch(async () => {
-            // If the autocomplete suggestions don't appear, we need let's trigger it manually
-            await page.keyboard.press("Tab")
-            await page.waitForSelector(".cm-tooltip-autocomplete")
-        })
+        const clear_and_type = async (/** @type {string} */ text) => {
+            lastPlutoCellId = lastElement(await getCellIds(page))
+            const pi_sel = `pluto-cell[id="${lastPlutoCellId}"] pluto-input`
 
-        // Get suggestions
-        const suggestions = await page.evaluate(() =>
-            Array.from(document.querySelectorAll(".cm-tooltip-autocomplete li")).map((suggestion) => suggestion.textContent)
-        )
+            await clearPlutoInput(page, pi_sel)
+            await new Promise((resolve) => setTimeout(resolve, 500))
+
+            // Type input
+            await writeSingleLineInPlutoInput(page, pi_sel, text)
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+        await clear_and_type("my_su")
+
+        const get_completions = async () => {
+            // Wait for the autocomplete suggestions to appear by itself
+            await page.waitForSelector(".cm-tooltip-autocomplete", { timeout: 10 * 1000 }).catch(async () => {
+                // If the autocomplete suggestions don't appear, we need let's trigger it manually
+                await page.keyboard.press("Tab")
+                await page.waitForSelector(".cm-tooltip-autocomplete")
+            })
+
+            // Get suggestions
+            return page.evaluate(() => Array.from(document.querySelectorAll(".cm-tooltip-autocomplete li")).map((suggestion) => suggestion.textContent))
+        }
+
+        let suggestions = await get_completions()
         suggestions.sort()
         expect(suggestions).toEqual(["my_subtract", "my_sum1", "my_sum2"])
-    })
 
-    // Skipping because this doesn't work with FuzzyCompletions anymore
-    it.skip("should automatically autocomplete if there is only one possible suggestion", async () => {
-        await importNotebook(page, "autocomplete_notebook.jl")
-        const importedCellIds = await getCellIds(page)
-        await Promise.all(importedCellIds.map((cellId) => waitForCellOutput(page, cellId)))
+        /////////////////
+        //// Next, test Base functions
 
-        // Add a new cell
-        let lastPlutoCellId = lastElement(importedCellIds)
-        await page.click(`pluto-cell[id="${lastPlutoCellId}"] .add_cell.after`)
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        await clear_and_type("nextfloa")
+        expect((await get_completions()).sort()).toEqual(["nextfloat"])
 
-        // Type the partial input
-        lastPlutoCellId = lastElement(await getCellIds(page))
-        await writeSingleLineInPlutoInput(page, `pluto-cell[id="${lastPlutoCellId}"] pluto-input`, "my_sub")
+        await clear_and_type("soerror")
+        expect((await get_completions()).sort()).toContain("StackOverflowError")
+        expect((await get_completions()).sort()).toContain("showerror")
 
-        // Trigger autocomplete
-        await page.keyboard.press("Tab")
+        ////////////
+        /// Test fuzzy
 
-        expect(await waitForContentToBecome(page, `pluto-cell[id="${lastPlutoCellId}"] pluto-input .CodeMirror-line`, "my_subtract")).toBe("my_subtract")
+        await clear_and_type("idxcrs")
+        expect((await get_completions()).sort()).toEqual(["IndexCartesian"])
     })
 })
