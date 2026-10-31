@@ -918,6 +918,69 @@ import Memoize: @memoize
         cleanup(🍭, notebook)
     end
 
+    @testset "Doc strings on macros types structs" begin
+        notebook = Notebook(Cell.([
+            raw"""
+            "struct with supertype doc"
+            struct MyDocStruct <: Number
+                a::Int
+            end
+            """,
+            raw"""
+            "parametric struct with supertype doc"
+            struct MyDocStruct2{T} <: Number
+                a::T
+            end
+            """,
+            raw"""
+            "abstract type doc"
+            abstract type MyDocAbstract end
+            """,
+            raw"""
+            "abstract type with supertype doc"
+            abstract type MyDocAbstract2 <: Number end
+            """,
+            raw"""
+            "primitive type doc"
+            primitive type MyDocPrim 32 end
+            """,
+            raw"""
+            "macro doc"
+            macro mydocmac(x)
+                x
+            end
+            """,
+        ]))
+
+        update_run!(🍭, notebook, notebook.cells)
+        @test all(noerror, notebook.cells)
+
+        is_doc_binding(cell) = occursin("pluto-docs-binding", cell.output.body)
+
+        struct_cell, param_struct_cell, abstract_cell, abstract_sub_cell, primitive_cell, macro_cell = notebook.cells
+
+        @test is_doc_binding(struct_cell)
+        @test occursin("struct with supertype doc", struct_cell.output.body)
+
+        @test is_doc_binding(param_struct_cell)
+        @test occursin("parametric struct with supertype doc", param_struct_cell.output.body)
+
+        @test is_doc_binding(abstract_cell)
+        @test occursin("abstract type doc", abstract_cell.output.body)
+
+        @test is_doc_binding(abstract_sub_cell)
+        @test occursin("abstract type with supertype doc", abstract_sub_cell.output.body)
+
+        @test is_doc_binding(primitive_cell)
+        @test occursin("primitive type doc", primitive_cell.output.body)
+
+        @test is_doc_binding(macro_cell)
+        @test occursin("macro doc", macro_cell.output.body)
+        @test occursin("@mydocmac", macro_cell.output.body)
+
+        cleanup(🍭, notebook)
+    end
+
     @testset "Delete methods from macros" begin
         🍭 = ServerSession()
         🍭.options.evaluation.workspace_use_distributed = false

@@ -1,7 +1,7 @@
 name = "Pluto"
 uuid = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
 license = "MIT"
-version = "1.0.3"
+version = "1.1.0"
 authors = ["Fons van der Plas <fons@plutojl.org>", "Mikołaj Bochenski <github.com/malyvsen>", "Michiel Dral <m.c.dral@gmail.com>", "Παναγιώτης Γεωργακόπουλος <panagiotis@plutojl.org>", "Paul Berg <paul@plutojl.org>"]
 
 [deps]
@@ -46,7 +46,7 @@ Downloads = "1"
 ExpressionExplorer = "0.5, 0.6, 1"
 FileWatching = "1"
 GracefulPkg = "2"
-HTTP = "^1.10.17"
+HTTP = "^1.10.19, 2.7"
 HypertextLiteral = "0.7, 0.8, 0.9, 1"
 InteractiveUtils = "1"
 LRUCache = "1.6.2"

@@ -44,6 +44,32 @@ const from_attribute = (element, name) => {
 
 const preamble_html_comes_from_url_params = url_params.has("preamble_html")
 
+const statefile_source_allowed = (source) => {
+    const u = new URL(source)
+    return u.host === "featured.plutojl.org" || (u.host === "cdn.jsdelivr.net" && u.pathname.startsWith("/gh/JuliaPluto/featured"))
+}
+
+const notebook_content_comes_from_url_params_and_is_not_trusted = (() => {
+    // If live content can get loaded from the slider server or recording
+    if (url_params.has("slider_server_url") || url_params.has("recording_url")) {
+        return true
+    }
+
+    // If live content comes from a statefile
+    if (url_params.has("statefile")) {
+        // if this source is trusted
+        if (statefile_source_allowed(url_params.get("statefile"))) {
+            if (url_params.get("statefile_integrity"))
+                // Trusted!
+                // (the actual integrity check will happen in fetch)
+                return false
+        }
+        return true
+    }
+
+    return false
+})()
+
 /**
  *
  * @returns {import("./components/Editor.js").NotebookData}
@@ -154,6 +180,7 @@ const EditorLoader = ({ launch_params, pluto_editor_element }) => {
           ? html`<${Editor}
                 initial_notebook_state=${initial_notebook_state_ref.current}
                 launch_params=${launch_params}
+                notebook_content_comes_from_url_params=${notebook_content_comes_from_url_params_and_is_not_trusted}
                 preamble_element=${preamble_element}
                 pluto_editor_element=${pluto_editor_element}
             />`
