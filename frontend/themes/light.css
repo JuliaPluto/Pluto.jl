@@ -29,7 +29,7 @@
         --export-color: rgb(228, 228, 228);
         --export-card-bg-color: rgba(255, 255, 255, 0.8);
         --export-card-title-color: rgba(0, 0, 0, 0.7);
-        --export-card-text-color: rgba(0, 0, 0, 0.5);
+        --export-card-text-color: rgba(0, 0, 0, 0.6);
         --export-card-shadow-color: #00000029;
 
         /*Frontmatter styling*/
@@ -146,8 +146,8 @@
         --pkg-terminal-border-color: #c3c3c3;
 
         /* run area*/
-        --pluto-runarea-bg-color: hsl(0, 0, 97%);
-        --pluto-runarea-span-color: hsl(353, 5%, 64%);
+        --pluto-runarea-bg-color: hsl(0, 0%, 97%);
+        --pluto-runarea-span-color: hsl(353, 5%, 44%);
 
         /*drop ruler*/
         --dropruler-bg-color: rgba(0, 0, 0, 0.5);
