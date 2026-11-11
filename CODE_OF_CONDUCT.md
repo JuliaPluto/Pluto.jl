@@ -36,6 +36,17 @@ Examples of unacceptable behavior include:
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
+### AI Generated Content
+
+Our community is built on human connection. AI generated content can be useful
+in our progress, but it should not interfere with human to human communication.
+
+Specifically, we require:
+* If you use AI generated content in communication (like comments, descriptions,
+  email, chat messages, etc), you need to clearly mark it as AI-generated. Do not
+  attempt to hide AI usage.
+* If a large part of a code contribution is AI generated, this needs to be clear.
+
 ## Enforcement Responsibilities
 
 Community leaders are responsible for clarifying and enforcing our standards of
