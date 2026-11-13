@@ -8,6 +8,7 @@ function set_bond_values_reactive(;
     # filter out the bonds that don't need to be set
     syms_to_set = first.(
         Iterators.filter(zip(bound_sym_names, is_first_values) |> collect) do (bound_sym, is_first_value)
+            haskey(notebook.bonds, bound_sym) || return false
             new_value = notebook.bonds[bound_sym].value
 
             variable_exists = Pluto.MoreAnalysis.is_assigned_anywhere(notebook.topology, bound_sym)
@@ -31,6 +32,8 @@ function set_bond_values_reactive(;
             return true
         end
     )::Vector{Symbol}
+
+    filter!(bound_sym -> haskey(notebook.bonds, bound_sym), syms_to_set)
 
     if isempty(syms_to_set) || !will_run_code(notebook)
         send_notebook_changes!(ClientRequest(; session, notebook, initiator))
@@ -81,4 +84,3 @@ possible_bond_values(session::ServerSession, notebook::Notebook, name::Symbol) =
 Optimized version of `length ∘ possible_bond_values`.
 """
 possible_bond_values_length(session::ServerSession, notebook::Notebook, name::Symbol) = WorkspaceManager.possible_bond_values((session,notebook), name; get_length=true)
-
